@@ -9,6 +9,11 @@
 ** Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
 ** All rights reserved.
 **
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release, please 
+** contact me by email at the address above.
+**
 ** Get the latest Ficl release at http://ficl.sourceforge.net
 **
 ** L I C E N S E  and  D I S C L A I M E R
@@ -33,13 +38,6 @@
 ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 ** SUCH DAMAGE.
-**
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please send
-** contact me by email at the address above.
-**
-** $Id$
 */
 
 #if !defined (__MATH64_H__)

@@ -1,11 +1,17 @@
+to do:
+fix dorky key handling in ficlwin
+debugger out command
+debugger breakpoints
+
 rel -- May 2001 (feast or famine around here)
 
 - Debugger changes:
   New debugger command "x" to execute the rest of the command line as ficl
   New debugger command "l" lists the source of the innermost word being debugged
   If you attempt to debug a primitive, it gets executed rather than doing nothing
-  .R displays the stack contents symbolically
+  r.s displays the stack contents symbolically
 - Debugger now runs correctly under ficlwin.
+- SEE listing enhanced for use with the debugger
 - Added Guy Carver's changes to oo.fr for VTABLE support
 - float.c words f> and >f to move floats to and from the param stack, analogous to >r and r>
 - LOOKUP - Surrogate precompiled parse step for ficlParseWord (this step is hard 

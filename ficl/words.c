@@ -12,6 +12,11 @@
 **
 ** Get the latest Ficl release at http://ficl.sourceforge.net
 **
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release, please
+** contact me by email at the address above.
+**
 ** L I C E N S E  and  D I S C L A I M E R
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -34,13 +39,6 @@
 ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 ** SUCH DAMAGE.
-**
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please send
-** contact me by email at the address above.
-**
-** $Id$
 */
 
 #include <stdlib.h>
@@ -74,7 +72,6 @@ static char origTag[]  = "origin";
 ** simple-minded...
 */
 static FICL_WORD *pBranchParen  = NULL;
-static FICL_WORD *pComma        = NULL;
 static FICL_WORD *pDoParen      = NULL;
 static FICL_WORD *pDoesParen    = NULL;
 static FICL_WORD *pExitParen    = NULL;
@@ -89,7 +86,6 @@ static FICL_WORD *pQDoParen     = NULL;
 static FICL_WORD *pSemiParen    = NULL;
 static FICL_WORD *pStore        = NULL;
 static FICL_WORD *pStringLit    = NULL;
-static FICL_WORD *pType         = NULL;
 
 #if FICL_WANT_LOCALS
 static FICL_WORD *pGetLocalParen= NULL;
@@ -1340,6 +1336,10 @@ static int ficlParseWord(FICL_VM *pVM, STRINGINFO si)
 }
 
 
+/*
+** Surrogate precompiled parse step for ficlParseWord (this step is hard coded in 
+** INTERPRET)
+*/
 static void lookup(FICL_VM *pVM)
 {
     STRINGINFO si;
@@ -1944,8 +1944,9 @@ static void base(FICL_VM *pVM)
 	vmCheckStack(pVM, 0, 1);
 #endif
 
-	pBase = (CELL *)(&pVM->base);
-	PUSH(*pBase);
+    pBase = (CELL *)(&pVM->base);
+    stackPush(pVM->pStack, LVALUEtoCELL(pBase));
+    return;
 }
 
 
@@ -2100,6 +2101,7 @@ static void postponeCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp  = ficlGetDict();
     FICL_WORD *pFW;
+    FICL_WORD *pComma = ficlLookup(",");
     assert(pComma);
 
     ficlTick(pVM);
@@ -2195,6 +2197,8 @@ static void stringLit(FICL_VM *pVM)
 static void dotQuoteCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = ficlGetDict();
+    FICL_WORD *pType = ficlLookup("type");
+    assert(pType);
     dictAppendCell(dp, LVALUEtoCELL(pStringLit));
     dp->here = PTRtoCELL vmGetString(pVM, (FICL_STRING *)dp->here, '\"');
     dictAlign(dp);
@@ -4274,19 +4278,19 @@ WORDKIND ficlWordClassify(FICL_WORD *pFW)
 
     static CODEtoKIND codeMap[] =
     {
-        {BRANCH, branchParen},
-        {COLON, colonParen},
+        {BRANCH,     branchParen},
+        {COLON,       colonParen},
         {CONSTANT, constantParen},
-        {CREATE, createParen},
-        {DO, doParen},
-        {DOES, doDoes},
-        {IF, ifParen},
-        {LITERAL, literalParen},
-        {LOOP, loopParen},
-        {PLOOP, plusLoopParen},
-        {QDO, qDoParen},
-        {STRINGLIT, stringLit},
-        {USER, userParen},
+        {CREATE,     createParen},
+        {DO,             doParen},
+        {DOES,            doDoes},
+        {IF,             ifParen},
+        {LITERAL,   literalParen},
+        {LOOP,         loopParen},
+        {PLOOP,    plusLoopParen},
+        {QDO,           qDoParen},
+        {STRINGLIT,    stringLit},
+        {USER,         userParen},
         {VARIABLE, variableParen},
     };
 
@@ -4332,7 +4336,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "+",         add,            FW_DEFAULT);
     dictAppendWord(dp, "+!",        plusStore,      FW_DEFAULT);
     dictAppendWord(dp, "+loop",     plusLoopCoIm,   FW_COMPIMMED);
-    pComma =
     dictAppendWord(dp, ",",         comma,          FW_DEFAULT);
     dictAppendWord(dp, "-",         sub,            FW_DEFAULT);
     dictAppendWord(dp, ".",         displayCell,    FW_DEFAULT);
@@ -4436,7 +4439,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "state",     state,          FW_DEFAULT);
     dictAppendWord(dp, "swap",      swap,           FW_DEFAULT);
     dictAppendWord(dp, "then",      endifCoIm,      FW_COMPIMMED);
-    pType =
     dictAppendWord(dp, "type",      type,           FW_DEFAULT);
     dictAppendWord(dp, "u.",        uDot,           FW_DEFAULT);
     dictAppendWord(dp, "u<",        uIsLess,        FW_DEFAULT);
@@ -4454,7 +4456,7 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "]",         rbracket,       FW_DEFAULT);
     /* 
     ** CORE EXT word set...
-    ** see softcore.c for other definitions
+    ** see softcore.fr for other definitions
     */
     dictAppendWord(dp, ".(",        dotParen,       FW_DEFAULT);
     dictAppendWord(dp, ":noname",   colonNoName,    FW_DEFAULT);

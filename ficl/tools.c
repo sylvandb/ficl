@@ -187,10 +187,8 @@ static FICL_WORD *findEnclosingWord(CELL *cp)
 */
 static void seeColon(FICL_VM *pVM, CELL *pc)
 {
-    static FICL_WORD *pSemiParen = NULL;
-
-    if (!pSemiParen)
-        pSemiParen = ficlLookup("(;)");
+	char *cp = pVM->pad + 1;
+	FICL_WORD *pSemiParen = ficlLookup("(;)");
     assert(pSemiParen);
 
     for (; pc->p != pSemiParen; pc++)
@@ -202,6 +200,8 @@ static void seeColon(FICL_VM *pVM, CELL *pc)
             WORDKIND kind = ficlWordClassify(pFW);
             CELL c;
 
+			cp[-1] = ((void *)pc == (void *)pVM->ip) ? '>' : ' ';
+
             switch (kind)
             {
             case LITERAL:
@@ -209,62 +209,62 @@ static void seeColon(FICL_VM *pVM, CELL *pc)
                 if (isAFiclWord(c.p))
                 {
                     FICL_WORD *pLit = (FICL_WORD *)c.p;
-                    sprintf(pVM->pad, "    literal %.*s (%#lx)", 
+                    sprintf(cp, "    literal %.*s (%#lx)", 
                         pLit->nName, pLit->name, c.u);
                 }
                 else
-                    sprintf(pVM->pad, "    literal %ld (%#lx)", c.i, c.u);
+                    sprintf(cp, "    literal %ld (%#lx)", c.i, c.u);
                 break;
             case STRINGLIT:
                 {
                     FICL_STRING *sp = (FICL_STRING *)(void *)++pc;
                     pc = (CELL *)alignPtr(sp->text + sp->count + 1) - 1;
-                    sprintf(pVM->pad, "    s\" %.*s\"", sp->count, sp->text);
+                    sprintf(cp, "    s\" %.*s\"", sp->count, sp->text);
                 }
                 break;
             case IF:
                 c = *++pc;
                 if (c.i > 0)
-                    sprintf(pVM->pad, "    if / while (branch rel %ld)", c.i);
+                    sprintf(cp, "    if / while (branch rel %ld)", c.i);
                 else
-                    sprintf(pVM->pad, "    until (branch rel %ld)", c.i);
+                    sprintf(cp, "    until (branch rel %ld)", c.i);
                 break;
             case BRANCH:
                 c = *++pc;
                 if (c.i > 0)
-                    sprintf(pVM->pad, "    else (branch rel %ld)", c.i);
+                    sprintf(cp, "    else (branch rel %ld)", c.i);
                 else
-                    sprintf(pVM->pad, "    repeat (branch rel %ld)", c.i);
+                    sprintf(cp, "    repeat (branch rel %ld)", c.i);
                 break;
 
             case QDO:
                 c = *++pc;
-                sprintf(pVM->pad, "    ?do (leave abs %#lx)", c.u);
+                sprintf(cp, "    ?do (leave abs %#lx)", c.u);
                 break;
             case DO:
                 c = *++pc;
-                sprintf(pVM->pad, "    do (leave abs %#lx)", c.u);
+                sprintf(cp, "    do (leave abs %#lx)", c.u);
                 break;
             case LOOP:
                 c = *++pc;
-                sprintf(pVM->pad, "    loop (branch rel %#ld)", c.i);
+                sprintf(cp, "    loop (branch rel %#ld)", c.i);
                 break;
             case PLOOP:
                 c = *++pc;
-                sprintf(pVM->pad, "    +loop (branch rel %#ld)", c.i);
+                sprintf(cp, "    +loop (branch rel %#ld)", c.i);
                 break;
             default:
-                sprintf(pVM->pad, "    %.*s", pFW->nName, pFW->name);
+                sprintf(cp, "    %.*s", pFW->nName, pFW->name);
                 break;
             }
  
-            vmTextOut(pVM, pVM->pad, 1);
         }
         else /* probably not a word - punt and print value */
         {
-            sprintf(pVM->pad, "    %ld (%#lx)", pc->i, pc->u);
-            vmTextOut(pVM, pVM->pad, 1);
+            sprintf(cp, "    %ld (%#lx)", pc->i, pc->u);
         }
+
+		vmTextOut(pVM, pVM->pad, 1);
     }
 
     vmTextOut(pVM, ";", 1);
@@ -318,7 +318,8 @@ static void seeXT(FICL_VM *pVM)
         vmTextOut(pVM, pVM->pad, 1);
 
     default:
-        vmTextOut(pVM, "primitive", 1);
+        sprintf(pVM->pad, "%.*s is a primitive", pFW->nName, pFW->name);
+        vmTextOut(pVM, pVM->pad, 1);
         break;
     }
 
@@ -356,9 +357,6 @@ void ficlDebugXT(FICL_VM *pVM)
 {
     FICL_WORD *xt    = stackPopPtr(pVM->pStack);
     WORDKIND   wk    = ficlWordClassify(xt);
-    FICL_WORD *pStep = ficlLookup("step-break");
-
-    assert(pStep);
 
     stackPushPtr(pVM->pStack, xt);
     seeXT(pVM);
@@ -650,7 +648,7 @@ static void displayRStack(FICL_VM *pVM)
                     int offset = (CELL *)c.p - &pFW->param[0];
                     sprintf(pVM->pad, "%s+%d ", pFW->name, offset);
                     vmTextOut(pVM, pVM->pad, 0);
-                    continue;
+                    continue;  /* no need to print the numeric value */
                 }
             }
             vmTextOut(pVM, ltoa(c.i, pVM->pad, pVM->base), 0);
@@ -843,7 +841,7 @@ void ficlCompileTools(FICL_SYSTEM *pSys)
     /*
     ** TOOLS and TOOLS EXT
     */
-    dictAppendWord(dp, ".r",        displayRStack,  FW_DEFAULT); /* guy carver */
+    dictAppendWord(dp, "r.s",       displayRStack,  FW_DEFAULT); /* guy carver */
     dictAppendWord(dp, ".s",        displayPStack,  FW_DEFAULT);
     dictAppendWord(dp, "bye",       bye,            FW_DEFAULT);
     dictAppendWord(dp, "forget",    forget,         FW_DEFAULT);
