@@ -500,6 +500,7 @@ int wordIsCompileOnly(FICL_WORD *pFW);
 #define VM_RESTART   -258   /* word needs more text to succeed - re-run it */
 #define VM_USEREXIT  -259   /* user wants to quit */
 #define VM_ERREXIT   -260   /* interp found an error */
+#define VM_BREAK     -261   /* debugger breakpoint */
 #define VM_ABORT       -1   /* like errexit -- abort */
 #define VM_ABORTQ      -2   /* like errexit -- abort" */
 #define VM_QUIT       -56   /* like errexit, but leave pStack & base alone */
@@ -799,7 +800,7 @@ FICL_WORD *ficlLookup(char *name);
 FICL_DICT *ficlGetDict(void);
 FICL_DICT *ficlGetEnv(void);
 void       ficlSetEnv(char *name, FICL_UNS value);
-void       ficlSetEnvD(char *name, FICL_UNS hi, UNS32 lo);
+void       ficlSetEnvD(char *name, FICL_UNS hi, FICL_UNS lo);
 #if FICL_WANT_LOCALS
 FICL_DICT *ficlGetLoc(void);
 #endif
@@ -829,12 +830,40 @@ int        ficlBuild(char *name, FICL_CODE code, char flags);
 void       ficlCompileCore(FICL_DICT *dp);
 void       ficlCompileSearch(FICL_DICT *dp);
 void       ficlCompileSoftCore(FICL_VM *pVM);
+void       ficlCompileTools(FICL_DICT *dp);
 
 /*
 ** from words.c...
 */
 void       constantParen(FICL_VM *pVM);
 void       twoConstParen(FICL_VM *pVM);
+void       ficlTick(FICL_VM *pVM);
+
+/* 
+** The following supports SEE and the debugger.
+*/
+enum  
+{
+	BRANCH,
+	COLON, 
+	CONSTANT, 
+	CREATE,
+	DO,
+	DOES, 
+	IF,
+	LITERAL,
+	LOOP,
+	PLOOP,
+	PRIMITIVE,
+	QDO,
+	STRINGLIT,
+	USER, 
+    VARIABLE, 
+} wordkinds;
+
+typedef enum wordkinds WORDKIND;
+
+WORDKIND   ficlWordClassify(FICL_WORD *pFW);
 
 #ifdef __cplusplus
 }

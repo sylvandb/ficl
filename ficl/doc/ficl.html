@@ -12,11 +12,16 @@
 <h1>
 <b>Ficl Documentation</b></h1>
 
-<table BORDER=0 CELLSPACING=3 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 WIDTH="640" >
 <tr>
 <td><b>Forth Inspired Command Language&nbsp;</b></td>
 
 <td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
+<td ROWSPAN="4">
+    <a href=http://www.links2go.net/topic/Forth>
+        <img alt="Key Resource" src="skey.gif" width=81 height=81 border=0>
+    </a>
+</td>
 </tr>
 
 <tr>
@@ -37,61 +42,79 @@ Contents</h2>
 
 <ul>
 <li>
-<a href="ficl_rel.html">Release notes</a></li>
+<font size=+1><a href="ficl_rel.html">Release notes</a></font></li>
 
 <li>
-<a href="#whatis">What is ficl?</a></li>
+<font size=+1><a href="#whatis">What is ficl?</a></font></li>
 
 <li>
-<a href="#download"><b>Download</b> the latest version</a></li>
+<font size=+1><a href="#download">Download</a></font></li>
 
 <li>
-<a href="#links">More information on Ficl</a></li>
+<font size=+1><a href="#links">References</a></font></li>
 
 <li>
-<font color="#000000"><a href="#includesficl">Some software that incorporates
-Ficl</a></font></li>
+<font color="#000000"><font size=+1><a href="#includesficl">Some software
+that incorporates Ficl</a></font></font></li>
 
 <li>
-<a href="#lawyerbait">Disclaimer &amp; License</a></li>
+<font size=+1><a href="#lawyerbait">Disclaimer &amp; License</a></font></li>
 
 <li>
-<a href="#features">Ficl features</a></li>
+<font size=+1><a href="#features">Ficl features</a></font></li>
 
 <li>
-<a href="#porting">Porting</a></li>
+<font size=+1><a href="#porting">Porting</a></font></li>
 
 <li>
-<a href="#api">Application Programming Interface</a></li>
+<font size=+1><a href="#api">Application Programming Interface</a></font></li>
 
 <li>
-<a href="#manifest">Distribution source files</a></li>
+<font size=+1><a href="#manifest">Distribution source files</a></font></li>
 
 <li>
-<a href="ficl_loc.html">Local variables</a></li>
+<font size=+1><a href="ficl_loc.html">Local variables</a></font></li>
 
 <li>
-<a href="ficl_oop.html">Object Oriented Programming in ficl</a></li>
+<font size=+1><a href="ficl_oop.html">Object Oriented Programming in ficl</a></font></li>
 
 <li>
-<a href="#extras">Ficl extras</a></li>
+<font size=+1><a href="#extras">Ficl extras</a></font></li>
+
+<ul>
+<li>
+<font size=+1><a href="#exnumber">Number syntax</a></font></li>
 
 <li>
-<a href="#ansinfo">ANS required information</a></li>
+<font size=+1><a href="#exsearch">Search order words</a></font></li>
+
+<li>
+<font size=+1><a href="#exuser">User variables</a></font></li>
+
+<li>
+<font size=+1><a href="#exmisc">Miscellaneous useful words</a></font></li>
+
+<li>
+<font size=+1><a href="#exficlwin">FiclWin words</a></font></li>
+</ul>
+
+<li>
+<font size=+1><a href="#ansinfo">ANS required information</a></font></li>
 </ul>
 
 <br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h1>
 <a NAME="whatis"></a>What is ficl?</h1>
-<font size=+1>Ficl (Forth inspired command language) a complete programming
-language interpreter based on ANS Forth and written in Standard C. Ficl
-is designed to be embedded into other systems as a command/macro/development
-prototype language. Ficl provides object extensions that can be used to
-wrap methods and structures of the host system without altering them. See
-below for examples of <a href="#includesficl">software that includes ficl</a>.</font></td>
+<font size=+1>Ficl is a complete programming language interpreter designed
+to be embedded into other systems as a command/macro/development prototype
+language. Ficl provides object extensions that can be used to wrap methods
+and structures of the host system without altering them. The syntax is
+based on ANS Forth and the code is Standard C. See below for examples of
+<a href="#includesficl">software
+that includes ficl</a>. Ficl stands for "Forth inspired command language".&nbsp;</font></td>
 </tr>
 
 <tr>
@@ -104,7 +127,7 @@ of threaded languages (rapid development, quick code/test/debug cycle,
 reasonably fast) with the best features of C (everyone knows it, easier
 to support large blocks of code, efficient, type checking). In addition,
 Ficl provides a simple and powerful object model that can act as an object
-oriented adapter for code written in C (or asm, Forth, C++...).&nbsp;</td>
+oriented <i>adapter</i> for code written in C (or asm, Forth, C++...).&nbsp;</td>
 </tr>
 
 <tr>
@@ -145,7 +168,7 @@ Provide object oriented extensions</li>
 <ul>
 <li>
 <b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl205/ficl205.zip">Download
-ficl 2.05</a></b></li>
+ficl (latest release)</a></b></li>
 
 <li>
 <b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl205/ficlwin.zip">Download
@@ -210,7 +233,7 @@ Usher)</li>
 </ul>
 
 <hr>
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -241,7 +264,7 @@ me email</a>.&nbsp;</td>
 </table>
 
 <br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -309,7 +332,7 @@ Type 1 indirect threaded interpreter</li>
 </table>
 
 <hr>
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -355,10 +378,12 @@ To-Do List (target system dependent words)</h3>
 
 <ul>
 <li>
-Unimplemented system dependent <tt>CORE</tt> word: <tt>KEY</tt>&nbsp;</li>
+Unimplemented system dependent <tt>CORE</tt> word: <tt>KEY</tt> (implement
+this yourself if you need it)</li>
 
 <li>
-Kludged <tt>CORE</tt> word: <tt>ACCEPT</tt></li>
+Kludged <tt>CORE</tt> word: <tt>ACCEPT </tt>(implement this better if you
+need to)</li>
 </ul>
 </td>
 </tr>
@@ -366,7 +391,7 @@ Kludged <tt>CORE</tt> word: <tt>ACCEPT</tt></li>
 
 <br>&nbsp;
 <br>&nbsp;
-<table BORDER=0 COLS=1 WIDTH="600" >
+<table BORDER=0 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -491,7 +516,7 @@ the specified name and value.</dd>
 <dd>
 Returns a pointer to the locals dictionary. This function is defined only
 if FICL_WANT_LOCALS is #defined as non-zero (see sysdep.h). The locals
-dictionary is the symbol table for <a href="#locals">local variables</a>.</dd>
+dictionary is the symbol table for <a href="ficl_loc.html">local variables</a>.</dd>
 
 <dt>
 <b>void ficlCompileCore(FICL_DICT *dp)</b></dt>
@@ -513,7 +538,7 @@ by PERL script softcore.pl.&nbsp;</dd>
 </table>
 
 <hr>
-<table BORDER=0 CELLSPACING=5 WIDTH="600" >
+<table BORDER=0 CELLSPACING=5 WIDTH="675" >
 <tr>
 <td COLSPAN="2">
 <h2>
@@ -612,7 +637,7 @@ This is where you'll find source code for the object oriented extensions.</td>
 </table>
 
 <hr WIDTH="100%">
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <dl>
@@ -620,7 +645,7 @@ This is where you'll find source code for the object oriented extensions.</td>
 <a NAME="extras"></a>Ficl extras</h2>
 
 <h3>
-Number syntax</h3>
+<a NAME="exnumber"></a>Number syntax</h3>
 You can precede a number with "0x", as in C, and it will be interpreted
 as a hex value regardless of the value of <tt>BASE</tt>. Example:&nbsp;
 <dl>
@@ -629,15 +654,16 @@ as a hex value regardless of the value of <tt>BASE</tt>. Example:&nbsp;
 
 <br><tt>123&nbsp;</tt>
 <br><tt>ok> 0x123 . cr</tt>
-<br><tt>291&nbsp;</tt></dl>
+<br><tt>291</tt>
+<br><tt>ok> 0x123 <a href="#xdot">x.</a> cr</tt>
+<br><tt>123</tt></dl>
 
 <h3>
-Search order words</h3>
+<a NAME="exsearch"></a>Search order words</h3>
 Ficl implements many of the search order words in terms of two primitives
 called <tt><a href="#tosearch">>SEARCH</a></tt> and <tt><a href="#searchfrom">SEARCH></a></tt>.
 As their names suggest (assuming you're familiar with Forth), they push
-and pop the search order stack. See the list of <a href="#extras">Ficl
-extras</a> for details.&nbsp;
+and pop the search order stack.&nbsp;
 <br>The standard does not appear to specify any conditions under which
 the search order is reset to a sane state. Ficl resets the search order
 to its default state whenever <tt>ABORT</tt> happens. This includes stack
@@ -656,13 +682,17 @@ lines in ficlExec().&nbsp;
 <dd>
 Push <tt>wid</tt> onto the search order. Many of the other search order
 words are written in terms of the <tt>SEARCH></tt> and <tt>>SEARCH</tt>
-primitives.</dd>
+primitives. This word can be defined in ANS Forth as follows</dd>
+
+<dd>
+<tt>: >search&nbsp;&nbsp; >r get-order 1+ r> swap set-order ;</tt></dd>
 
 <dt>
 <a NAME="searchfrom"></a><tt>search>&nbsp;&nbsp; ( -- wid )</tt></dt>
 
 <dd>
-Pop <tt>wid</tt> off the search order</dd>
+Pop <tt>wid</tt> off the search order (can be coded in ANS Forth as&nbsp;<tt>
+: search>&nbsp; get-order nip 1- set-order ;</tt> )</dd>
 
 <dt>
 <a NAME="ficlsetcurrent"></a><tt>ficl-set-current&nbsp;&nbsp; ( wid --
@@ -691,7 +721,10 @@ Creates a wordlist with the specified number of hash table bins, and leaves
 the address of the wordlist on the stack. A <tt>ficl-wordlist</tt> behaves
 exactly as a regular wordlist, but it may search faster depending on the
 number of bins chosen and the number of words it contains at search time.
-As implemented in ficl, a <tt>wordlist</tt> is single threaded by default.&nbsp;</dd>
+As implemented in ficl, a wordlist is single threaded by default. <tt>ficl-named-wordlist</tt>
+takes a name for the wordlist and creates a word that pushes the <tt>wid</tt>.
+This is by contrast to <tt>VOCABULARY</tt>, which also has a name, but
+replaces the top of the search order with its <tt>wid</tt>.</dd>
 
 <dt>
 <a NAME="ficlforgetwid"></a><tt>forget-wid&nbsp;&nbsp; ( wid -- )</tt></dt>
@@ -720,16 +753,8 @@ Wordlist for storing implementation factors of ficl provided words. To
 see what's in there, try:&nbsp; <b><tt>hide words previous set-current</tt></b></dd>
 
 <dt>
-<tt>last-word&nbsp;&nbsp; ( -- xt )</tt></dt>
-
-<dd>
-Pushes the xt address of the most recently defined word. This applies to
-colon definitions, constants, variables, and words that use <tt>create</tt>.
-You can print the name of the most recently defined word with <tt>last-word
->name type</tt>&nbsp;</dd>
-
-<dt>
-<tt>wid-get-name&nbsp;&nbsp; ( wid -- c-addr u )</tt></dt>
+<a NAME="wid-get-name"></a><tt>wid-get-name&nbsp;&nbsp; ( wid -- c-addr
+u )</tt></dt>
 
 <dd>
 Ficl wordlists (2.05 and later) have a name property that can be assigned.
@@ -737,7 +762,8 @@ This is used by <tt>ORDER</tt> to list the names of wordlists in the search
 order.&nbsp;</dd>
 
 <dt>
-<tt>wid-set-name&nbsp;&nbsp; ( c-addr wid -- )</tt></dt>
+<a NAME="wid-set-name"></a><tt>wid-set-name&nbsp;&nbsp; ( c-addr wid --
+)</tt></dt>
 
 <dd>
 Ficl wordlists (2.05 and later) have a name property that can be assigned.
@@ -747,7 +773,7 @@ conveniently is how Ficl stores word names.&nbsp; See softwords/softcore.fr
 definition of <tt>brand-wordlist</tt>&nbsp;</dd>
 
 <dt>
-<tt>wid-set-super&nbsp;&nbsp; ( wid -- )</tt></dt>
+<a NAME="wid-set-super"></a><tt>wid-set-super&nbsp;&nbsp; ( wid -- )</tt></dt>
 
 <dd>
 Ficl wordlists have a parent wordlist pointer that is not specified in
@@ -763,7 +789,7 @@ explicitly.</dd>
 </dl>
 
 <h3>
-User variables</h3>
+<a NAME="exuser"></a>User variables</h3>
 
 <dl>
 <dt>
@@ -773,11 +799,21 @@ User variables</h3>
 Create a user variable with the given name. User variables are virtual
 machine local. Each VM allocates a fixed amount of storage for them. You
 can change the maximum number of user variables allowed by defining FICL_USER_CELLS
-on your compiiler's command line. Default is 16 user cells.</dd>
+on your compiiler's command line. Default is 16 user cells. User variables
+behave like <tt>VARIABLE</tt>s in all other respects (you use @ and ! on
+them, for example). Example:</dd>
+
+<dl>
+<dd>
+<tt>user current-class</tt></dd>
+
+<dd>
+<tt>0 current-class !</tt></dd>
+</dl>
 </dl>
 
 <h3>
-Miscellaneous</h3>
+<a NAME="exmisc"></a>Miscellaneous</h3>
 
 <dl>
 <dt>
@@ -851,6 +887,19 @@ Empty the parameter stack</dd>
 Synonym for <tt>THEN</tt></dd>
 
 <dt>
+<a NAME="last-word"></a><tt>last-word&nbsp;&nbsp; ( -- xt )</tt></dt>
+
+<dd>
+Pushes the xt address of the most recently defined word. This applies to
+colon definitions, constants, variables, and words that use <tt>create</tt>.
+You can print the name of the most recently defined word with&nbsp;</dd>
+
+<dl>
+<dd>
+<b><tt>last-word >name type</tt>&nbsp;</b></dd>
+</dl>
+
+<dt>
 <tt>parse-word&nbsp;&nbsp; ( &lt;spaces>name -- c-addr u )</tt></dt>
 
 <dd>
@@ -858,6 +907,18 @@ Skip leading spaces and parse name delimited by a space. c-addr is the
 address within the input buffer and u is the length of the selected string.
 If the parse area is empty, the resulting string has a zero length. (From
 the Standard)</dd>
+
+<dt>
+<a NAME="qfetch"></a><tt>q@&nbsp;&nbsp; ( addr -- x )</tt></dt>
+
+<dd>
+Fetch a 32 bit quantity from the specified address</dd>
+
+<dt>
+<a NAME="qbang"></a><tt>q!&nbsp;&nbsp; ( x addr -- )</tt></dt>
+
+<dd>
+Store a 32 bit quantity to the specified address&nbsp;</dd>
 
 <dt>
 <tt>w@&nbsp;&nbsp; ( addr -- x )</tt></dt>
@@ -873,7 +934,7 @@ Store a 16 bit quantity to the specified address (the low 16 bits of the
 given value)</dd>
 
 <dt>
-<tt>x.&nbsp;&nbsp; ( x -- )</tt></dt>
+<a NAME="xdot"></a><tt>x.&nbsp;&nbsp; ( x -- )</tt></dt>
 
 <dd>
 Pop and display the value in hex format, regardless of the current value
@@ -881,7 +942,7 @@ of <tt>BASE</tt></dd>
 </dl>
 
 <h3>
-FiclWin Extras (defined in testmain.c)</h3>
+<a NAME="exficlwin"></a>FiclWin Extras (defined in testmain.c)</h3>
 
 <dl>
 <dt>
@@ -938,10 +999,12 @@ Issues a command to a shell; implemented with the Win32 system() call.</dd>
 Dumps all threads of the current compilation wordlist to the specified
 text file. This was useful when I thought there might be some point in
 attempting to optimize the hash function. I no longer harbor those illusions.</dd>
+</dl>
 
 <h3>
 FiclWin Exclusives (no source provided)</h3>
 
+<dl>
 <dt>
 <tt>!oreg&nbsp;&nbsp; ( c -- )</tt></dt>
 
@@ -987,10 +1050,10 @@ specified by the top-of-stack value.</dd>
 </table>
 
 <hr>
-<p><a NAME="ansinfo"></a>
-<p>ANS Required Information
-<br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<h2>
+<a NAME="ansinfo"></a>ANS Required Information</h2>
+
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td><b>ANS Forth System</b>
 <br><b>Providing names from the Core Extensions word set&nbsp;</b>

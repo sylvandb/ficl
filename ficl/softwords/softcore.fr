@@ -33,7 +33,7 @@ decimal 32 constant bl
     state @ if
         postpone if
         postpone ."
-        postpone type
+\        postpone type
         postpone cr
         -2
         postpone literal

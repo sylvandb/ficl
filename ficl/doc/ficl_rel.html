@@ -32,7 +32,7 @@
 </table>
 
 <br>&nbsp;
-<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -58,45 +58,62 @@ syntax</a> now lose the first '2' in their names.</li>
 
 <h3>
 Bug fixes</h3>
+
+<ul>
+<li>
 <a href="http://www.taygeta.com/forth/dpans9.htm#9.6.2.0680">ABORT"</a>
-now works correctly (I promise!)
-<br><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.2125">REFILL</a>
-works better
+now works correctly (I promise!)</li>
+
+<li>
+<a href="http://www.taygeta.com/forth/dpans6.htm#6.2.2125">REFILL</a> works
+better</li>
+
+<li>
+<a href="http://www.taygeta.com/forth/dpans6.htm#6.1.0710">ALLOT</a>'s
+use of dictCheck corrected (finally)</li>
+</ul>
+
 <h3>
 New words</h3>
 
 <ul>
 <li>
-ANS CORE EXT words: <a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0415">2r@</a><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0410">2r></a>
-<a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0340">2>r</a>&nbsp;</li>
+<a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0415">2r@</a><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0410">2r></a><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0340">2>r</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(CORE EXT)</li>
 
 <li>
-ANS DOUBLE words: <a href="http://www.taygeta.com/forth/dpans8.htm#8.6.1.0440">2VARIABLE</a></li>
+<a href="http://www.taygeta.com/forth/dpans8.htm#8.6.1.0440">2VARIABLE</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(DOUBLE)</li>
 
 <li>
-ANS ORDER now lists wordlists by name</li>
+<a href="http://www.taygeta.com/forth/dpans16.htm#16.6.2.1985">ORDER</a>
+now lists wordlists by name</li>
 
 <li>
-ANS .S now displays all stack entries on one line, like a stack comment</li>
+<a href="http://www.taygeta.com/forth/dpans15.htm#15.6.1.0220">.S</a> now
+displays all stack entries on one line, like a stack comment</li>
 
 <li>
-<tt>wid-get-name</tt>&nbsp;&nbsp; given a wid, returns the address and
-count of its name. If no name, count is 0</li>
+<a href="ficl.html#wid-get-name"><tt>wid-get-name</tt>&nbsp;</a>&nbsp;
+given a wid, returns the address and count of its name. If no name, count
+is 0</li>
 
 <li>
-<tt>wid-set-name</tt>&nbsp;&nbsp; set optional wid name pointer to the
-\0 terminated string address specified.</li>
+<tt><a href="ficl.html#wid-set-name">wid-set-name</a></tt>&nbsp;&nbsp;
+set optional wid name pointer to the \0 terminated string address specified.</li>
 
 <li>
-<tt>ficl-named-wordlist</tt> creates a ficl-wordlist and names it. This
-is now used in <tt>vocabulary</tt> and <tt>ficl-vocabulary</tt>&nbsp;</li>
+<tt><a href="ficl.html#ficlwordlist">ficl-named-wordlist</a></tt> creates
+a ficl-wordlist and names it. This is now used in <tt>vocabulary</tt> and
+<tt><a href="ficl.html#ficlvocabulary">ficl-vocabulary</a></tt>&nbsp;</li>
 
 <li>
-<tt>last-word</tt>&nbsp; returns the xt of the word being defined or most
-recently defined.</li>
+<tt><a href="ficl.html#last-word">last-word</a></tt>&nbsp; returns the
+xt of the word being defined or most recently defined.</li>
 
 <li>
-<tt>q@</tt> and <tt>q!</tt> operate on quadbyte quantities for 64 bit friendliness</li>
+<tt><a href="ficl.html#qfetch">q@</a></tt> and <tt><a href="ficl.html#qbang">q!</a></tt>
+operate on quadbyte quantities for 64 bit friendliness</li>
 </ul>
 
 <h3>
@@ -104,7 +121,11 @@ New OO stuff</h3>
 
 <ul>
 <li>
-Class methods <tt>ALLOT</tt> and <tt>ALLOT-ARRAY</tt></li>
+<tt>ALLOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+
+<li>
+<tt>ALLOT-ARRAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (class method)</tt></li>
 
 <li>
 <tt>METHOD</tt> define method names globally</li>

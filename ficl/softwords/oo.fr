@@ -74,6 +74,12 @@ hide
     class swap
 ;
 
+: find-method-xt   \ name ( class -- class xt )
+	parse-word lookup-method
+;
+
+set-current  ( stop hiding definitions )
+
 : catch-method  ( instance class c-addr u -- <method-signature> exc-flag )
     lookup-method catch
 ;
@@ -81,12 +87,6 @@ hide
 : exec-method  ( instance class c-addr u -- <method-signature> )
     lookup-method execute
 ;
-
-: find-method-xt   \ name ( class -- class xt )
-	parse-word lookup-method
-;
-
-set-current  ( stop hiding definitions )
 
 \ Method lookup operator takes a class-addr and instance-addr
 \ and executes the method from the class's wordlist if
@@ -458,11 +458,11 @@ create  .size  ( class metaclass -- size ) \ return class's payload size
 previous set-current	
 \ E N D   M E T A C L A S S
 
-\ META is a nickname for the address of METACLASS...
+\ ** META is a nickname for the address of METACLASS...
 metaclass drop  
 constant meta
 
-\ SUBCLASS is a nickname for a class's SUB method...
+\ ** SUBCLASS is a nickname for a class's SUB method...
 \ Subclass compilation ends when you invoke end-class
 \ This method is late bound for safety...
 : subclass   --> sub ;

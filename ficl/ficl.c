@@ -263,6 +263,7 @@ int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
 
     case VM_USEREXIT:
     case VM_INNEREXIT:
+	case VM_BREAK:
         break;
 
     case VM_QUIT:
@@ -348,6 +349,7 @@ int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
         break;
 
     case VM_INNEREXIT:
+	case VM_BREAK:
         break;
 
     case VM_RESTART:

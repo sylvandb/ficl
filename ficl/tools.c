@@ -29,27 +29,34 @@
 #include "ficl.h"
 
 
+#if 0
 /*
 ** nBREAKPOINTS sizes the breakpoint array. One breakpoint (bp 0) is reserved
 ** for the STEP command. The rest are user programmable. 
 */
 #define nBREAKPOINTS 10
+#endif
 
 /*
 ** BREAKPOINT record.
 ** origXT - if NULL, this breakpoint is unused. Otherwise it stores the xt 
 ** that the breakpoint overwrote. This is restored to the dictionary when the
 ** BP executes or gets cleared
+** address - the location of the breakpoint (address of the instruction that
+**           has been replaced with the breakpoint trap
+** origXT  - The original contents of the location with the breakpoint
+** Note: address is NULL when this breakpoint is empty
 */
 typedef struct breakpoint
 {
-	FICL_WORD *origXT;
-	FICL_WORD *onBreak;
+	void      *address;
+    FICL_WORD *origXT;
 } BREAKPOINT;
 
-static BREAKPOINT bpTable[nBREAKPOINTS];
-static FICL_WORD *pBreak = NULL;
+static BREAKPOINT bpStep = {NULL, NULL};
+static FICL_WORD *pStep = NULL;
 
+#if 0
 /**************************************************************************
                         i n i t T o o l s
 ** Initializes static variables of this file, including:
@@ -67,7 +74,7 @@ static void initTools(FICL_VM *pVM)
 
     return;	
 }
-
+#endif
 
 
 /**************************************************************************
@@ -271,41 +278,143 @@ static void see(FICL_VM *pVM)
 ** Given an xt of a colon definition or a word defined by DOES>, set the
 ** VM up to debug the word: push IP, set the xt as the next thing to execute,
 ** set a breakpoint at its first instruction, and run to the breakpoint.
+** Note: the semantics of this word are equivalent to "step in"
 **************************************************************************/
 void ficlDebug(FICL_VM *pVM)
 {
-	int ret;
-	FICL_WORD *xt = stackPopPtr(pVM->pStack);
-    assert(pBreak);
+    FICL_WORD *xt = stackPopPtr(pVM->pStack);
+    WORDKIND wk = ficlWordClassify(xt);
 
-	if (ficlWordIsDebuggable(xt))
+    assert(pStep);
+
+    stackPushPtr(pVM->pStack, xt);
+    seeXT(pVM);
+
+	switch (wk)
 	{
-		stackPushPtr(pVM, xt);
-		seeXT(pVM);
+	case COLON:
+    case DOES:
 		/*
-		** Set a breakpoint at the first instruction and run the word
+		** Run the colon code and set a breakpoint at the next instruction
 		*/
-        
-	    ret = ficlExecXT(pVM, xt);
-	}
-	else
-	{
-		ficlTextOut(pVM, "primitive - cannot debug", 1);
+        vmExecute(pVM, xt);
+        bpStep.address = pVM->ip;
+        bpStep.origXT = *pVM->ip;
+        *pVM->ip = pStep;
+        break;
+
+    default:
+        break;
 	}
 
     return;
 }
 
 
+void stepIn(FICL_VM *pVM)
+{
+    assert(pStep);
+    /*
+    ** Do one step of the inner loop
+    */
+    { 
+        M_VM_STEP(pVM) 
+    }
+
+    /*
+    ** Now set a breakpoint at the next instruction
+    */
+    bpStep.address = pVM->ip;
+    bpStep.origXT = *pVM->ip;
+    *pVM->ip = pStep;
+    
+    return;
+}
+
 
 /**************************************************************************
-                        d e b u g - b r e a k
-** FICL
-** Throws a breakpoint exception - used by DEBUG to step and break.
+                        s t e p O v e r
+** FICL 
+** Execute the next instruction atomically.
 **************************************************************************/
-void debugBreak(FICL_VM *pVM)
+void stepOver(FICL_VM *pVM)
 {
-	vmThrow(pVM, VM_BREAK);
+    assert(pStep);
+    /*
+    ** Do one step of the inner loop
+    */
+    { 
+        M_VM_STEP(pVM) 
+    }
+
+    /*
+    ** Now set a breakpoint at the next instruction
+    */
+    bpStep.address = pVM->ip;
+    bpStep.origXT = *pVM->ip;
+    *pVM->ip = pStep;
+    
+    return;
+}
+
+
+
+/**************************************************************************
+                        s t e p - b r e a k
+** FICL
+** Handles breakpoints for stepped execution.
+** Upon entry, bpStep contains the address and replaced instruction
+** of the current breakpoint.
+** Clear the breakpoint
+** Get a command from the console. 
+** in (step in) - execute the current instruction and set a new breakpoint 
+**    at the IP
+** ov (step over) - execute the current instruction to completion and set
+**    a new breakpoint at the IP
+** go - execute the current instruction and exit
+**************************************************************************/
+void stepBreak(FICL_VM *pVM)
+{
+    STRINGINFO si;
+    FICL_WORD *pFW;
+
+    if (!pVM->fRestart)
+    {
+
+        assert(bpStep.address != NULL);
+        /*
+        ** restore the original instruction at the breakpoint, and restore the IP
+        */
+        pVM->ip = (IPTYPE)bpStep.address;
+        *pVM->ip = pFW = bpStep.origXT;
+
+        /*
+        ** Print the name of the next instruction and get a debug command
+        */
+        sprintf(pVM->pad, "%.*s", pFW->nName, pFW->name);
+        vmTextOut(pVM, pVM->pad, 1);
+    }
+
+    si = vmGetWord(pVM);
+
+    if      (!strincmp(si.cp, "in", (unsigned char)si.count))
+    {
+        stepIn(pVM);
+    }
+    else if (!strincmp(si.cp, "go", (unsigned char)si.count))
+    {
+        return;
+    }
+    else if (!strincmp(si.cp, "ov", (unsigned char)si.count))
+    {
+        stepOver(pVM);
+    }
+    else
+    {
+        vmTextOut(pVM, "unrecognized debug command", 1);
+        vmThrow(pVM, VM_ABORT);
+    }
+
 	return;
 }
 
@@ -510,8 +619,8 @@ void ficlCompileTools(FICL_DICT *dp)
     */
     dictAppendWord(dp, ".env",      listEnv,        FW_DEFAULT);
     dictAppendWord(dp, "debug",     ficlDebug,      FW_DEFAULT);
-	pBreak = 
-    dictAppendWord(dp, "debug-break",debugBreak,    FW_DEFAULT);
+	pStep = 
+    dictAppendWord(dp, "step-break",stepBreak,      FW_DEFAULT);
     dictAppendWord(dp, "forget-wid",forgetWid,      FW_DEFAULT);
     dictAppendWord(dp, "see-xt",    seeXT,          FW_DEFAULT);
     return;

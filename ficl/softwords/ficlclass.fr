@@ -18,20 +18,16 @@ object subclass c-word
     \ Push word's name...
     : get-name   ( inst class -- c-addr u )
         2dup
-        --> .pName --> get-ptr  -rot
-        --> .nName --> get
+        my=[ .pName get-ptr ] -rot
+        my=[ .nName get ]
     ;
 
     : next   ( inst class -- link-inst class )
-        --> .link ;
+        my=> .link ;
         
     : ?
-        ." ficl word: " 
+        ." c-word: " 
         2dup --> get-name type cr
-        ." hash = "
-        2dup --> .hashcode --> get x. cr
-        ." flags = "
-        --> .flags --> get x. cr
     ;
 
 end-class

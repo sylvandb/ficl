@@ -61,7 +61,7 @@ Contents</h2>
 <a href="#stockclasses">Supplied Classes</a></li>
 </ul>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -123,7 +123,7 @@ easily confused.&nbsp;</td>
 </table>
 
 <br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h3>
@@ -163,7 +163,7 @@ as an instance of itself.&nbsp;
 
 <p><a NAME="figure1"></a><img SRC="ficl_oop.jpg" VSPACE=10 height=442 width=652>
 <br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -175,7 +175,8 @@ It's helpful to have some familiarity with Forth and the customary Forth
 stack notation to understand this tutorial. To get started, take a look
 at this <a href="http://www.taygeta.com/forth_intro/stackflo.html">web-based
 Forth tutorial</a>. If you're comfortable with both OO and Forth, you can
-<a href="#ootutoial-finally">jump ahead</a>.
+<a href="#ootutoial-finally">jump
+ahead</a>.
 <p>A Ficl <a href="oo_in_c.html#object-def">object</a> associates a <a href="oo_in_c.html#class-def">class</a>
 with an <a href="oo_in_c.html#instance-def">instance</a> (the storage for
 one set of instance variables). This is done explicitly on Ficl's stack,
@@ -230,7 +231,7 @@ word of the same name.&nbsp;</td>
 </tr>
 </table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h3>
@@ -330,7 +331,11 @@ Early binding</h3>
 Ficl also provides early binding if you ask for it. Early binding is not
 as safe as late binding, but it produces code that is more compact and
 effiecient because it compiles method addresses rather then their names.
-Here's an example that illustrates a potential problem:
+In the preferred uses of early binding, the class is assumed to be the
+one you're defining. This kind of early binding can only be used inside
+a class definition. Early bound methods still expect to find a class and
+instance cell-pair on top of the stack when they run.
+<br>Here's an example that illustrates a potential problem:
 <blockquote><b><tt>object --> sub c1</tt></b>
 <br><b><tt>: m1&nbsp;&nbsp; { 2this -- }&nbsp; ." c1's m1" cr ;</tt></b>
 <br><b><tt>: m2&nbsp;&nbsp; { 2this -- }&nbsp; ." Running&nbsp; " this
@@ -367,14 +372,14 @@ the&nbsp; method in that class. Since you have to specify the class explicitly,
 there is a real danger that this will be out of sync with the class you
 really wanted. I recommend the <b><tt>my=</tt></b> operations.</li>
 </ol>
-Early binding can be dangerous because&nbsp; it partially defeats the data-to-code
-matching mechanism object oriented languages were created to provide, but
-it does increase run-time speed by binding the method at compile time.
-In many cases, such as the <tt>init</tt> method, you can be reasonably
-certain of the class of thing you're working on. This is also true when
-invoking class methods, since all classes are instances of <tt>metaclass</tt>.
-Here's an example from the definition of <tt>metaclass</tt> in oo.fr (don't
-paste this into ficlWin - it's already there):&nbsp;
+Early binding using <b><tt>=></tt></b> is dangerous because&nbsp; it partially
+defeats the data-to-code matching mechanism object oriented languages were
+created to provide, but it does increase run-time speed by binding the
+method at compile time. In many cases, such as the <tt>init</tt> method,
+you can be reasonably certain of the class of thing you're working on.
+This is also true when invoking class methods, since all classes are instances
+of <tt>metaclass</tt>. Here's an example from the definition of <tt>metaclass</tt>
+in oo.fr (don't paste this into ficlWin - it's already there):&nbsp;
 <blockquote><b><tt>: new&nbsp;&nbsp; \ ( class metaclass "name" -- )</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; metaclass => instance --> init ;</tt></b></blockquote>
 Try this...&nbsp;
@@ -473,7 +478,7 @@ homer --> type</b></pre>
 </tr>
 </table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
@@ -570,7 +575,7 @@ and address when the enclosing definition runs.</dd>
 </tr>
 </table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h3>
@@ -579,37 +584,29 @@ and address when the enclosing definition runs.</dd>
 create a subclass, use the <tt>sub</tt> method on <tt>object</tt> or any
 class derived from it (<i>not</i> <tt>metaclass</tt>). Source code for
 Ficl OOP is in ficl/softwords/oo.fr.&nbsp;
-<ul>
-<li>
-Instance variable words do two things: they create methods that do an action
-appropriate for the type of instance variable they represent, and they
-reserve space in the class template for the instance variable. We'll use
-the term <i>instance variable</i> to refer both to the method that gives
-access to a particular field of an object, and to the field itself. Rather
-than give esentially the same example over and over, here's one example
-that shows several of the instance variable construction words in use:</li>
-
-<li>
-<tt>object subclass c-example</tt></li>
-
-<li>
-<tt>&nbsp;&nbsp;&nbsp; cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.cell0</tt></li>
-
-<br><tt>&nbsp;&nbsp;&nbsp; c-4byte&nbsp;&nbsp; obj: .nCells</tt>
-<br><tt>&nbsp; 4 c-4byte array: .quad</tt>
-<br><tt>&nbsp;&nbsp;&nbsp; char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>Instance variable words do two things: they create methods that do
+an action appropriate for the type of instance variable they represent,
+and they reserve space in the class template for the instance variable.
+We'll use the term <i>instance variable</i> to refer both to the method
+that gives access to a particular field of an object, and to the field
+itself. Rather than give esentially the same example over and over, here's
+one example that shows several of the instance variable construction words
+in use:
+<blockquote><tt>object subclass c-example</tt>
+<br><tt>&nbsp;&nbsp; cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.cell0</tt>
+<br><tt>&nbsp;&nbsp; c-4byte&nbsp;&nbsp; obj: .nCells</tt>
+<br><tt>&nbsp;4 c-4byte array: .quad</tt>
+<br><tt>&nbsp;&nbsp; char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 .length</tt>
-<br><tt>&nbsp;79 chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.name</tt>
-<br><tt>end-class</tt> This class only defines instance variables, and
-it inherits some methods from <tt>object</tt>. Each untyped instance variable
-(.cell0, .length, .name) pushes its address when executed. Each object
-instance variable pushes the address and class of the aggregate object.
-Similar to C, an array instance variable leaves its base address (and its
-class) when executed. The word <tt>subclass</tt> is shorthand for "<tt>-->
-sub</tt>"&nbsp;</ul>
-
+<br><tt>79 chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .name</tt>
+<br><tt>end-class</tt>&nbsp;</blockquote>
+This class only defines instance variables, and it inherits some methods
+from <tt>object</tt>. Each untyped instance variable (.cell0, .length,
+.name) pushes its address when executed. Each object instance variable
+pushes the address and class of the aggregate object. Similar to C, an
+array instance variable leaves its base address (and its class) when executed.
+The word <tt>subclass</tt> is shorthand for "<tt>--> sub</tt>"&nbsp;
 <dl>
 <dt>
 <b><font face="Courier New"><font size=-1>cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -767,7 +764,7 @@ with akbar</tt></dl>
 </tr>
 </table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h3>
@@ -825,7 +822,7 @@ to ficlMalloc() to get the memory). Leaves the payload and class addresses
 on the stack. Usage example:</dd>
 
 <dd>
-<tt>c-ref --> alloc 2constant instance-of-ref</tt></dd>
+<tt>c-ref --> alloc&nbsp; 2constant instance-of-ref</tt></dd>
 
 <dd>
 Creates a double-cell constant that pushes the payload and class address
@@ -840,6 +837,30 @@ Same as new-array, but creates anonymous instances from the heap using
 a call to ficlMalloc(). Each instance is initialized using the class's
 <tt>init</tt>
 method</dd>
+
+<dt>
+<a NAME="allot"></a><b><tt>allot&nbsp;&nbsp; ( class metaclass -- instance
+class )</tt></b></dt>
+
+<dd>
+Creates an anonymous instance of <b>class</b> from the dictionary. Leaves
+the payload and class addresses on the stack. Usage example:</dd>
+
+<dd>
+<tt>c-ref --> allot&nbsp; 2constant instance-of-ref</tt></dd>
+
+<dd>
+Creates a double-cell constant that pushes the payload and class address
+of a heap instance of c-ref.</dd>
+
+<dt>
+<a NAME="allotarray"></a><b><tt>allot-array&nbsp;&nbsp; ( nObj class metaclass
+-- instance class )</tt></b></dt>
+
+<dd>
+Same as new-array, but creates anonymous instances from the dictionary.
+Each instance is initialized using the class's
+<tt>init</tt> method</dd>
 
 <dt>
 <b><tt>ref&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance-addr
@@ -981,7 +1002,7 @@ wordset.</dd>
 </tr>
 </table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h3>
@@ -1100,7 +1121,7 @@ in the array. No check for bounds underflow.</dl>
 </tr>
 </table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h3>

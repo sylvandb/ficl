@@ -7,12 +7,17 @@
    <title>Object Oriented Idioms in C</title>
 </head>
 <body>
-<b><font face="Arial"><font size=+1>Object Oriented
-Idioms in C</font></font></b>
-<br><font face="Arial"><font size=-1>John Sadler</font></font>
+
+<h1>
+<b><font face="Arial"><font size=+1>Object Oriented Idioms in C</font></font></b></h1>
+<font face="Arial"><font size=-1>John Sadler</font></font>
 <br><font face="Arial"><font size=-1>10 Aug 98</font></font>
-<p><a NAME="review"></a><b><font face="Arial"><font size=+1>Review of Key
-OO Characteristics</font></font></b>
+<br>&nbsp;
+<br>&nbsp;
+<table COLS=1 WIDTH="675" >
+<tr>
+<td><a NAME="review"></a><b><font face="Arial"><font size=+1>Review of
+Key OO Characteristics</font></font></b>
 <h3>
 <b><i><font face="Arial">Object</font></i></b></h3>
 <a NAME="object-def"></a><font face="Times New Roman,Times"><b>"A package
@@ -23,19 +28,20 @@ inside). This idea of hiding the data inside a package with a fixed set
 of allowed manipulations is called encapsulation. Why? If the object always
 selects how to perform a requested manipulation, you guarantee that the
 procedure and the data it operates on always match.</font>
-<p><font face="Times New Roman,Times">A message describes an operation
-that can be performed on an object. The code that describes how to perform
-an operation on a specific object type is called a method. From the outside,
-objects receive messages. On the inside, these messages are mapped to methods
-that perform appropriate actions for the specific kind of object. An object’s
-interface is the set of messages to which it can respond. For example,
-several object types may have a "dump" method to cause the object to display
-its state. Each kind of object will need a unique method to accomplish
-this. So the message-method idea separates the interface from the implementation.
-The idea that different kinds of objects might invoke different methods
-to respond to the same message is called polymorphism. Methods can be bound
-to messages as soon as the type of the object receiving the message is
-known., or this mapping can wait until run-time.</font>
+<p><font face="Times New Roman,Times">A <b>message</b> denotes an operation
+that can be performed on an <b>object</b>. The code that describes how
+to perform an operation on a specific object type is called a <b>method</b>.
+From the outside, objects receive messages. On the inside, these messages
+are mapped to methods that perform appropriate actions for the specific
+kind of object. An object’s <b>interface</b> is the set of messages to
+which it can respond. For example, several object types may have a "dump"
+method to cause the object to display its state. Each kind of object will
+need a unique method to accomplish this. So the message-method idea separates
+the interface from the implementation. The idea that different kinds of
+objects might invoke different methods to respond to the same message is
+called <b>polymorphism</b>. Methods can be bound to messages as soon as
+the type of the object receiving the message is known (called <b>early
+binding</b>), or this mapping can wait until run-time (<b>late binding</b>).</font>
 <p><font face="Times New Roman,Times">Some languages (notably C++) make
 a syntactic distinction between early and late binding of methods to messages
 (virtual functions are bound late, while all others are bound early – at
@@ -47,6 +53,11 @@ other hand, if that method is not virtual, you get early binding to the
 parent class’s definition even if the child class has overridden it. Smalltalk
 adheres rigorously to the idea that the object itself has sole ownership
 of the mapping from methods to messages.</font>
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td>
 <h3>
 <b><i><font face="Arial">Class</font></i></b></h3>
 <a NAME="class-def"></a><b><font face="Times New Roman,Times">"A description
@@ -61,6 +72,11 @@ and destruction of an instance. All instances of a particular class use
 the same method to respond to a given message. Classes may define other
 members that are shared by all instances of the class. These are called
 class variables. (In C++, these would be static members.)
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td>
 <h3>
 <b><i><font face="Arial">Inheritance</font></i></b></h3>
 <font face="Times New Roman,Times">A means for creating a new object or
@@ -83,7 +99,11 @@ a child class can:</font>
 <font face="Times New Roman,Times">provide methods for (<b>override</b>)
 messages already handled by the parent class</font></li>
 </ul>
+</td>
+</tr>
 
+<tr>
+<td>
 <h3>
 <b><font face="Arial"><font size=+1>What C++ Does for you…</font></font></b></h3>
 <b><i><font face="Arial">Name mangling – separation of name spaces</font></i></b>
@@ -105,7 +125,11 @@ compiler can provide strict type checking for method invocations.
 and assignment operator</font></i></b>
 <p><b><i><font face="Arial">Explicit early and late binding support</font></i></b>
 <p><b><i><font face="Arial">And more…</font></i></b>
-<br>&nbsp;
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td>
 <h3>
 <b><font face="Arial"><font size=+1>What other OO languages do (or don’t
 do)</font></font></b></h3>
@@ -140,6 +164,11 @@ hides much of the memory management work.
 <p><b><i><font face="Arial">Late binding</font></i></b>
 <p>Smalltalk makes no syntactic distinction between late and early bound
 methods (unlike C++ "virtual" methods)
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td>
 <h3>
 <b><font face="Arial"><font size=+1>OO-C framework options</font></font></b></h3>
 <font face="Times New Roman,Times">Covered: objects (encapsulation, explicit
@@ -174,7 +203,11 @@ checking, may require a single prototype for all methods</font></blockquote>
 article handles encapsulation</font>
 <p><b><font face="Arial"><font size=+1>Strategy 3: preprocessor</font></font></b>
 <br><font face="Times New Roman,Times">This is how C++ started out.</font>
-<p><b><font face="Arial"><font size=+1>References</font></font></b>
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td><b><font face="Arial"><font size=+1>References</font></font></b>
 <ul>
 <li>
 <a NAME="robson"></a><font size=-1>David Robson, <i>Object Oriented Software
@@ -184,6 +217,9 @@ Systems</i>. Byte, August 1981</font></li>
 <a NAME="samek"></a><font size=-1>Miro Samek, <i>Portable Inheritance and
 Polymorphism in C</i>. Embedded Systems Programming, December 1997</font></li>
 </ul>
+</td>
+</tr>
+</table>
 
 </body>
 </html>
