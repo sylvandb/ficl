@@ -62,7 +62,8 @@ static void Fadd(FICL_VM *pVM)
     vmCheckFStack(pVM, 2, 1);
 #endif
 
-    f = POPFLOAT() + GETTOPF().f;
+    f = POPFLOAT();
+    f += GETTOPF().f;
     SETTOPF(f);
 }
 
@@ -95,7 +96,8 @@ static void Fmul(FICL_VM *pVM)
     vmCheckFStack(pVM, 2, 1);
 #endif
 
-    f = POPFLOAT() * GETTOPF().f;
+    f = POPFLOAT();
+    f *= GETTOPF().f;
     SETTOPF(f);
 }
 
@@ -145,7 +147,8 @@ static void Faddi(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 0);
 #endif
 
-    f = (FICL_FLOAT)POPINT() + GETTOPF().f;
+    f = (FICL_FLOAT)POPINT();
+    f += GETTOPF().f;
     SETTOPF(f);
 }
 
@@ -162,7 +165,8 @@ static void Fsubi(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 0);
 #endif
 
-    f = GETTOPF().f - (FICL_FLOAT)POPINT();
+    f = GETTOPF().f;
+    f -= (FICL_FLOAT)POPINT();
     SETTOPF(f);
 }
 
@@ -179,7 +183,8 @@ static void Fmuli(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 0);
 #endif
 
-    f = (FICL_FLOAT)POPINT() * GETTOPF().f;
+    f = (FICL_FLOAT)POPINT();
+    f *= GETTOPF().f;
     SETTOPF(f);
 }
 
@@ -196,7 +201,8 @@ static void Fdivi(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 0);
 #endif
 
-    f = GETTOPF().f / (FICL_FLOAT)POPINT();
+    f = GETTOPF().f;
+    f /= (FICL_FLOAT)POPINT();
     SETTOPF(f);
 }
 
@@ -213,7 +219,8 @@ static void isubf(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 0);
 #endif
 
-    f = (FICL_FLOAT)POPINT() - GETTOPF().f;
+    f = (FICL_FLOAT)POPINT();
+    f -= GETTOPF().f;
     SETTOPF(f);
 }
 
@@ -230,7 +237,8 @@ static void idivf(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 0);
 #endif
 
-    f = (FICL_FLOAT)POPINT() / GETTOPF().f;
+    f = (FICL_FLOAT)POPINT();
+    f /= GETTOPF().f;
     SETTOPF(f);
 }
 
@@ -1034,8 +1042,6 @@ void ficlCompileFloat(FICL_SYSTEM *pSys)
     ficlSetEnv(pSys, "floating",       FICL_FALSE);  /* not all required words are present */
     ficlSetEnv(pSys, "floating-ext",   FICL_FALSE);
     ficlSetEnv(pSys, "floating-stack", FICL_DEFAULT_STACK);
-
-    ficlAddPrecompiledParseStep(pSys, ">float", ficlParseFloatNumber);
 #endif
     return;
 }

@@ -29,8 +29,7 @@ also oop definitions
 \ A ficl object binds instance storage (payload) to a class.
 \ object  ( -- instance class )
 \ All objects push their payload address and class address when
-\ executed. All objects have this footprint:
-\ cell 0: first payload cell
+\ executed. 
 
 \ A ficl class consists of a parent class pointer, a wordlist
 \ ID for the methods of the class, and a size for the payload
@@ -42,13 +41,38 @@ also oop definitions
 \ cell 2: size of instance's payload
 
 \ Methods expect an object couple ( instance class ) 
-\ on the stack.
+\ on the stack. This is by convention - ficl has no way to 
+\ police your code to make sure this is always done, but it 
+\ happens naturally if you use the facilities presented here.
+\
 \ Overridden methods must maintain the same stack signature as
-\ their predecessors. Ficl has no way of enforcing this, though.
+\ their predecessors. Ficl has no way of enforcing this, either.
 \
 \ Revised Apr 2001 - Added Guy Carver's vtable extensions. Class now
 \ has an extra field for the vtable method count. Hasvtable declares
 \ refs to vtable classes
+\
+\ Revised August 2001 - Ficl vtable support
+\ Each class has a vtable size parameter
+\ END-CLASS allocates and clears the vtable - then it walks class's method 
+\ list and inserts all new methods into table. For each method, if the table
+\ slot is already nonzero, do nothing (overridden method). Otherwise fill
+\ vtable slot. Now do same check for parent class vtable, filling only
+\ empty slots in the new vtable.
+\ Methods are now structured as follows:
+\ - header
+\ - vtable index
+\ - xt
+\ :noname definition for code
+\
+\ : is redefined to check for override, fill in vtable index, increment method
+\ count if not an override, create header and fill in index. Allot code pointer
+\ and run :noname
+\ ; is overridden to fill in xt returned by :noname
+\ --> compiles code to fetch vtable address, offset by index, and execute
+\ => looks up xt in the vtable and compiles it directly
+
+
 
 user current-class
 0 current-class !
@@ -57,16 +81,24 @@ user current-class
 \ ** L A T E   B I N D I N G
 \ Compile the method name, and code to find and
 \ execute it at run-time...
-\ parse-method compiles the method name so that it pushes
-\ the string base address and count at run-time.
 \
 
 hide
+
+\ p a r s e - m e t h o d
+\ compiles a method name so that it pushes
+\ the string base address and count at run-time.
 
 : parse-method  \ name  run: ( -- c-addr u )
     parse-word
     postpone sliteral
 ; compile-only
+
+\ l o o k u p - m e t h o d
+\ takes a counted string method name from the stack (as compiled
+\ by parse-method) and attempts to look this method up in the method list of 
+\ the class that's on the stack. If successful, it leaves the class on the stack
+\ and pushes the xt of the method. If not, it aborts with an error message.
 
 : lookup-method  { class 2:name -- class xt }
     name class cell+ @  ( c-addr u wid )
@@ -116,6 +148,11 @@ set-current  ( stop hiding definitions )
 
 \ METHOD  makes global words that do method invocations by late binding
 \ in case you prefer this style (no --> in your code)
+\ Example: everything has next and prev for array access, so...
+\ method next
+\ method prev
+\ my-instance next ( does whatever next does to my-instance by late binding )
+
 : method   create does> body> >name lookup-method execute ;
 
 

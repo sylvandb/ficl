@@ -179,7 +179,7 @@ void ficlCompilePrefix(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "0x", prefixHex, FW_DEFAULT);
     dictAppendWord(dp, "0d", prefixTen, FW_DEFAULT);
 #if (FICL_EXTENDED_PREFIX)
-    pFW = ficlLookup("\\");
+    pFW = ficlLookup(pSys, "\\");
     if (pFW)
     {
         dictAppendWord(dp, "//", pFW->code, FW_DEFAULT);
@@ -187,6 +187,5 @@ void ficlCompilePrefix(FICL_SYSTEM *pSys)
 #endif
     dp->pCompile = pPrevCompile;
 
-    ficlAddPrecompiledParseStep(pSys, "?prefix", ficlParsePrefix);
     return;
 }

@@ -326,7 +326,7 @@ int main(int argc, char **argv)
     buildTestInterface(pSys);
     pVM = ficlNewVM(pSys);
 
-    ret = ficlExec(pVM, ".ver .( " __DATE__ " ) cr quit");
+    ret = ficlEvaluate(pVM, ".ver .( " __DATE__ " ) cr quit");
 
     /*
     ** load file from cmd line...
@@ -336,7 +336,7 @@ int main(int argc, char **argv)
         sprintf(in, ".( loading %s ) cr load %s\n cr", argv[1], argv[1]);
         __try
         {
-            ret = ficlExec(pVM, in);
+            ret = ficlEvaluate(pVM, in);
         }
         __except(1)
         {

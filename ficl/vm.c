@@ -443,18 +443,6 @@ void vmSetTextOut(FICL_VM *pVM, OUTFUNC textOut)
 
 
 /**************************************************************************
-                        v m S t e p
-** Single step the vm - equivalent to "step into" - used for debugging
-**************************************************************************/
-#if FICL_WANT_DEBUGGER
-void vmStep(FICL_VM *pVM)
-{
-    M_VM_STEP(pVM);
-}
-#endif
-
-
-/**************************************************************************
                         v m T e x t O u t
 ** Feeds text to the vm's output callback
 **************************************************************************/

@@ -70,30 +70,13 @@
 
 #endif
 
-/*
-** BREAKPOINT record.
-** origXT - if NULL, this breakpoint is unused. Otherwise it stores the xt 
-** that the breakpoint overwrote. This is restored to the dictionary when the
-** BP executes or gets cleared
-** address - the location of the breakpoint (address of the instruction that
-**           has been replaced with the breakpoint trap
-** origXT  - The original contents of the location with the breakpoint
-** Note: address is NULL when this breakpoint is empty
-*/
-typedef struct breakpoint
-{
-    void      *address;
-    FICL_WORD *origXT;
-} BREAKPOINT;
-
-static BREAKPOINT bpStep = {NULL, NULL};
 
 /**************************************************************************
                         v m S e t B r e a k
 ** Set a breakpoint at the current value of IP by
 ** storing that address in a BREAKPOINT record
 **************************************************************************/
-static void vmSetBreak(FICL_VM *pVM, BREAKPOINT *pBP)
+static void vmSetBreak(FICL_VM *pVM, FICL_BREAKPOINT *pBP)
 {
     FICL_WORD *pStep = ficlLookup(pVM->pSys, "step-break");
     assert(pStep);
@@ -234,6 +217,13 @@ static void seeColon(FICL_VM *pVM, CELL *pc)
                     sprintf(cp, "    s\" %.*s\"", sp->count, sp->text);
                 }
                 break;
+            case CSTRINGLIT:
+                {
+                    FICL_STRING *sp = (FICL_STRING *)(void *)++pc;
+                    pc = (CELL *)alignPtr(sp->text + sp->count + 1) - 1;
+                    sprintf(cp, "    c\" %.*s\"", sp->count, sp->text);
+                }
+                break;
             case IF:
                 c = *++pc;
                 if (c.i > 0)
@@ -320,10 +310,12 @@ static void seeXT(FICL_VM *pVM)
         vmTextOut(pVM, pVM->pad, 1);
         break;
 
+#if FICL_WANT_USER
     case USER:
         sprintf(pVM->pad, "user variable %ld (%#lx)", pFW->param->i, pFW->param->u);
         vmTextOut(pVM, pVM->pad, 1);
         break;
+#endif
 
     case CONSTANT:
         sprintf(pVM->pad, "constant = %ld (%#lx)", pFW->param->i, pFW->param->u);
@@ -381,7 +373,7 @@ void ficlDebugXT(FICL_VM *pVM)
         ** Run the colon code and set a breakpoint at the next instruction
         */
         vmExecute(pVM, xt);
-        vmSetBreak(pVM, &bpStep);
+        vmSetBreak(pVM, &(pVM->pSys->bpStep));
         break;
 
     default:
@@ -411,7 +403,7 @@ void stepIn(FICL_VM *pVM)
     /*
     ** Now set a breakpoint at the next instruction
     */
-    vmSetBreak(pVM, &bpStep);
+    vmSetBreak(pVM, &(pVM->pSys->bpStep));
     
     return;
 }
@@ -442,8 +434,8 @@ void stepOver(FICL_VM *pVM)
         ** assume that the next cell holds an instruction 
         ** set a breakpoint there and return to the inner interp
         */
-        bpStep.address = pVM->ip + 1;
-        bpStep.origXT =  pVM->ip[1];
+        pVM->pSys->bpStep.address = pVM->ip + 1;
+        pVM->pSys->bpStep.origXT =  pVM->ip[1];
         pVM->ip[1] = pStep;
         break;
 
@@ -480,15 +472,15 @@ void stepBreak(FICL_VM *pVM)
 
     if (!pVM->fRestart)
     {
-        assert(bpStep.address);
-        assert(bpStep.origXT);
+        assert(pVM->pSys->bpStep.address);
+        assert(pVM->pSys->bpStep.origXT);
         /*
         ** Clear the breakpoint that caused me to run
         ** Restore the original instruction at the breakpoint, 
         ** and restore the IP
         */
-        pVM->ip = (IPTYPE)bpStep.address;
-        *pVM->ip = bpStep.origXT;
+        pVM->ip = (IPTYPE)(pVM->pSys->bpStep.address);
+        *pVM->ip = pVM->pSys->bpStep.origXT;
 
         /*
         ** If there's an onStep, do it
@@ -500,7 +492,7 @@ void stepBreak(FICL_VM *pVM)
         /*
         ** Print the name of the next instruction
         */
-        pFW = bpStep.origXT;
+        pFW = pVM->pSys->bpStep.origXT;
         sprintf(pVM->pad, "next: %.*s", pFW->nName, pFW->name);
         if (isPrimitive(pFW))
         {
@@ -784,7 +776,7 @@ static void listWords(FICL_VM *pVM)
 **************************************************************************/
 static void listEnv(FICL_VM *pVM)
 {
-    FICL_DICT *dp = vmGetDict(pVM);
+    FICL_DICT *dp = pVM->pSys->envp;
     FICL_HASH *pHash = dp->pForthWords;
     FICL_WORD *wp;
     unsigned i;
@@ -853,7 +845,6 @@ void ficlCompileTools(FICL_SYSTEM *pSys)
     /*
     ** TOOLS and TOOLS EXT
     */
-    dictAppendWord(dp, "r.s",       displayRStack,  FW_DEFAULT); /* guy carver */
     dictAppendWord(dp, ".s",        displayPStack,  FW_DEFAULT);
     dictAppendWord(dp, "bye",       bye,            FW_DEFAULT);
     dictAppendWord(dp, "forget",    forget,         FW_DEFAULT);
@@ -869,6 +860,7 @@ void ficlCompileTools(FICL_SYSTEM *pSys)
     /*
     ** Ficl extras
     */
+    dictAppendWord(dp, "r.s",       displayRStack,  FW_DEFAULT); /* guy carver */
     dictAppendWord(dp, ".env",      listEnv,        FW_DEFAULT);
     dictAppendWord(dp, "env-constant",
                                     envConstant,    FW_DEFAULT);

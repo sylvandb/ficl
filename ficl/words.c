@@ -64,46 +64,9 @@ static char leaveTag[] = "leave";
 static char destTag[]  = "target";
 static char origTag[]  = "origin";
 
-/*
-** Pointers to various words in the dictionary
-** -- initialized by ficlCompileCore, below --
-** for use by compiling words. Colon definitions
-** in ficl are lists of pointers to words. A bit
-** simple-minded...
-*/
-static FICL_WORD *pBranchParen  = NULL;
-static FICL_WORD *pDoParen      = NULL;
-static FICL_WORD *pDoesParen    = NULL;
-static FICL_WORD *pExitParen    = NULL;
-static FICL_WORD *pIfParen      = NULL;
-static FICL_WORD *pInterpret    = NULL;
-static FICL_WORD *pLitParen     = NULL;
-static FICL_WORD *pTwoLitParen  = NULL;
-static FICL_WORD *pLoopParen    = NULL;
-static FICL_WORD *pPLoopParen   = NULL;
-static FICL_WORD *pPlusStore    = NULL;
-static FICL_WORD *pQDoParen     = NULL;
-static FICL_WORD *pSemiParen    = NULL;
-static FICL_WORD *pStore        = NULL;
-static FICL_WORD *pStringLit    = NULL;
-
 #if FICL_WANT_LOCALS
-static FICL_WORD *pGetLocalParen= NULL;
-static FICL_WORD *pGet2LocalParen= NULL;
-static FICL_WORD *pGetLocal0    = NULL;
-static FICL_WORD *pGetLocal1    = NULL;
-static FICL_WORD *pToLocalParen = NULL;
-static FICL_WORD *pTo2LocalParen = NULL;
-static FICL_WORD *pToLocal0     = NULL;
-static FICL_WORD *pToLocal1     = NULL;
-static FICL_WORD *pLinkParen    = NULL;
-static FICL_WORD *pUnLinkParen  = NULL;
-static FICL_INT   nLocals = 0;
-static CELL *pMarkLocals = NULL;
-
 static void doLocalIm(FICL_VM *pVM);
 static void do2LocalIm(FICL_VM *pVM);
-
 #endif
 
 
@@ -224,12 +187,15 @@ static void resolveAbsBranch(FICL_DICT *dp, FICL_VM *pVM, char *tag)
 ** Attempts to convert the NULL terminated string in the VM's pad to 
 ** a number using the VM's current base. If successful, pushes the number
 ** onto the param stack and returns TRUE. Otherwise, returns FALSE.
+** (jws 8/01) Trailing decimal point causes a zero cell to be pushed. (See
+** the standard for DOUBLE wordset.
 **************************************************************************/
 
 int ficlParseNumber(FICL_VM *pVM, STRINGINFO si)
 {
     FICL_INT accum  = 0;
     char isNeg      = FALSE;
+	char hasDP      = FALSE;
     unsigned base   = pVM->base;
     char *cp        = SI_PTR(si);
     FICL_COUNT count= (FICL_COUNT)SI_COUNT(si);
@@ -255,7 +221,13 @@ int ficlParseNumber(FICL_VM *pVM, STRINGINFO si)
         }
     }
 
-    if (count == 0)
+    if ((count > 0) && (cp[count-1] == '.')) /* detect & remove trailing decimal */
+    {
+        hasDP = TRUE;
+        count--;
+    }
+
+    if (count == 0)        /* detect "+", "-", ".", "+." etc */
         return FALSE;
 
     while ((count--) && ((ch = *cp++) != '\0'))
@@ -273,6 +245,9 @@ int ficlParseNumber(FICL_VM *pVM, STRINGINFO si)
 
         accum = accum * base + digit;
     }
+
+	if (hasDP)		/* simple (required) DOUBLE support */
+		PUSHINT(0);
 
     if (isNeg)
         accum = -accum;
@@ -482,7 +457,7 @@ static void colon(FICL_VM *pVM)
     markControlTag(pVM, colonTag);
     dictAppendWord2(dp, si, colonParen, FW_DEFAULT | FW_SMUDGE);
 #if FICL_WANT_LOCALS
-    nLocals = 0;
+    pVM->pSys->nLocals = 0;
 #endif
     return;
 }
@@ -528,21 +503,21 @@ static void semicolonCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pSemiParen);
+    assert(pVM->pSys->pSemiParen);
     matchControlTag(pVM, colonTag);
 
 #if FICL_WANT_LOCALS
-    assert(pUnLinkParen);
-    if (nLocals > 0)
+    assert(pVM->pSys->pUnLinkParen);
+    if (pVM->pSys->nLocals > 0)
     {
         FICL_DICT *pLoc = ficlGetLoc(pVM->pSys);
         dictEmpty(pLoc, pLoc->pForthWords->size);
-        dictAppendCell(dp, LVALUEtoCELL(pUnLinkParen));
+        dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pUnLinkParen));
     }
-    nLocals = 0;
+    pVM->pSys->nLocals = 0;
 #endif
 
-    dictAppendCell(dp, LVALUEtoCELL(pSemiParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pSemiParen));
     pVM->state = INTERPRET;
     dictUnsmudge(dp);
     return;
@@ -567,16 +542,16 @@ static void exitParen(FICL_VM *pVM)
 static void exitCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
-    assert(pExitParen);
+    assert(pVM->pSys->pExitParen);
     IGNORE(pVM);
 
 #if FICL_WANT_LOCALS
-    if (nLocals > 0)
+    if (pVM->pSys->nLocals > 0)
     {
-        dictAppendCell(dp, LVALUEtoCELL(pUnLinkParen));
+        dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pUnLinkParen));
     }
 #endif
-    dictAppendCell(dp, LVALUEtoCELL(pExitParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pExitParen));
     return;
 }
 
@@ -692,6 +667,172 @@ static void hexDot(FICL_VM *pVM)
     strcat(pVM->pad, " ");
     vmTextOut(pVM, pVM->pad, 0);
     return;
+}
+
+
+/**************************************************************************
+                        s t r l e n
+** FICL   ( c-string -- length )
+**
+** Returns the length of a C-style (zero-terminated) string.
+**
+** --lch
+**/
+static void ficlStrlen(FICL_VM *ficlVM)
+	{
+	char *address = (char *)stackPopPtr(ficlVM->pStack);
+	stackPushINT(ficlVM->pStack, strlen(address));
+	}
+
+
+/**************************************************************************
+                        s p r i n t f
+** FICL   ( i*x c-addr-fmt u-fmt c-addr-buffer u-buffer -- c-addr-buffer u-written success-flag )
+** Similar to the C sprintf() function.  It formats into a buffer based on
+** a "format" string.  Each character in the format string is copied verbatim
+** to the output buffer, until SPRINTF encounters a percent sign ("%").
+** SPRINTF then skips the percent sign, and examines the next character
+** (the "format character").  Here are the valid format characters:
+**    s - read a C-ADDR U-LENGTH string from the stack and copy it to
+**        the buffer
+**    d - read a cell from the stack, format it as a string (base-10,
+**        signed), and copy it to the buffer
+**    x - same as d, except in base-16
+**    u - same as d, but unsigned
+**    % - output a literal percent-sign to the buffer
+** SPRINTF returns the c-addr-buffer argument unchanged, the number of bytes
+** written, and a flag indicating whether or not it ran out of space while
+** writing to the output buffer (TRUE if it ran out of space).
+**
+** If SPRINTF runs out of space in the buffer to store the formatted string,
+** it still continues parsing, in an effort to preserve your stack (otherwise
+** it might leave uneaten arguments behind).
+**
+** --lch
+**************************************************************************/
+static void ficlSprintf(FICL_VM *pVM) /*  */
+{
+	int bufferLength = stackPopINT(pVM->pStack);
+	char *buffer = (char *)stackPopPtr(pVM->pStack);
+	char *bufferStart = buffer;
+
+	int formatLength = stackPopINT(pVM->pStack);
+	char *format = (char *)stackPopPtr(pVM->pStack);
+	char *formatStop = format + formatLength;
+
+	int base = 10;
+	int unsignedInteger = FALSE;
+
+	int append = FICL_TRUE;
+
+	while (format < formatStop)
+	{
+		char scratch[64];
+		char *source;
+		int actualLength;
+		int desiredLength;
+		int leadingZeroes;
+
+
+		if (*format != '%')
+		{
+			source = format;
+			actualLength = desiredLength = 1;
+			leadingZeroes = 0;
+		}
+		else
+		{
+			format++;
+			if (format == formatStop)
+				break;
+
+			leadingZeroes = (*format == '0');
+			if (leadingZeroes)
+				{
+				format++;
+				if (format == formatStop)
+					break;
+				}
+
+			desiredLength = isdigit(*format);
+			if (desiredLength)
+				{
+				desiredLength = strtoul(format, &format, 10);
+				if (format == formatStop)
+					break;
+				}
+			else if (*format == '*')
+				{
+				desiredLength = stackPopINT(pVM->pStack);
+				format++;
+				if (format == formatStop)
+					break;
+				}
+
+
+			switch (*format)
+			{
+				case 's':
+				case 'S':
+				{
+					actualLength = stackPopINT(pVM->pStack);
+					source = (char *)stackPopPtr(pVM->pStack);
+					break;
+				}
+				case 'x':
+				case 'X':
+					base = 16;
+				case 'u':
+				case 'U':
+					unsignedInteger = TRUE;
+				case 'd':
+				case 'D':
+				{
+					int integer = stackPopINT(pVM->pStack);
+					if (unsignedInteger)
+						ultoa(integer, scratch, base);
+					else
+						ltoa(integer, scratch, base);
+					base = 10;
+					unsignedInteger = FALSE;
+					source = scratch;
+					actualLength = strlen(scratch);
+					break;
+				}
+				case '%':
+					source = format;
+					actualLength = 1;
+				default:
+					continue;
+			}
+		}
+
+		if (append == FICL_TRUE)
+		{
+			if (!desiredLength)
+				desiredLength = actualLength;
+			if (desiredLength > bufferLength)
+			{
+				append = FICL_FALSE;
+				desiredLength = bufferLength;
+			}
+			while (desiredLength > actualLength)
+				{
+				*buffer++ = (char)((leadingZeroes) ? '0' : ' ');
+				bufferLength--;
+				desiredLength--;
+				}
+			memcpy(buffer, source, actualLength);
+			buffer += actualLength;
+			bufferLength -= actualLength;
+		}
+
+		format++;
+	}
+
+	stackPushPtr(pVM->pStack, bufferStart);
+	stackPushINT(pVM->pStack, buffer - bufferStart);
+	stackPushINT(pVM->pStack, append);
 }
 
 
@@ -1081,9 +1222,9 @@ static void ifCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pIfParen);
+    assert(pVM->pSys->pIfParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pIfParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pIfParen));
     markBranch(dp, pVM, origTag);
     dictAppendUNS(dp, 1);
     return;
@@ -1137,9 +1278,9 @@ static void elseCoIm(FICL_VM *pVM)
     FICL_INT offset;
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pBranchParen);
+    assert(pVM->pSys->pBranchParen);
                                             /* (1) compile branch runtime */
-    dictAppendCell(dp, LVALUEtoCELL(pBranchParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pBranchParen));
     matchControlTag(pVM, origTag);
     patchAddr = 
         (CELL *)stackPopPtr(pVM->pStack);   /* (2) pop "if" patch addr */
@@ -1305,7 +1446,7 @@ static int ficlParseWord(FICL_VM *pVM, STRINGINFO si)
 #endif
 
 #if FICL_WANT_LOCALS
-    if (nLocals > 0)
+    if (pVM->pSys->nLocals > 0)
     {
         tempFW = ficlLookupLoc(pVM->pSys, si);
     }
@@ -1440,9 +1581,9 @@ static void twoLitParen(FICL_VM *pVM)
 static void literalIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
-    assert(pLitParen);
+    assert(pVM->pSys->pLitParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pLitParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pLitParen));
     dictAppendCell(dp, stackPop(pVM->pStack));
 
     return;
@@ -1452,9 +1593,9 @@ static void literalIm(FICL_VM *pVM)
 static void twoLiteralIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
-    assert(pTwoLitParen);
+    assert(pVM->pSys->pTwoLitParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pTwoLitParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pTwoLitParen));
     dictAppendCell(dp, stackPop(pVM->pStack));
     dictAppendCell(dp, stackPop(pVM->pStack));
 
@@ -1625,9 +1766,9 @@ static void doCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pDoParen);
+    assert(pVM->pSys->pDoParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pDoParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pDoParen));
     /*
     ** Allot space for a pointer to the end
     ** of the loop - "leave" uses this...
@@ -1665,9 +1806,9 @@ static void qDoCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pQDoParen);
+    assert(pVM->pSys->pQDoParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pQDoParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pQDoParen));
     /*
     ** Allot space for a pointer to the end
     ** of the loop - "leave" uses this...
@@ -1735,9 +1876,9 @@ static void loopCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pLoopParen);
+    assert(pVM->pSys->pLoopParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pLoopParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pLoopParen));
     resolveBackBranch(dp, pVM, doTag);
     resolveAbsBranch(dp, pVM, leaveTag);
     return;
@@ -1748,9 +1889,9 @@ static void plusLoopCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pPLoopParen);
+    assert(pVM->pSys->pPLoopParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pPLoopParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pPLoopParen));
     resolveBackBranch(dp, pVM, doTag);
     resolveAbsBranch(dp, pVM, leaveTag);
     return;
@@ -2176,6 +2317,42 @@ static void compileOnly(FICL_VM *pVM)
 }
 
 
+static void cstringLit(FICL_VM *pVM)
+{
+    FICL_STRING *sp = (FICL_STRING *)(pVM->ip);
+
+    char *cp = sp->text;
+    cp += sp->count + 1;
+    cp = alignPtr(cp);
+    pVM->ip = (IPTYPE)(void *)cp;
+
+    stackPushPtr(pVM->pStack, sp);
+    return;
+}
+
+
+static void cstringQuoteIm(FICL_VM *pVM)
+{
+    FICL_DICT *dp = vmGetDict(pVM);
+
+    if (pVM->state == INTERPRET)
+    {
+        FICL_STRING *sp = (FICL_STRING *) dp->here;
+        vmGetString(pVM, sp, '\"');
+        stackPushPtr(pVM->pStack, sp);
+		/* move HERE past string so it doesn't get overwritten.  --lch */
+		dictAllot(dp, sp->count + sizeof(FICL_COUNT));
+    }
+    else    /* COMPILE state */
+    {
+        dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pCStringLit));
+        dp->here = PTRtoCELL vmGetString(pVM, (FICL_STRING *)dp->here, '\"');
+        dictAlign(dp);
+    }
+
+    return;
+}
+
 /**************************************************************************
                         d o t Q u o t e
 ** IMMEDIATE word that compiles a string literal for later display
@@ -2211,7 +2388,7 @@ static void dotQuoteCoIm(FICL_VM *pVM)
     FICL_DICT *dp = vmGetDict(pVM);
     FICL_WORD *pType = ficlLookup(pVM->pSys, "type");
     assert(pType);
-    dictAppendCell(dp, LVALUEtoCELL(pStringLit));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pStringLit));
     dp->here = PTRtoCELL vmGetString(pVM, (FICL_STRING *)dp->here, '\"');
     dictAlign(dp);
     dictAppendCell(dp, LVALUEtoCELL(pType));
@@ -2268,7 +2445,7 @@ static void sLiteralCoIm(FICL_VM *pVM)
     u  = POPUNS();
     cp = POPPTR();
 
-    dictAppendCell(dp, LVALUEtoCELL(pStringLit));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pStringLit));
     cpDest    = (char *) dp->here;
     *cpDest++ = (char)   u;
 
@@ -2360,19 +2537,19 @@ static void doesCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 #if FICL_WANT_LOCALS
-    assert(pUnLinkParen);
-    if (nLocals > 0)
+    assert(pVM->pSys->pUnLinkParen);
+    if (pVM->pSys->nLocals > 0)
     {
         FICL_DICT *pLoc = ficlGetLoc(pVM->pSys);
         dictEmpty(pLoc, pLoc->pForthWords->size);
-        dictAppendCell(dp, LVALUEtoCELL(pUnLinkParen));
+        dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pUnLinkParen));
     }
 
-    nLocals = 0;
+    pVM->pSys->nLocals = 0;
 #endif
     IGNORE(pVM);
 
-    dictAppendCell(dp, LVALUEtoCELL(pDoesParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pDoesParen));
     return;
 }
 
@@ -2785,9 +2962,9 @@ static void untilCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pIfParen);
+    assert(pVM->pSys->pIfParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pIfParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pIfParen));
     resolveBackBranch(dp, pVM, destTag);
     return;
 }
@@ -2796,9 +2973,9 @@ static void whileCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pIfParen);
+    assert(pVM->pSys->pIfParen);
 
-    dictAppendCell(dp, LVALUEtoCELL(pIfParen));
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pIfParen));
     markBranch(dp, pVM, origTag);
     twoSwap(pVM);
     dictAppendUNS(dp, 1);
@@ -2809,8 +2986,8 @@ static void repeatCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pBranchParen);
-    dictAppendCell(dp, LVALUEtoCELL(pBranchParen));
+    assert(pVM->pSys->pBranchParen);
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pBranchParen));
 
     /* expect "begin" branch marker */
     resolveBackBranch(dp, pVM, destTag);
@@ -2824,8 +3001,8 @@ static void againCoIm(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
 
-    assert(pBranchParen);
-    dictAppendCell(dp, LVALUEtoCELL(pBranchParen));
+    assert(pVM->pSys->pBranchParen);
+    dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pBranchParen));
 
     /* expect "begin" branch marker */
     resolveBackBranch(dp, pVM, destTag);
@@ -2957,7 +3134,7 @@ static void environmentQ(FICL_VM *pVM)
     vmCheckStack(pVM,2,1);
 #endif
 
-    envp = ficlGetEnv(pVM->pSys);
+    envp = pVM->pSys->envp;
     len = (FICL_COUNT)POPUNS();
     cp = POPPTR();
 
@@ -3033,7 +3210,7 @@ static void stringQuoteIm(FICL_VM *pVM)
     }
     else    /* COMPILE state */
     {
-        dictAppendCell(dp, LVALUEtoCELL(pStringLit));
+        dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pStringLit));
         dp->here = PTRtoCELL vmGetString(pVM, (FICL_STRING *)dp->here, '\"');
         dictAlign(dp);
     }
@@ -3202,17 +3379,10 @@ static void fill(FICL_VM *pVM)
 ** string, the values returned by FIND while compiling may differ from
 ** those returned while not compiling. 
 **************************************************************************/
-static void find(FICL_VM *pVM)
+static void do_find(FICL_VM *pVM, STRINGINFO si, void *returnForFailure)
 {
-    FICL_STRING *sp;
     FICL_WORD *pFW;
-    STRINGINFO si;
-#if FICL_ROBUST > 1
-    vmCheckStack(pVM,1,2);
-#endif
 
-    sp = POPPTR();
-    SI_PFS(si, sp);
     pFW = dictLookup(vmGetDict(pVM), si);
     if (pFW)
     {
@@ -3221,10 +3391,56 @@ static void find(FICL_VM *pVM)
     }
     else
     {
-        PUSHPTR(sp);
+        PUSHPTR(returnForFailure);
         PUSHUNS(0);
     }
     return;
+}
+
+
+
+/**************************************************************************
+                        f i n d
+** FIND CORE ( c-addr -- c-addr 0  |  xt 1  |  xt -1 )
+** Find the definition named in the counted string at c-addr. If the
+** definition is not found, return c-addr and zero. If the definition is
+** found, return its execution token xt. If the definition is immediate,
+** also return one (1), otherwise also return minus-one (-1). For a given
+** string, the values returned by FIND while compiling may differ from
+** those returned while not compiling. 
+**************************************************************************/
+static void cFind(FICL_VM *pVM)
+{
+    FICL_STRING *sp;
+    STRINGINFO si;
+
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM,1,2);
+#endif
+    sp = POPPTR();
+    SI_PFS(si, sp);
+    do_find(pVM, si, sp);
+}
+
+
+
+/**************************************************************************
+                        s f i n d
+** FICL   ( c-addr u -- 0 0  |  xt 1  |  xt -1 )
+** Like FIND, but takes "c-addr u" for the string.
+**************************************************************************/
+static void sFind(FICL_VM *pVM)
+{
+    STRINGINFO si;
+
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM,2,2);
+#endif
+
+    si.count = stackPopINT(pVM->pStack);
+    si.cp = stackPopPtr(pVM->pStack);
+
+    do_find(pVM, si, NULL);
 }
 
 
@@ -3649,26 +3865,26 @@ static void toValue(FICL_VM *pVM)
     FICL_WORD *pFW;
 
 #if FICL_WANT_LOCALS
-    if ((nLocals > 0) && (pVM->state == COMPILE))
+    if ((pVM->pSys->nLocals > 0) && (pVM->state == COMPILE))
     {
         FICL_DICT *pLoc = ficlGetLoc(pVM->pSys);
         pFW = dictLookup(pLoc, si);
         if (pFW && (pFW->code == doLocalIm))
         {
-            dictAppendCell(dp, LVALUEtoCELL(pToLocalParen));
+            dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pToLocalParen));
             dictAppendCell(dp, LVALUEtoCELL(pFW->param[0]));
             return;
         }
         else if (pFW && pFW->code == do2LocalIm)
         {
-            dictAppendCell(dp, LVALUEtoCELL(pTo2LocalParen));
+            dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pTo2LocalParen));
             dictAppendCell(dp, LVALUEtoCELL(pFW->param[0]));
             return;
         }
     }
 #endif
 
-    assert(pStore);
+    assert(pVM->pSys->pStore);
 
     pFW = dictLookup(dp, si);
     if (!pFW)
@@ -3683,7 +3899,7 @@ static void toValue(FICL_VM *pVM)
     {
         PUSHPTR(&pFW->param[0]);
         literalIm(pVM);
-        dictAppendCell(dp, LVALUEtoCELL(pStore));
+        dictAppendCell(dp, LVALUEtoCELL(pVM->pSys->pStore));
     }
     return;
 }
@@ -3785,15 +4001,15 @@ static void doLocalIm(FICL_VM *pVM)
         
         if (nLocal == 0)
         {
-            dictAppendCell(pDict, LVALUEtoCELL(pGetLocal0));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pGetLocal0));
         }
         else if (nLocal == 1)
         {
-            dictAppendCell(pDict, LVALUEtoCELL(pGetLocal1));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pGetLocal1));
         }
         else
         {
-            dictAppendCell(pDict, LVALUEtoCELL(pGetLocalParen));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pGetLocalParen));
             dictAppendCell(pDict, LVALUEtoCELL(nLocal));
         }
     }
@@ -3826,7 +4042,6 @@ static void doLocalIm(FICL_VM *pVM)
 **************************************************************************/
 static void localParen(FICL_VM *pVM)
 {
-    static CELL *pMark = NULL;
     FICL_DICT *pDict;
     STRINGINFO si;
 #if FICL_ROBUST > 1
@@ -3840,38 +4055,38 @@ static void localParen(FICL_VM *pVM)
     if (SI_COUNT(si) > 0)
     {   /* add a local to the **locals** dict and update nLocals */
         FICL_DICT *pLoc = ficlGetLoc(pVM->pSys);
-        if (nLocals >= FICL_MAX_LOCALS)
+        if (pVM->pSys->nLocals >= FICL_MAX_LOCALS)
         {
             vmThrowErr(pVM, "Error: out of local space");
         }
 
         dictAppendWord2(pLoc, si, doLocalIm, FW_COMPIMMED);
-        dictAppendCell(pLoc,  LVALUEtoCELL(nLocals));
+        dictAppendCell(pLoc,  LVALUEtoCELL(pVM->pSys->nLocals));
 
-        if (nLocals == 0)
+        if (pVM->pSys->nLocals == 0)
         {   /* compile code to create a local stack frame */
-            dictAppendCell(pDict, LVALUEtoCELL(pLinkParen));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pLinkParen));
             /* save location in dictionary for #locals */
-            pMarkLocals = pDict->here;
-            dictAppendCell(pDict, LVALUEtoCELL(nLocals));
+            pVM->pSys->pMarkLocals = pDict->here;
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->nLocals));
             /* compile code to initialize first local */
-            dictAppendCell(pDict, LVALUEtoCELL(pToLocal0));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pToLocal0));
         }
-        else if (nLocals == 1)
+        else if (pVM->pSys->nLocals == 1)
         {
-            dictAppendCell(pDict, LVALUEtoCELL(pToLocal1));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pToLocal1));
         }
         else
         {
-            dictAppendCell(pDict, LVALUEtoCELL(pToLocalParen));
-            dictAppendCell(pDict, LVALUEtoCELL(nLocals));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pToLocalParen));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->nLocals));
         }
 
-        nLocals++;
+        (pVM->pSys->nLocals)++;
     }
-    else if (nLocals > 0)
+    else if (pVM->pSys->nLocals > 0)
     {       /* write nLocals to (link) param area in dictionary */
-        *(FICL_INT *)pMarkLocals = nLocals;
+        *(FICL_INT *)(pVM->pSys->pMarkLocals) = pVM->pSys->nLocals;
     }
 
     return;
@@ -3899,7 +4114,7 @@ static void do2LocalIm(FICL_VM *pVM)
     }
     else
     {
-        dictAppendCell(pDict, LVALUEtoCELL(pGet2LocalParen));
+        dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pGet2LocalParen));
         dictAppendCell(pDict, LVALUEtoCELL(nLocal));
     }
     return;
@@ -3925,30 +4140,30 @@ static void twoLocalParen(FICL_VM *pVM)
     if (SI_COUNT(si) > 0)
     {   /* add a local to the **locals** dict and update nLocals */
         FICL_DICT *pLoc = ficlGetLoc(pVM->pSys);
-        if (nLocals >= FICL_MAX_LOCALS)
+        if (pVM->pSys->nLocals >= FICL_MAX_LOCALS)
         {
             vmThrowErr(pVM, "Error: out of local space");
         }
 
         dictAppendWord2(pLoc, si, do2LocalIm, FW_COMPIMMED);
-        dictAppendCell(pLoc,  LVALUEtoCELL(nLocals));
+        dictAppendCell(pLoc,  LVALUEtoCELL(pVM->pSys->nLocals));
 
-        if (nLocals == 0)
+        if (pVM->pSys->nLocals == 0)
         {   /* compile code to create a local stack frame */
-            dictAppendCell(pDict, LVALUEtoCELL(pLinkParen));
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pLinkParen));
             /* save location in dictionary for #locals */
-            pMarkLocals = pDict->here;
-            dictAppendCell(pDict, LVALUEtoCELL(nLocals));
+            pVM->pSys->pMarkLocals = pDict->here;
+            dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->nLocals));
         }
 
-        dictAppendCell(pDict, LVALUEtoCELL(pTo2LocalParen));
-        dictAppendCell(pDict, LVALUEtoCELL(nLocals));
+        dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->pTo2LocalParen));
+        dictAppendCell(pDict, LVALUEtoCELL(pVM->pSys->nLocals));
 
-        nLocals += 2;
+        pVM->pSys->nLocals += 2;
     }
-    else if (nLocals > 0)
+    else if (pVM->pSys->nLocals > 0)
     {       /* write nLocals to (link) param area in dictionary */
-        *(FICL_INT *)pMarkLocals = nLocals;
+        *(FICL_INT *)(pVM->pSys->pMarkLocals) = pVM->pSys->nLocals;
     }
 
     return;
@@ -3970,7 +4185,7 @@ static void twoLocalParen(FICL_VM *pVM)
 ** lesser numeric value than the corresponding character in the string specified
 ** by c-addr2 u2 and one (1) otherwise. 
 **************************************************************************/
-static void compareString(FICL_VM *pVM)
+static void compareInternal(FICL_VM *pVM, int caseInsensitive)
 {
     char *cp1, *cp2;
     FICL_UNS u1, u2, uMin;
@@ -3985,7 +4200,14 @@ static void compareString(FICL_VM *pVM)
     uMin = (u1 < u2)? u1 : u2;
     for ( ; (uMin > 0) && (n == 0); uMin--)
     {
-        n = (int)(*cp1++ - *cp2++);
+		char c1 = *cp1++;
+		char c2 = *cp2++;
+		if (caseInsensitive)
+		{
+			c1 = (char)tolower(c1);
+			c2 = (char)tolower(c2);
+		}
+        n = (int)(c1 - c2);
     }
 
     if (n == 0)
@@ -3998,6 +4220,30 @@ static void compareString(FICL_VM *pVM)
 
     PUSHINT(n);
     return;
+}
+
+
+static void compareString(FICL_VM *pVM)
+{
+	compareInternal(pVM, FALSE);
+}
+
+
+static void compareStringInsensitive(FICL_VM *pVM)
+{
+	compareInternal(pVM, TRUE);
+}
+
+
+/**************************************************************************
+                        p a d
+** CORE EXT  ( -- c-addr )
+** c-addr is the address of a transient region that can be used to hold
+** data for intermediate processing.
+**************************************************************************/
+static void pad(FICL_VM *pVM)
+{
+    stackPushPtr(pVM->pStack, pVM->pad);
 }
 
 
@@ -4066,8 +4312,6 @@ static void refill(FICL_VM *pVM)
 
 static void ficlCatch(FICL_VM *pVM)
 {
-    static FICL_WORD *pQuit = NULL;
-
     int         except;
     jmp_buf     vmState;
     FICL_VM     VM;
@@ -4075,11 +4319,8 @@ static void ficlCatch(FICL_VM *pVM)
     FICL_STACK  rStack;
     FICL_WORD   *pFW;
 
-    if (!pQuit)
-        pQuit = ficlLookup(pVM->pSys, "exit-inner");
-
     assert(pVM);
-    assert(pQuit);
+    assert(pVM->pSys->pExitInner);
     
 
     /*
@@ -4126,7 +4367,7 @@ static void ficlCatch(FICL_VM *pVM)
         ** the XT
         */
     case 0:
-        vmPushIP(pVM, &pQuit);          /* Open mouth, insert emetic */
+        vmPushIP(pVM, &(pVM->pSys->pExitInner));          /* Open mouth, insert emetic */
         vmExecute(pVM, pFW);
         vmInnerLoop(pVM);
         break;
@@ -4301,8 +4542,11 @@ WORDKIND ficlWordClassify(FICL_WORD *pFW)
         {LOOP,         loopParen},
         {PLOOP,    plusLoopParen},
         {QDO,           qDoParen},
+        {CSTRINGLIT,  cstringLit},
         {STRINGLIT,    stringLit},
+#if FICL_WANT_USER
         {USER,         userParen},
+#endif
         {VARIABLE, variableParen},
     };
 
@@ -4331,11 +4575,12 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     FICL_DICT *dp = pSys->dp;
     assert (dp);
 
+
     /*
     ** CORE word set
     ** see softcore.c for definitions of: abs bl space spaces abort"
     */
-    pStore =
+    pSys->pStore =
     dictAppendWord(dp, "!",         store,          FW_DEFAULT);
     dictAppendWord(dp, "#",         numberSign,     FW_DEFAULT);
     dictAppendWord(dp, "#>",        numberSignGreater,FW_DEFAULT);
@@ -4388,6 +4633,7 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "base",      base,           FW_DEFAULT);
     dictAppendWord(dp, "begin",     beginCoIm,      FW_COMPIMMED);
     dictAppendWord(dp, "c!",        cStore,         FW_DEFAULT);
+    dictAppendWord(dp, "c\"",       cstringQuoteIm, FW_IMMEDIATE);
     dictAppendWord(dp, "c,",        cComma,         FW_DEFAULT);
     dictAppendWord(dp, "c@",        cFetch,         FW_DEFAULT);
     dictAppendWord(dp, "cell+",     cellPlus,       FW_DEFAULT);
@@ -4412,7 +4658,7 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "execute",   execute,        FW_DEFAULT);
     dictAppendWord(dp, "exit",      exitCoIm,       FW_COMPIMMED);
     dictAppendWord(dp, "fill",      fill,           FW_DEFAULT);
-    dictAppendWord(dp, "find",      find,           FW_DEFAULT);
+    dictAppendWord(dp, "find",      cFind,          FW_DEFAULT);
     dictAppendWord(dp, "fm/mod",    fmSlashMod,     FW_DEFAULT);
     dictAppendWord(dp, "here",      here,           FW_DEFAULT);
     dictAppendWord(dp, "hex",       hex,            FW_DEFAULT);
@@ -4435,6 +4681,7 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "negate",    negate,         FW_DEFAULT);
     dictAppendWord(dp, "or",        bitwiseOr,      FW_DEFAULT);
     dictAppendWord(dp, "over",      over,           FW_DEFAULT);
+    dictAppendWord(dp, "pad",       pad,            FW_DEFAULT);
     dictAppendWord(dp, "postpone",  postponeCoIm,   FW_COMPIMMED);
     dictAppendWord(dp, "quit",      quit,           FW_DEFAULT);
     dictAppendWord(dp, "r>",        fromRStack,     FW_COMPILE);
@@ -4470,7 +4717,7 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     ** CORE EXT word set...
     ** see softcore.fr for other definitions
     */
-    dictAppendWord(dp, ".(",        dotParen,       FW_DEFAULT);
+    dictAppendWord(dp, ".(",        dotParen,       FW_IMMEDIATE);
     dictAppendWord(dp, ":noname",   colonNoName,    FW_DEFAULT);
     dictAppendWord(dp, "2>r",       twoToR,         FW_COMPILE);
     dictAppendWord(dp, "2r>",       twoRFrom,       FW_COMPILE);
@@ -4528,28 +4775,28 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     ** see softcore.c for implementation of locals|
     */
 #if FICL_WANT_LOCALS
-    pLinkParen = 
+    pSys->pLinkParen = 
     dictAppendWord(dp, "(link)",    linkParen,      FW_COMPILE);
-    pUnLinkParen = 
+    pSys->pUnLinkParen = 
     dictAppendWord(dp, "(unlink)",  unlinkParen,    FW_COMPILE);
     dictAppendWord(dp, "doLocal",   doLocalIm,      FW_COMPIMMED);
-    pGetLocalParen =
+    pSys->pGetLocalParen =
     dictAppendWord(dp, "(@local)",  getLocalParen,  FW_COMPILE);
-    pToLocalParen =
+    pSys->pToLocalParen =
     dictAppendWord(dp, "(toLocal)", toLocalParen,   FW_COMPILE);
-    pGetLocal0 =
+    pSys->pGetLocal0 =
     dictAppendWord(dp, "(@local0)", getLocal0,      FW_COMPILE);
-    pToLocal0 =
+    pSys->pToLocal0 =
     dictAppendWord(dp, "(toLocal0)",toLocal0,       FW_COMPILE);
-    pGetLocal1 =
+    pSys->pGetLocal1 =
     dictAppendWord(dp, "(@local1)", getLocal1,      FW_COMPILE);
-    pToLocal1 =
+    pSys->pToLocal1 =
     dictAppendWord(dp, "(toLocal1)",toLocal1,       FW_COMPILE);
     dictAppendWord(dp, "(local)",   localParen,     FW_COMPILE);
 
-    pGet2LocalParen =
+    pSys->pGet2LocalParen =
     dictAppendWord(dp, "(@2local)", get2LocalParen, FW_COMPILE);
-    pTo2LocalParen =
+    pSys->pTo2LocalParen =
     dictAppendWord(dp, "(to2Local)",to2LocalParen,  FW_COMPILE);
     dictAppendWord(dp, "(2local)",  twoLocalParen,  FW_COMPILE);
 
@@ -4580,9 +4827,18 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     ficlCompileTools(pSys);
 
     /*
+    ** FILE and FILE EXT
+    */
+#if FICL_WANT_FILE
+    ficlCompileFile(pSys);
+#endif
+
+    /*
     ** Ficl extras
     */
+#if FICL_WANT_FLOAT
     dictAppendWord(dp, ".hash",     dictHashSummary,FW_DEFAULT);
+#endif
     dictAppendWord(dp, ".ver",      ficlVersion,    FW_DEFAULT);
     dictAppendWord(dp, "-roll",     minusRoll,      FW_DEFAULT);
     dictAppendWord(dp, ">name",     toName,         FW_DEFAULT);
@@ -4590,13 +4846,17 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
                                     addParseStep,   FW_DEFAULT);
     dictAppendWord(dp, "body>",     fromBody,       FW_DEFAULT);
     dictAppendWord(dp, "compare",   compareString,  FW_DEFAULT);   /* STRING */
+    dictAppendWord(dp, "compare-insensitive",   compareStringInsensitive,  FW_DEFAULT);   /* STRING */
     dictAppendWord(dp, "compile-only",
                                     compileOnly,    FW_DEFAULT);
     dictAppendWord(dp, "endif",     endifCoIm,      FW_COMPIMMED);
     dictAppendWord(dp, "last-word", getLastWord,    FW_DEFAULT);
     dictAppendWord(dp, "hash",      hash,           FW_DEFAULT);
     dictAppendWord(dp, "parse-word",parseNoCopy,    FW_DEFAULT);
+    dictAppendWord(dp, "sfind",     sFind,          FW_DEFAULT);
     dictAppendWord(dp, "sliteral",  sLiteralCoIm,   FW_COMPIMMED); /* STRING */
+    dictAppendWord(dp, "sprintf",   ficlSprintf,    FW_DEFAULT);
+    dictAppendWord(dp, "strlen",    ficlStrlen,     FW_DEFAULT);
     dictAppendWord(dp, "q@",        quadFetch,      FW_DEFAULT);
     dictAppendWord(dp, "q!",        quadStore,      FW_DEFAULT);
     dictAppendWord(dp, "w@",        wFetch,         FW_DEFAULT);
@@ -4606,42 +4866,53 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "(user)",    userParen,      FW_DEFAULT);
     dictAppendWord(dp, "user",      userVariable,   FW_DEFAULT);
 #endif
+
     /*
     ** internal support words
     */
     dictAppendWord(dp, "(create)",  createParen,    FW_COMPILE);
-    pExitParen =
+    pSys->pExitParen =
     dictAppendWord(dp, "(exit)",    exitParen,      FW_COMPILE);
-    pSemiParen =
+    pSys->pSemiParen =
     dictAppendWord(dp, "(;)",       semiParen,      FW_COMPILE);
-    pLitParen = 
+    pSys->pLitParen = 
     dictAppendWord(dp, "(literal)", literalParen,   FW_COMPILE);
-    pTwoLitParen = 
+    pSys->pTwoLitParen = 
     dictAppendWord(dp, "(2literal)",twoLitParen,    FW_COMPILE);
-    pStringLit =
+    pSys->pStringLit =
     dictAppendWord(dp, "(.\")",     stringLit,      FW_COMPILE);
-    pIfParen =
+    pSys->pCStringLit =
+    dictAppendWord(dp, "(c\")",     cstringLit,     FW_COMPILE);
+    pSys->pIfParen =
     dictAppendWord(dp, "(if)",      ifParen,        FW_COMPILE);
-    pBranchParen =
+    pSys->pBranchParen =
     dictAppendWord(dp, "(branch)",  branchParen,    FW_COMPILE);
-    pDoParen =
+    pSys->pDoParen =
     dictAppendWord(dp, "(do)",      doParen,        FW_COMPILE);
-    pDoesParen =
+    pSys->pDoesParen =
     dictAppendWord(dp, "(does>)",   doesParen,      FW_COMPILE);
-    pQDoParen =
+    pSys->pQDoParen =
     dictAppendWord(dp, "(?do)",     qDoParen,       FW_COMPILE);
-    pLoopParen =
+    pSys->pLoopParen =
     dictAppendWord(dp, "(loop)",    loopParen,      FW_COMPILE);
-    pPLoopParen =
+    pSys->pPLoopParen =
     dictAppendWord(dp, "(+loop)",   plusLoopParen,  FW_COMPILE);
-    pInterpret =
+    pSys->pInterpret =
     dictAppendWord(dp, "interpret", interpret,      FW_DEFAULT);
     dictAppendWord(dp, "lookup",    lookup,         FW_DEFAULT);
     dictAppendWord(dp, "(variable)",variableParen,  FW_COMPILE);
     dictAppendWord(dp, "(constant)",constantParen,  FW_COMPILE);
     dictAppendWord(dp, "(parse-step)", 
                                     parseStepParen, FW_DEFAULT);
+	pSys->pExitInner =
     dictAppendWord(dp, "exit-inner",ficlExitInner,  FW_DEFAULT);
+
+    /*
+    ** Set up system's outer interpreter loop - maybe this should be in initSystem?
+    */
+	pSys->pInterp[0] = pSys->pInterpret;
+	pSys->pInterp[1] = pSys->pBranchParen;
+	pSys->pInterp[2] = (FICL_WORD *)(void *)(-2);
 
     assert(dictCellsAvail(dp) > 0);
 

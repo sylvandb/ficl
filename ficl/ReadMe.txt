@@ -1,3 +1,22 @@
+rel 3.01 -- 2001
+
+Major contribs by Larry Hastings (larry@hastings.org)
+- FILE wordset
+- ficlEvaluate wrapper for ficlExec
+- ficlInitSystemEx makes it possible to bind selectable properties to VMs at create time
+- softcore.py (python version)
+
+Environment contains ficl-version (double)
+?number handles trailing decimal point per DOUBLE wordset spec
+
+Fixed broken .env (thanks to Leonid Rosin for spotting this goof)
+Fixed broken floating point words that depended on evaluation order of stack pops.
+env-constant
+env-2constant
+dictHashSummary is now commented out unless FICL_WANT_FLOAT (thanks to Leonid Rosin again)
+
+Thanks to David McNab for pointing out that .( should be IMMEDIATE. Now it is.
+
 rel 3.00a -- July 2001
 
 - Fixed broken oo.fr by commenting out vcall stuff using FICL_WANT_VCALL. 
@@ -8,7 +27,7 @@ rel 3.00 -- June 2001
 
 - Added pSys parameter to most ficlXXXX functions - multiple system support
   dictLookupLoc renamed to ficlLookupLoc after addition of pSys param
-  ficlInitSystem returns a FICL_SYSTEM*
+  ficlInibtSystem returns a FICL_SYSTEM*
   ficlTermSystem
   ficlNewVM
   ficlLookup

@@ -75,6 +75,9 @@ static int defaultStack = FICL_DEFAULT_STACK;
 static int defaultDict  = FICL_DEFAULT_DICT;
 
 
+static void ficlSetVersionEnv(FICL_SYSTEM *pSys);
+
+
 /**************************************************************************
                         f i c l I n i t S y s t e m
 ** Binds a global dictionary to the interpreter system. 
@@ -86,8 +89,9 @@ static int defaultDict  = FICL_DEFAULT_DICT;
 ** precompiled part. Try 1K cells minimum. Use "words" to find
 ** out how much of the dictionary is used at any time.
 **************************************************************************/
-FICL_SYSTEM *ficlInitSystem(int nDictCells)
+FICL_SYSTEM *ficlInitSystemEx(FICL_SYSTEM_INFO *fsi)
 {
+	int nDictCells = fsi->nDictCells;
     FICL_SYSTEM *pSys = ficlMalloc(sizeof (FICL_SYSTEM));
     assert(pSys);
 
@@ -102,6 +106,9 @@ FICL_SYSTEM *ficlInitSystem(int nDictCells)
     pSys->envp = dictCreate((unsigned)FICL_DEFAULT_ENV);
     pSys->envp->pForthWords->name = "environment";
 
+	pSys->textOut = fsi->textOut;
+	pSys->context = fsi->context;
+
 #if FICL_WANT_LOCALS
     /*
     ** The locals dictionary is only searched while compiling,
@@ -114,25 +121,29 @@ FICL_SYSTEM *ficlInitSystem(int nDictCells)
 #endif
 
     /*
-    ** Establish the parse order. Note that prefixes precede numbers -
-    ** this allows constructs like "0b101010" which might parse as a
-    ** hex value otherwise.
-    */
-    ficlCompilePrefix(pSys);
-    ficlAddPrecompiledParseStep(pSys, "?number", ficlParseNumber);
-
-    /*
     ** Build the precompiled dictionary and load softwords. We need a temporary
     ** VM to do this - ficlNewVM links one to the head of the system VM list.
     ** ficlCompilePlatform (defined in win32.c, for example) adds platform specific words.
     */
     ficlCompileCore(pSys);
+    ficlCompilePrefix(pSys);
 #if FICL_WANT_FLOAT
     ficlCompileFloat(pSys);
 #endif
-
 #if FICL_PLATFORM_EXTEND
     ficlCompilePlatform(pSys);
+#endif
+    ficlSetVersionEnv(pSys);
+
+    /*
+    ** Establish the parse order. Note that prefixes precede numbers -
+    ** this allows constructs like "0b101010" which might parse as a
+    ** hex value otherwise.
+    */
+    ficlAddPrecompiledParseStep(pSys, "?prefix", ficlParsePrefix);
+    ficlAddPrecompiledParseStep(pSys, "?number", ficlParseNumber);
+#if FICL_WANT_FLOAT
+    ficlAddPrecompiledParseStep(pSys, ">float", ficlParseFloatNumber);
 #endif
 
     /*
@@ -149,6 +160,15 @@ FICL_SYSTEM *ficlInitSystem(int nDictCells)
 
 
     return pSys;
+}
+
+
+FICL_SYSTEM *ficlInitSystem(int nDictCells)
+{
+	FICL_SYSTEM_INFO fsi;
+	ficlInitInfo(&fsi);
+	fsi.nDictCells = nDictCells;
+	return ficlInitSystemEx(&fsi);
 }
 
 
@@ -223,6 +243,7 @@ FICL_VM *ficlNewVM(FICL_SYSTEM *pSys)
     FICL_VM *pVM = vmCreate(NULL, defaultStack, defaultStack);
     pVM->link = pSys->vmList;
     pVM->pSys = pSys;
+	vmSetTextOut(pVM, pSys->textOut);
 
     pSys->vmList = pVM;
     return pVM;
@@ -279,14 +300,31 @@ void ficlFreeVM(FICL_VM *pVM)
 **************************************************************************/
 int ficlBuild(FICL_SYSTEM *pSys, char *name, FICL_CODE code, char flags)
 {
+#if FICL_MULTITHREAD
     int err = ficlLockDictionary(TRUE);
     if (err) return err;
+#endif /* FICL_MULTITHREAD */
 
     assert(dictCellsAvail(pSys->dp) > sizeof (FICL_WORD) / sizeof (CELL));
     dictAppendWord(pSys->dp, name, code, flags);
 
     ficlLockDictionary(FALSE);
     return 0;
+}
+
+
+/**************************************************************************
+                    f i c l E v a l u a t e
+** Wrapper for ficlExec() which sets SOURCE-ID to -1.
+*/
+int ficlEvaluate(FICL_VM *pVM, char *pText)
+{
+    int returnValue;
+    CELL id = pVM->sourceID;
+    pVM->sourceID.i = -1;
+    returnValue = ficlExecC(pVM, pText, -1);
+    pVM->sourceID = id;
+    return returnValue;
 }
 
 
@@ -316,23 +354,15 @@ int ficlExec(FICL_VM *pVM, char *pText)
 int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
 {
 	FICL_SYSTEM *pSys = pVM->pSys;
-    FICL_WORD **pInterp =  pSys->pInterp;
-    FICL_DICT *dp = pSys->dp;
+    FICL_DICT   *dp   = pSys->dp;
 
     int        except;
     jmp_buf    vmState;
     jmp_buf   *oldState;
     TIB        saveTib;
 
-    if (!pInterp[0])
-    {
-        pInterp[0] = ficlLookup(pSys, "interpret");
-        pInterp[1] = ficlLookup(pSys, "(branch)");
-        pInterp[2] = (FICL_WORD *)(void *)(-2);
-    }
-    
-    assert(pInterp[0]);
     assert(pVM);
+    assert(pSys->pInterp[0]);
 
     if (size < 0)
         size = strlen(pText);
@@ -356,7 +386,7 @@ int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
         }
         else
         {   /* set VM up to interpret text */
-            vmPushIP(pVM, &pInterp[0]);
+            vmPushIP(pVM, &(pSys->pInterp[0]));
         }
 
         vmInnerLoop(pVM);
@@ -430,17 +460,13 @@ int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
 **************************************************************************/
 int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
 {
-    static FICL_WORD *pQuit = NULL;
     int        except;
     jmp_buf    vmState;
     jmp_buf   *oldState;
     FICL_WORD *oldRunningWord;
 
-    if (!pQuit)
-        pQuit = ficlLookup(pVM->pSys, "exit-inner");
-
     assert(pVM);
-    assert(pQuit);
+    assert(pVM->pSys->pExitInner);
     
     /* 
     ** Save the runningword so that RESTART behaves correctly
@@ -457,7 +483,7 @@ int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
     if (except)
         vmPopIP(pVM);
     else
-        vmPushIP(pVM, &pQuit);
+        vmPushIP(pVM, &(pVM->pSys->pExitInner));
 
     switch (except)
     {
@@ -640,4 +666,17 @@ void ficlTermSystem(FICL_SYSTEM *pSys)
     return;
 }
 
+
+/**************************************************************************
+                        f i c l S e t V e r s i o n E n v
+** Create a double cell environment constant for the version ID
+**************************************************************************/
+static void ficlSetVersionEnv(FICL_SYSTEM *pSys)
+{
+    int major = 0;
+    int minor = 0;
+    sscanf(FICL_VER, "%d.%d", &major, &minor);
+    ficlSetEnvD(pSys, "ficl-version", major, minor);
+    return;
+}
 

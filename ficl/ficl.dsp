@@ -96,6 +96,10 @@ SOURCE=.\ficl.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\fileaccess.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\float.c
 # End Source File
 # Begin Source File
@@ -185,6 +189,10 @@ SOURCE=.\softwords\ficllocal.fr
 # End Source File
 # Begin Source File
 
+SOURCE=.\softwords\fileaccess.fr
+# End Source File
+# Begin Source File
+
 SOURCE=.\softwords\forml.fr
 # End Source File
 # Begin Source File
@@ -234,6 +242,10 @@ SOURCE=.\doc\ficl.html
 # Begin Source File
 
 SOURCE=.\doc\ficl_debug.html
+# End Source File
+# Begin Source File
+
+SOURCE=.\ficl_guts.htm
 # End Source File
 # Begin Source File
 

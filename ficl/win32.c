@@ -157,6 +157,7 @@ static void VCall(FICL_VM *pVM)
 }
 
 
+#if 0
 //**************************************************************
 //Load forth file.
 //ENTER:    pVM = Pointer to forth virtual machine.
@@ -288,6 +289,35 @@ static void reinclude(FICL_VM *pVM)
     }
 }
 
+#endif /* 0 */
+
+
+static void ficlWordGetTickCount(FICL_VM *pVM) /* ( -- ms ) */
+{
+    stackPushINT(pVM->pStack, (int)GetTickCount());
+}
+
+
+static void ficlDebugBreak(FICL_VM *pVM) /* ( -- ) */
+{
+    DebugBreak();
+    pVM = pVM;
+}
+
+
+static void ficlOutputDebugString(FICL_VM *pVM) /* ( c-addr u -- ) */
+{
+    int length = stackPopINT(pVM->pStack);
+    void *address = (void *)stackPopPtr(pVM->pStack);
+
+    char *buf = (char *)_alloca(length + 1);
+    memcpy(buf, address, length);
+    buf[length] = 0;
+
+    OutputDebugString(buf);
+}
+
+
 
 /**************************************************************************
                         f i c l C o m p i l e P l a t f o r m
@@ -306,9 +336,71 @@ void ficlCompilePlatform(FICL_SYSTEM *pSys)
                                          callNativeFunction,
                                                          FW_DEFAULT);
     dictAppendWord(dp, "vcall",          VCall,          FW_DEFAULT);
+/*
     dictAppendWord(dp, "include",        include,        FW_DEFAULT);
     dictAppendWord(dp, "reinclude",      reinclude,      FW_DEFAULT);
+*/
+    dictAppendWord(dp, "GetTickCount", ficlWordGetTickCount,  FW_DEFAULT);
+
+    dictAppendWord(dp, "debug-break", ficlDebugBreak,  FW_DEFAULT);
+    dictAppendWord(dp, "output-debug-string", ficlOutputDebugString,  FW_DEFAULT);
 
     return;
 }
+
+
+
+
+/*
+**
+** Heavy, undocumented wizardry here.
+**
+** In Win32, like most OSes, the buffered file I/O functions in the
+** C API (functions that take a FILE * like fopen()) are implemented
+** on top of the raw file I/O functions (functions that take an int,
+** like open()).  However, in Win32, these functions in turn are
+** implemented on top of the Win32 native file I/O functions (functions
+** that take a HANDLE, like CreateFile()).  This behavior is undocumented
+** but easy to deduce by reading the CRT/SRC directory.
+**
+** The below mishmash of typedefs and defines were copied from
+** CRT/SRC/INTERNAL.H.
+**
+** --lch
+*/
+typedef struct {
+        long osfhnd;    /* underlying OS file HANDLE */
+        char osfile;    /* attributes of file (e.g., open in text mode?) */
+        char pipech;    /* one char buffer for handles opened on pipes */
+#ifdef _MT
+        int lockinitflag;
+        CRITICAL_SECTION lock;
+#endif  /* _MT */
+    }   ioinfo;
+extern _CRTIMP ioinfo * __pioinfo[];
+
+#define IOINFO_L2E          5
+#define IOINFO_ARRAY_ELTS   (1 << IOINFO_L2E)
+#define _pioinfo(i) ( __pioinfo[(i) >> IOINFO_L2E] + ((i) & (IOINFO_ARRAY_ELTS - \
+                              1)) )
+#define _osfhnd(i)  ( _pioinfo(i)->osfhnd )
+
+
+int ftruncate(int fileno, size_t size)
+{
+    HANDLE hFile = (HANDLE)_osfhnd(fileno);
+    if (SetFilePointer(hFile, size, NULL, FILE_BEGIN) != size)
+        return 0;
+    return !SetEndOfFile(hFile);
+}
+
+#if 0
+unsigned long ficlNtohl(unsigned long number)
+{
+    return ntohl(number);
+}
+#endif
+
+
+
 

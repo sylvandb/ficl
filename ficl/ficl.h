@@ -220,6 +220,7 @@ extern "C" {
 
 #include "sysdep.h"
 #include <limits.h> /* UCHAR_MAX */
+#include <stdio.h>
 
 /*
 ** Forward declarations... read on.
@@ -232,11 +233,13 @@ struct ficl_dict;
 typedef struct ficl_dict FICL_DICT;
 struct ficl_system;
 typedef struct ficl_system FICL_SYSTEM;
+struct ficl_system_info;
+typedef struct ficl_system_info FICL_SYSTEM_INFO;
 
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "3.00"
+#define FICL_VER    "3.01"
 #if !defined (FICL_PROMPT)
 #define FICL_PROMPT "ok> "
 #endif
@@ -471,6 +474,7 @@ typedef void (*OUTFUNC)(FICL_VM *pVM, char *text, int fNewline);
 struct vm
 {
     FICL_SYSTEM    *pSys;       /* Which system this VM belongs to  */
+    void           *context;    /* Not used by FICL--use this for your own data  */
     FICL_VM        *link;       /* Ficl keeps a VM list for simple teardown */
     jmp_buf        *pState;     /* crude exception mechanism...     */
     OUTFUNC         textOut;    /* Output callback - see sysdep.c   */
@@ -485,7 +489,7 @@ struct vm
 #if FICL_WANT_FLOAT
     FICL_STACK     *fStack;     /* float stack (optional)           */
 #endif
-    CELL            sourceID;   /* -1 if string, 0 if normal input  */
+    CELL            sourceID;   /* -1 if EVALUATE, 0 if normal input */
     TIB             tib;        /* address of incoming text string  */
 #if FICL_WANT_USER
     CELL            user[FICL_USER_CELLS];
@@ -582,9 +586,7 @@ void        vmPushIP       (FICL_VM *pVM, IPTYPE newIP);
 void        vmQuit         (FICL_VM *pVM);
 void        vmReset        (FICL_VM *pVM);
 void        vmSetTextOut   (FICL_VM *pVM, OUTFUNC textOut);
-#if FICL_WANT_DEBUGGER
-void        vmStep         (FICL_VM *pVM);
-#endif
+void        vmTextOut      (FICL_VM *pVM, char *text, int fNewline);
 void        vmTextOut      (FICL_VM *pVM, char *text, int fNewline);
 void        vmThrow        (FICL_VM *pVM, int except);
 void        vmThrowErr     (FICL_VM *pVM, char *fmt, ...);
@@ -759,7 +761,9 @@ FICL_DICT  *dictCreateHashed(unsigned nCells, unsigned nHash);
 FICL_HASH  *dictCreateWordlist(FICL_DICT *dp, int nBuckets);
 void        dictDelete     (FICL_DICT *pDict);
 void        dictEmpty      (FICL_DICT *pDict, unsigned nHash);
+#if FICL_WANT_FLOAT
 void        dictHashSummary(FICL_VM *pVM);
+#endif
 int         dictIncludes   (FICL_DICT *pDict, void *p);
 FICL_WORD  *dictLookup     (FICL_DICT *pDict, STRINGINFO si);
 #if FICL_WANT_LOCALS
@@ -806,6 +810,23 @@ void ficlAddPrecompiledParseStep(FICL_SYSTEM *pSys, char *name, FICL_PARSE_STEP 
 void ficlListParseSteps(FICL_VM *pVM);
 
 /*
+** FICL_BREAKPOINT record.
+** origXT - if NULL, this breakpoint is unused. Otherwise it stores the xt 
+** that the breakpoint overwrote. This is restored to the dictionary when the
+** BP executes or gets cleared
+** address - the location of the breakpoint (address of the instruction that
+**           has been replaced with the breakpoint trap
+** origXT  - The original contents of the location with the breakpoint
+** Note: address is NULL when this breakpoint is empty
+*/
+typedef struct FICL_BREAKPOINT
+{
+    void      *address;
+    FICL_WORD *origXT;
+} FICL_BREAKPOINT;
+
+
+/*
 ** F I C L _ S Y S T E M
 ** The top level data structure of the system - ficl_system ties a list of
 ** virtual machines with their corresponding dictionaries. Ficl 3.0 will
@@ -813,16 +834,11 @@ void ficlListParseSteps(FICL_VM *pVM);
 ** to separate dictionaries with some constraints. 
 ** The present model allows multiple sessions to one dictionary provided
 ** you implement ficlLockDictionary() as specified in sysdep.h
-**
-** RESTRICTIONS: due to the use of static variables in words.c for compiling
-** comtrol structures faster, if you use multiple ficl systems these variables
-** will point into the most recently initialized dictionary - this is probably
-** not a problem provided the precompiled dictionaries are identical for 
-** all systems.
 */
 struct ficl_system 
 {
     FICL_SYSTEM *link;
+    void *context;    /* Not used by FICL--use this for your own data  */
     FICL_VM *vmList;
     FICL_DICT *dp;
     FICL_DICT *envp;
@@ -831,7 +847,54 @@ struct ficl_system
 #endif
     FICL_WORD *pInterp[3];
     FICL_WORD *parseList[FICL_MAX_PARSE_STEPS];
+	OUTFUNC    textOut;
+
+	FICL_WORD *pBranchParen;
+	FICL_WORD *pDoParen;
+	FICL_WORD *pDoesParen;
+	FICL_WORD *pExitInner;
+	FICL_WORD *pExitParen;
+	FICL_WORD *pIfParen;
+	FICL_WORD *pInterpret;
+	FICL_WORD *pLitParen;
+	FICL_WORD *pTwoLitParen;
+	FICL_WORD *pLoopParen;
+	FICL_WORD *pPLoopParen;
+	FICL_WORD *pQDoParen;
+	FICL_WORD *pSemiParen;
+	FICL_WORD *pStore;
+	FICL_WORD *pCStringLit;
+	FICL_WORD *pStringLit;
+
+#if FICL_WANT_LOCALS
+	FICL_WORD *pGetLocalParen;
+	FICL_WORD *pGet2LocalParen;
+	FICL_WORD *pGetLocal0;
+	FICL_WORD *pGetLocal1;
+	FICL_WORD *pToLocalParen;
+	FICL_WORD *pTo2LocalParen;
+	FICL_WORD *pToLocal0;
+	FICL_WORD *pToLocal1;
+	FICL_WORD *pLinkParen;
+	FICL_WORD *pUnLinkParen;
+	FICL_INT   nLocals;
+	CELL *pMarkLocals;
+#endif
+
+	FICL_BREAKPOINT bpStep;
 };
+
+struct ficl_system_info
+{
+	int size;
+	int nDictCells;
+	OUTFUNC textOut;
+	void *context;
+};
+
+
+#define ficlInitInfo(x) { memset((x), 0, sizeof(FICL_SYSTEM_INFO)); \
+         (x)->size = sizeof(FICL_SYSTEM_INFO); }
 
 /*
 ** External interface to FICL...
@@ -840,7 +903,8 @@ struct ficl_system
 ** f i c l I n i t S y s t e m
 ** Binds a global dictionary to the interpreter system and initializes
 ** the dict to contain the ANSI CORE wordset. 
-** You specify the address and size of the allocated area.
+** You can specify the address and size of the allocated area.
+** Using ficlInitSystemEx you can also specify the text output function.
 ** After that, ficl manages it.
 ** First step is to set up the static pointers to the area.
 ** Then write the "precompiled" portion of the dictionary in.
@@ -848,6 +912,9 @@ struct ficl_system
 ** precompiled part. Try 1K cells minimum. Use "words" to find
 ** out how much of the dictionary is used at any time.
 */
+FICL_SYSTEM *ficlInitSystemEx(FICL_SYSTEM_INFO *fsi);
+
+/* Deprecated call */
 FICL_SYSTEM *ficlInitSystem(int nDictCells);
 
 /*
@@ -857,6 +924,16 @@ FICL_SYSTEM *ficlInitSystem(int nDictCells);
 ** reclaim all memory used by the dictionary and VMs.
 */
 void       ficlTermSystem(FICL_SYSTEM *pSys);
+
+/*
+** f i c l E v a l u a t e
+** Evaluates a block of input text in the context of the
+** specified interpreter. Also sets SOURCE-ID properly.
+**
+** PLEASE USE THIS FUNCTION when throwing a hard-coded
+** string to the FICL interpreter.
+*/
+int        ficlEvaluate(FICL_VM *pVM, char *pText);
 
 /*
 ** f i c l E x e c
@@ -879,6 +956,10 @@ void       ficlTermSystem(FICL_SYSTEM *pSys);
 **      commands.
 ** Preconditions: successful execution of ficlInitSystem,
 **      Successful creation and init of the VM by ficlNewVM (or equiv)
+**
+** If you call ficlExec() or one of its brothers, you MUST
+** ensure pVM->sourceID was set to a sensible value.
+** ficlExec() explicitly DOES NOT manage SOURCE-ID for you.
 */
 int        ficlExec (FICL_VM *pVM, char *pText);
 int        ficlExecC(FICL_VM *pVM, char *pText, FICL_INT nChars);
@@ -955,12 +1036,15 @@ void       ficlCompilePrefix(FICL_SYSTEM *pSys);
 void       ficlCompileSearch(FICL_SYSTEM *pSys);
 void       ficlCompileSoftCore(FICL_SYSTEM *pSys);
 void       ficlCompileTools(FICL_SYSTEM *pSys);
+void       ficlCompileFile(FICL_SYSTEM *pSys);
 #if FICL_WANT_FLOAT
 void       ficlCompileFloat(FICL_SYSTEM *pSys);
+int        ficlParseFloatNumber( FICL_VM *pVM, STRINGINFO si ); /* float.c */
 #endif
 #if FICL_PLATFORM_EXTEND
 void       ficlCompilePlatform(FICL_SYSTEM *pSys);
 #endif
+int        ficlParsePrefix(FICL_VM *pVM, STRINGINFO si);
 
 /*
 ** from words.c...
@@ -994,11 +1078,33 @@ typedef enum
     PRIMITIVE,
     QDO,
     STRINGLIT,
+    CSTRINGLIT,
+#if FICL_WANT_USER
     USER, 
+#endif
     VARIABLE, 
 } WORDKIND;
 
 WORDKIND   ficlWordClassify(FICL_WORD *pFW);
+
+
+
+/*
+** Used with File-Access wordset.
+*/
+#define FICL_FAM_READ	1
+#define FICL_FAM_WRITE	2
+#define FICL_FAM_APPEND	4
+#define FICL_FAM_BINARY	8
+
+#define FICL_FAM_OPEN_MODE(fam)	((fam) & (FICL_FAM_READ | FICL_FAM_WRITE | FICL_FAM_APPEND))
+
+
+typedef struct ficlFILE
+{
+	FILE *f;
+	char filename[256];
+} ficlFILE;
 
 #ifdef __cplusplus
 }

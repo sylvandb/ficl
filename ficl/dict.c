@@ -459,6 +459,7 @@ void dictEmpty(FICL_DICT *pDict, unsigned nHash)
 ** addressing scheme (i.e. collisions resolved by searching the
 ** table for an empty slot) for a given size table.
 **************************************************************************/
+#if FICL_WANT_FLOAT
 void dictHashSummary(FICL_VM *pVM)
 {
     FICL_DICT *dp = vmGetDict(pVM);
@@ -522,7 +523,7 @@ void dictHashSummary(FICL_VM *pVM)
 
     return;
 }
-
+#endif
 
 /**************************************************************************
                         d i c t I n c l u d e s
