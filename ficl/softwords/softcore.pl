@@ -53,7 +53,6 @@ print <<EOF
 ** if you would like to contribute to the ficl release, please send
 ** contact me by email at the address above.
 **
-** \$Id$
 */
 
 

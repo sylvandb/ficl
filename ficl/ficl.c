@@ -123,7 +123,7 @@ void ficlInitSystem(int nDictCells)
     ** valid hex value otherwise.
     */
     ficlCompilePrefix(pSys);
-    ficlAddPrecompiledParseStep(pSys, "number?", ficlParseNumber);
+    ficlAddPrecompiledParseStep(pSys, ">number", ficlParseNumber);
 
     /*
     ** Build the precompiled dictionary and load softwords. We need a temporary

@@ -169,6 +169,7 @@ set-current   \ stop hiding words
 ; 
 
 : debug  ' debug-xt ;
+: on-step   ." S: " .s cr ;
 
 previous   \ lose hidden words from search order
 

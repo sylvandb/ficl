@@ -823,7 +823,6 @@ void ficlListParseSteps(FICL_VM *pVM);
 typedef struct ficl_system 
 {
     FICL_SYSTEM *link;
-    FICL_WORD *parseList[FICL_MAX_PARSE_STEPS];
     FICL_VM *vmList;
     FICL_DICT *dp;
     FICL_DICT *envp;
@@ -831,6 +830,7 @@ typedef struct ficl_system
     FICL_DICT *localp;
 #endif
     FICL_WORD *pInterp[3];
+    FICL_WORD *parseList[FICL_MAX_PARSE_STEPS];
 } FICL_SYSTEM;
 
 /*

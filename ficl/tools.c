@@ -96,9 +96,19 @@ static void vmSetBreak(FICL_VM *pVM, BREAKPOINT *pBP)
 {
     FICL_WORD *pStep = ficlLookup("step-break");
     assert(pStep);
+
     pBP->address = pVM->ip;
     pBP->origXT = *pVM->ip;
     *pVM->ip = pStep;
+}
+
+
+/*
+** debugPrompt
+*/
+static void debugPrompt(FICL_VM *pVM)
+{
+        vmTextOut(pVM, "debug> ", 0);
 }
 
 
@@ -332,12 +342,11 @@ void ficlDebugXT(FICL_VM *pVM)
         ** Run the colon code and set a breakpoint at the next instruction
         */
         vmExecute(pVM, xt);
-        bpStep.address = pVM->ip;
-        bpStep.origXT = *pVM->ip;
-        *pVM->ip = pStep;
+        vmSetBreak(pVM, &bpStep);
         break;
 
     default:
+        vmExecute(pVM, xt);
         break;
     }
 
@@ -428,26 +437,24 @@ void stepBreak(FICL_VM *pVM)
 {
     STRINGINFO si;
     FICL_WORD *pFW;
-    FICL_WORD *pOnStep = ficlLookup("on-step");
+    FICL_WORD *pOnStep;
 
     if (!pVM->fRestart)
     {
-
-        assert(bpStep.address != NULL);
+        assert(bpStep.address);
+        assert(bpStep.origXT);
         /*
         ** Clear the breakpoint that caused me to run
         ** Restore the original instruction at the breakpoint, 
         ** and restore the IP
         */
-        assert(bpStep.address);
-        assert(bpStep.origXT);
-
         pVM->ip = (IPTYPE)bpStep.address;
         *pVM->ip = bpStep.origXT;
 
         /*
         ** If there's an onStep, do it
         */
+        pOnStep = ficlLookup("on-step");
         if (pOnStep)
             ficlExecXT(pVM, pOnStep);
 
@@ -462,6 +469,7 @@ void stepBreak(FICL_VM *pVM)
         }
 
         vmTextOut(pVM, pVM->pad, 1);
+        debugPrompt(pVM);
     }
     else
     {
@@ -484,19 +492,39 @@ void stepBreak(FICL_VM *pVM)
     }
     else if (!strincmp(si.cp, "q", si.count))
     {
+        ficlTextOut(pVM, FICL_PROMPT, 0);
         vmThrow(pVM, VM_ABORT);
     }
-    else if (!strincmp(si.cp, "?", si.count))
+    else if (!strincmp(si.cp, "x", si.count))
+    {
+        /*
+        ** Take whatever's left in the TIB and feed it to a subordinate ficlExec
+        */ 
+        int ret;
+        char *cp = pVM->tib.cp + pVM->tib.index;
+        int count = pVM->tib.end - cp; 
+        FICL_WORD *oldRun = pVM->runningWord;
+
+        ret = ficlExecC(pVM, cp, count);
+
+        if (ret == VM_OUTOFTEXT)
+        {
+            ret = VM_RESTART;
+            pVM->runningWord = oldRun;
+            debugPrompt(pVM);
+        }
+
+        vmThrow(pVM, ret);
+    }
+    else
     {
         vmTextOut(pVM, "i -- step In", 1);
         vmTextOut(pVM, "o -- step Over", 1);
         vmTextOut(pVM, "g -- Go (execute to completion)", 1);
         vmTextOut(pVM, "q -- Quit (stop debugging and abort)", 1);
-    }
-    else
-    {
-        vmTextOut(pVM, "unrecognized debug command", 1);
-        vmThrow(pVM, VM_ABORT);
+        vmTextOut(pVM, "x -- eXecute the rest of the line as ficl words", 1);
+        debugPrompt(pVM);
+        vmThrow(pVM, VM_RESTART);
     }
 
     return;
@@ -521,46 +549,40 @@ static void bye(FICL_VM *pVM)
 ** TOOLS 
 ** Display the parameter stack (code for ".s")
 **************************************************************************/
-static void displayStack(FICL_VM *pVM)
+static void displayStack(FICL_VM *pVM, FICL_STACK *pStk)
 {
-    int d = stackDepth(pVM->pStack);
+    int d = stackDepth(pStk);
     int i;
     CELL *pCell;
-
-    vmCheckStack(pVM, 0, 0);
 
     if (d == 0)
         vmTextOut(pVM, "(Stack Empty) ", 0);
     else
     {
-        pCell = pVM->pStack->base;
+        pCell = pStk->base;
         for (i = 0; i < d; i++)
         {
             vmTextOut(pVM, ltoa((*pCell++).i, pVM->pad, pVM->base), 0);
             vmTextOut(pVM, " ", 0);
         }
     }
+
+    return;
+}
+
+static void displayPStack(FICL_VM *pVM)
+{
+    vmCheckStack(pVM, 0, 0);
+    displayStack(pVM, pVM->pStack);
+    return;
 }
 
 
 static void displayRStack(FICL_VM *pVM)
 {
-    int d = stackDepth(pVM->rStack);
-    int i;
-    CELL *pCell;
-
-    vmTextOut(pVM, "Return Stack: ", 0);
-    if (d == 0)
-        vmTextOut(pVM, "Empty ", 0);
-    else
-    {
-        pCell = pVM->rStack->base;
-        for (i = 0; i < d; i++)
-        {
-            vmTextOut(pVM, ultoa((*pCell++).i, pVM->pad, 16), 0);
-            vmTextOut(pVM, " ", 0);
-        }
-    }
+    vmCheckStack(pVM, 0, 0);
+    displayStack(pVM, pVM->rStack);
+    return;
 }
 
 
@@ -746,7 +768,7 @@ void ficlCompileTools(FICL_SYSTEM *pSys)
     ** TOOLS and TOOLS EXT
     */
     dictAppendWord(dp, ".r",        displayRStack,  FW_DEFAULT); /* guy carver */
-    dictAppendWord(dp, ".s",        displayStack,   FW_DEFAULT);
+    dictAppendWord(dp, ".s",        displayPStack,  FW_DEFAULT);
     dictAppendWord(dp, "bye",       bye,            FW_DEFAULT);
     dictAppendWord(dp, "forget",    forget,         FW_DEFAULT);
     dictAppendWord(dp, "see",       see,            FW_DEFAULT);
@@ -773,7 +795,6 @@ void ficlCompileTools(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "step-break",stepBreak,      FW_DEFAULT);
     dictAppendWord(dp, "forget-wid",forgetWid,      FW_DEFAULT);
     dictAppendWord(dp, "see-xt",    seeXT,          FW_DEFAULT);
-    dictAppendWord(dp, ".r",        displayRStack,  FW_DEFAULT);
 
     return;
 }

@@ -1225,6 +1225,7 @@ static void interpret(FICL_VM *pVM)
     FICL_SYSTEM *pSys;
 
     assert(pVM);
+
     pSys = pVM->pSys;
     si   = vmGetWord0(pVM);
 
@@ -1336,6 +1337,16 @@ static int ficlParseWord(FICL_VM *pVM, STRINGINFO si)
     }
 
     return FICL_FALSE;
+}
+
+
+static void lookup(FICL_VM *pVM)
+{
+    STRINGINFO si;
+    SI_SETLEN(si, stackPopUNS(pVM->pStack));
+    SI_SETPTR(si, stackPopPtr(pVM->pStack));
+    stackPushINT(pVM->pStack, ficlParseWord(pVM, si));
+    return;
 }
 
 
@@ -4611,6 +4622,7 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "(+loop)",   plusLoopParen,  FW_COMPILE);
     pInterpret =
     dictAppendWord(dp, "interpret", interpret,      FW_DEFAULT);
+    dictAppendWord(dp, "lookup",    lookup,         FW_DEFAULT);
     dictAppendWord(dp, "(variable)",variableParen,  FW_COMPILE);
     dictAppendWord(dp, "(constant)",constantParen,  FW_COMPILE);
     dictAppendWord(dp, "(parse-step)", 

@@ -767,8 +767,23 @@ static void FisGreater(FICL_VM *pVM)
 }
 
 
-#define NUMISNEG 1
-#define EXPISNEG 2
+/*******************************************************************
+** Move float to param stack (assumes they both fit in a single CELL)
+** f>s 
+*******************************************************************/
+static void FtoS(FICL_VM *pVM)
+{
+    CELL c;
+
+#if FICL_ROBUST > 1
+    vmCheckFStack(pVM, 1, 0);
+    vmCheckStack(pVM, 0, 1);
+#endif
+
+    c = stackPop(pVM->fStack);
+    stackPush(pVM->pStack, c);
+    return;
+}
 
 
 /**************************************************************************
@@ -776,6 +791,9 @@ static void FisGreater(FICL_VM *pVM)
 ** Enum to determine the current segement of a floating point number
 ** being parsed.
 **************************************************************************/
+#define NUMISNEG 1
+#define EXPISNEG 2
+
 enum
 {
     FPS_START,
@@ -994,6 +1012,8 @@ void ficlCompileFloat(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "i-f",       isubf,          FW_DEFAULT);
     dictAppendWord(dp, "i/f",       idivf,          FW_DEFAULT);
 
+    dictAppendWord(dp, "f>s",       FtoS,           FW_DEFAULT);
+
     dictAppendWord(dp, "f-roll",    FminusRoll,     FW_DEFAULT);
     dictAppendWord(dp, "f-rot",     Fminusrot,      FW_DEFAULT);
     dictAppendWord(dp, "(fliteral)", fliteralParen, FW_COMPILE);
@@ -1002,7 +1022,7 @@ void ficlCompileFloat(FICL_SYSTEM *pSys)
     ficlSetEnv("floating-ext",   FICL_FALSE);
     ficlSetEnv("floating-stack", FICL_DEFAULT_STACK);
 
-    ficlAddPrecompiledParseStep(pSys, "fnumber?", ficlParseFloatNumber);
+    ficlAddPrecompiledParseStep(pSys, ">float", ficlParseFloatNumber);
 #endif
     return;
 }

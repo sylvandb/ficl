@@ -226,34 +226,42 @@ SOURCE=.\softwords\string.fr
 # End Group
 # Begin Group "doc"
 
-# PROP Default_Filter ".html,.js"
+# PROP Default_Filter "*.html. *.txt"
 # Begin Source File
 
-SOURCE=..\doc\ficl.html
+SOURCE=.\doc\ficl.html
 # End Source File
 # Begin Source File
 
-SOURCE=..\doc\ficl_debug.html
+SOURCE=.\doc\ficl_debug.html
 # End Source File
 # Begin Source File
 
-SOURCE=..\doc\ficl_loc.html
+SOURCE=.\doc\ficl_loc.html
 # End Source File
 # Begin Source File
 
-SOURCE=..\doc\ficl_oop.html
+SOURCE=.\doc\ficl_oop.html
 # End Source File
 # Begin Source File
 
-SOURCE=..\doc\ficl_rel.html
+SOURCE=.\doc\ficl_rel.html
 # End Source File
 # Begin Source File
 
-SOURCE=..\doc\ficlheader.js
+SOURCE=.\doc\ficlheader.js
 # End Source File
 # Begin Source File
 
-SOURCE=..\doc\oo_in_c.html
+SOURCE=.\doc\index.html
+# End Source File
+# Begin Source File
+
+SOURCE=.\doc\oo_in_c.html
+# End Source File
+# Begin Source File
+
+SOURCE=.\doc\primer.txt
 # End Source File
 # End Group
 # Begin Source File
