@@ -1,0 +1,19 @@
+OBJECTS= dict.o ficl.o math64.o softcore.o stack.o sysdep.o vm.o words.o
+HEADERS= ficl.h math64.h sysdep.h
+#
+# Flags for shared library
+CFLAGS= -O -c -mstubs -D__UNAME
+CC=gcc
+LIB = makealf -qls -o
+
+MAJOR = 2
+MINOR = 0.3
+
+lib: o.libficl
+
+# static library build
+o.libficl: $(OBJECTS)
+        $(LIB) o.libficl $(OBJECTS)
+
+testmain: testmain.o ficl.h sysdep.h libficl.so.$(MAJOR).$(MINOR)
+        $(CC) testmain.o -o testmain -L. -lficl -luname
