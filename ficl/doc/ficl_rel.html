@@ -9,7 +9,8 @@
 <body>
 
 <h1>
-<b>Ficl Release Notes</b></h1>
+<b>Ficl Release Notes</b>
+</h1>
 
 
 <script language="javascript" src="ficlheader.js"></script>
@@ -19,12 +20,63 @@
 <table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
-<h2><a NAME="whatsnew">Version 3.00a</a></h2>
+<h2><a NAME="whatsnew">Version 3.01</a></h2>
+<ul>
+<li>
+Major contribs by Larry Hastings (larry@hastings.org):
+<ul>
+<li>
+FILE wordset (fileaccess.c)
+</li>
+<li>
+ficlEvaluate wrapper for ficlExec
+</li>
+<li>
+ficlInitSystemEx makes it possible to bind selectable properties to VMs at create time
+</li>
+<li>
+Python version of softcore builder ficl/softwords/softcore.py
+</li>
+</ul>
+</li>
+<li>
+<a href="http://www.swig.org">SWIG</a> wrapper for Ficl contributed by <a href="mailto:xiaoye@users.sf.net">Ye Xiaofeng</a>.
+SWIG is a software development tool that connects programs written in C, C++, and Objective-C with a variety of high-level programming languages - now including Ficl. SWIG writes the wrapper code so you don't have to.
+</li>
+<li>
+Environment contains ficl-version (double)
+</li>
+<li>
+?number handles trailing decimal point per DOUBLE wordset spec
+</li>
+<li>
+Fixed broken .env (thanks to Leonid Rosin for spotting this goof)
+</li>
+<li>
+Fixed broken floating point words that depended on evaluation order of stack pops.
+</li>
+<li>
+env-constant
+</li>
+<li>
+env-2constant
+</li>
+<li>
+dictHashSummary is now commented out unless FICL_WANT_FLOAT (thanks to Leonid Rosin again)
+</li>
+<li>
+Thanks to David McNab for pointing out that .( should be IMMEDIATE. Now it is.
+</li>
+</ul>
+
+
+<h2>Version 3.00a</h2>
 
 <ul>
 <li>
 Fixed broken oo.fr by commenting out vcall stuff using FICL_WANT_VCALL. Vcall is still broken.
 </li>
+</ul>
 
 <h2>Version 3.00</h2>
 
