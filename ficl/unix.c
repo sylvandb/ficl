@@ -1,4 +1,5 @@
 #include <string.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 
 #include "ficl.h"
