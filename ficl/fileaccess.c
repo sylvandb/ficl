@@ -35,7 +35,7 @@ static void ficlFopen(FICL_VM *pVM, char *writeMode) /* ( c-addr u fam -- fileid
     char mode[4];
     FILE *f;
 
-    char *filename = (char *)_alloca(length + 1);
+    char *filename = (char *)alloca(length + 1);
     memcpy(filename, address, length);
     filename[length] = 0;
 
@@ -108,7 +108,7 @@ static void ficlDeleteFile(FICL_VM *pVM) /* ( c-addr u -- ior ) */
     int length = stackPopINT(pVM->pStack);
     void *address = (void *)stackPopPtr(pVM->pStack);
 
-    char *filename = (char *)_alloca(length + 1);
+    char *filename = (char *)alloca(length + 1);
     memcpy(filename, address, length);
     filename[length] = 0;
 
@@ -124,14 +124,14 @@ static void ficlRenameFile(FICL_VM *pVM) /* ( c-addr1 u1 c-addr2 u2 -- ior ) */
 
     length = stackPopINT(pVM->pStack);
     address = (void *)stackPopPtr(pVM->pStack);
-    to = (char *)_alloca(length + 1);
+    to = (char *)alloca(length + 1);
     memcpy(to, address, length);
     to[length] = 0;
 
     length = stackPopINT(pVM->pStack);
     address = (void *)stackPopPtr(pVM->pStack);
 
-    from = (char *)_alloca(length + 1);
+    from = (char *)alloca(length + 1);
     memcpy(from, address, length);
     from[length] = 0;
 
@@ -145,7 +145,7 @@ static void ficlFileStatus(FICL_VM *pVM) /* ( c-addr u -- x ior ) */
     int length = stackPopINT(pVM->pStack);
     void *address = (void *)stackPopPtr(pVM->pStack);
 
-    char *filename = (char *)_alloca(length + 1);
+    char *filename = (char *)alloca(length + 1);
     memcpy(filename, address, length);
     filename[length] = 0;
 
@@ -179,9 +179,9 @@ static void ficlFilePosition(FICL_VM *pVM) /* ( fileid -- ud ior ) */
 
 static long fileSize(FILE *f)
 {
-    struct _stat statbuf;
+    struct stat statbuf;
     statbuf.st_size = -1;
-    if (_fstat(fileno(f), &statbuf) != 0)
+    if (fstat(fileno(f), &statbuf) != 0)
         return -1;
     return statbuf.st_size;
 }
