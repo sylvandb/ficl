@@ -324,7 +324,7 @@ int ficlLockDictionary(short fLock)
 
 #if PORTABLE_LONGMULDIV == 0
 
-#ifdef riscos
+#if defined(riscos)
 typedef unsigned long long __u64;
 typedef unsigned long __u32;
 #endif
