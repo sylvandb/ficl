@@ -32,13 +32,6 @@ while (<>) {
     s/\"/\\\"/g;        # escape quotes
 
     #
-    # ignore empty lines and lines containing
-    # only empty comments
-    #
-    next if /^\s*\\\s*$/;
-    next if /^\s*$/;
-
-    #
     # emit lines beginnning with "\ **" as C comments
     #
     if (/^\\\s\*\*/)  {	
@@ -56,6 +49,13 @@ while (<>) {
     }
 
     $commenting = 0;
+
+    #
+    # ignore empty lines and lines containing
+    # only empty comments
+    #
+    next if /^\s*\\\s*$/;
+    next if /^\s*$/;
 
     #
 	# pass commented preprocessor directives
