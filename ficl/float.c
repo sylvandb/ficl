@@ -806,7 +806,7 @@ static void ToF(FICL_VM *pVM)
 #define NUMISNEG 1
 #define EXPISNEG 2
 
-enum _floatParseState
+typedef enum _floatParseState
 {
     FPS_START,
     FPS_ININT,
@@ -831,7 +831,7 @@ int ficlParseFloatNumber( FICL_VM *pVM, STRINGINFO si )
     float mant = 0.1f;
     FICL_INT exponent = 0;
     char flag = 0;
-    enum FloatParseState estate = FPS_START;
+    FloatParseState estate = FPS_START;
 
 #if FICL_ROBUST > 1
     vmCheckFStack(pVM, 0, 1);
@@ -883,7 +883,7 @@ int ficlParseFloatNumber( FICL_VM *pVM, STRINGINFO si )
                 else
                 {
                     digit = (unsigned char)(ch - '0');
-                    if ((digit > 9) || (digit < 0))
+                    if (digit > 9)
                         return(0);
 
                     accum = accum * 10 + digit;
@@ -904,7 +904,7 @@ int ficlParseFloatNumber( FICL_VM *pVM, STRINGINFO si )
                 else
                 {
                     digit = (unsigned char)(ch - '0');
-                    if ((digit > 9) || (digit < 0))
+                    if (digit > 9)
                         return(0);
 
                     accum += digit * mant;
@@ -935,7 +935,7 @@ int ficlParseFloatNumber( FICL_VM *pVM, STRINGINFO si )
             case FPS_INEXP:
             {
                 digit = (unsigned char)(ch - '0');
-                if ((digit > 9) || (digit < 0))
+                if (digit > 9)
                     return(0);
 
                 exponent = exponent * 10 + digit;

@@ -47,25 +47,28 @@ are (you guessed it) set to zero when the word executes, and any characters
 between -- and } are treated as a comment. The | and -- sections are optional,
 but they must appear in the order shown if they appear at all.&nbsp;
 <br><b>Double cell locals </b>(AKA 2locals): ordinarily, each local represents
-one cell. Local variable names prefixed with the character '2' in the declaration
-are double-cell locals. They behave the same as single cell locals in all
+one cell. Local variable names prefixed with the characters "2:" in the declaration
+are double-cell locals. The prefix is not part of the local variable's name, only
+part of the declaration. 
+They behave the same as single cell locals in all
 other respects. I use 2locals quite a bit in Ficl's OO classes, because
 objects in Ficl require two cells on the stack. You can modify the
 value of a double cell local with <tt><a href="http://www.taygeta.com/forth/dpans13.htm#13.6.1.2295">TO</a></tt>
 the same as you would a single cell local.
 <br>Following are some examples to illustrate usage (they are not intended
 to be good code otherwise). Try these out in FiclWin to get a feeling for
-how they work...
+how they work. Also see <code>softwords/string.fr</code> for an example of use of locals
+in OO code.
 <blockquote><b><tt>: local-demo&nbsp; { a b | c -- }</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; ." a = " a . cr</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; ." b = " b . cr</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; ." c = " c . cr ;</tt></b>
 <br><b><tt>1 2 local-demo&nbsp; ( you should see 1 2 0 )</tt></b>
-<p><b><tt>: my2dup&nbsp; { 2x }&nbsp;&nbsp; x x ;&nbsp; ( uses a 2local
+<p><b><tt>: my2dup&nbsp; { 2:x }&nbsp;&nbsp; x x ;&nbsp; ( uses a 2local
 )</tt></b>
 <br><b><tt>1 2 my2dup .s&nbsp;</tt></b>
 <br><b><tt>.( you should see 1 2 1 2 on the stack ) cr empty</tt></b>
-<p><b><tt>: my2swap&nbsp;&nbsp; { 2x 2y -- y x }&nbsp;&nbsp; y x ;&nbsp;
+<p><b><tt>: my2swap&nbsp;&nbsp; { 2:x 2:y -- y x }&nbsp;&nbsp; y x ;&nbsp;
 ( note use of 2locals )</tt></b>
 <br><b><tt>1 2 3 4 my2swap .s</tt></b>
 <br><b><tt>.( you should see 3 4 1 2 on the stack ) cr empty</tt></b>
@@ -78,8 +81,7 @@ The last definition introduces the use of <tt>TO</tt> applied to local
 variables. <tt>TO</tt> knows whether it's operating on a <tt>LOCAL</tt>,
 a <tt>2LOCAL</tt>, or a <tt>VALUE</tt>, and does the right thing accordingly.&nbsp;
 <br>&nbsp;
-<h2>
-Other local variable syntaxes (deprecated)</h2>
+<h2>Other local variable syntaxes (deprecated)</h2>
 There are other syntaxes in use for local variables. You get the same compiled
 code regardless of which style of local declaration you choose, but the
 Johns-Hopkins syntax is more readable, more flexible, and supports <tt>2LOCAL</tt>s
@@ -116,13 +118,14 @@ a bit easier to read, so I'd encourage you to experiment with them.&nbsp;
 by FICL_MAX_LOCALS in sysdep.h.&nbsp;
 <h2>
 Release notes for local variables</h2>
-Ficl 2.02 includes by default an implementation of the Johns Hopkins local
+<p>Ficl 2.05 adds 2LOCALS using the "2:" prefix</p>
+<p>Ficl 2.02 includes by default an implementation of the Johns Hopkins local
 syntax (as best I can determine it from examples on the web). This syntax
 lets you declare local variables that look very much like a stack comment.
 Variables in the declaration appear in the "correct" order for a stack
 comment. Everything after the -- is treated as a comment. In addition,
 you can insert a | before the -- to declare one or more zero-initialized
-locals. Example:&nbsp;
+locals. Example:&nbsp;</p>
 <blockquote><b><tt>:tuck0&nbsp;&nbsp; { a b c | d -- 0 a b c }</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; d a b c ;</tt></b></blockquote>
 The | and -- delimiters can appear at most once, and must appear in the

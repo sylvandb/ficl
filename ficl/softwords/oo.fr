@@ -234,6 +234,7 @@ instance-vars dup >search ficl-set-current
     2swap drop + @ swap
 ;
 
+\ #if FICL_WANT_VCALL
 \ vcall extensions contributed by Guy Carver
 : vcall:  ( paramcnt "name" -- )   
     current-class @ 8 + dup @ dup 1+ rot !  \ Kludge fix to get to .vtCount before it's defined.
@@ -252,7 +253,8 @@ instance-vars dup >search ficl-set-current
     does>                                   \ ( inst class pfa -- ptr-inst ptr-class )
     nip 2@ vcall f>                         \ ( params offset inst class offset -- f: r )
 ;
-\ #endif
+\ #endif /* FLOAT */
+\ #endif /* VCALL */
 
 \ END-CLASS terminates construction of a class by storing
 \  the size of its instance variables in the class's size field
@@ -302,7 +304,11 @@ set-current previous
     immediate
     0       ,   \ NULL parent class
     dup     ,   \ wid
+\ #if FICL_WANT_VCALL
     4 cells ,   \ instance size 
+\ #else
+    3 cells ,   \ instance size 
+\ #endif
     ficl-set-current
     does> dup
 ;  execute metaclass 
@@ -323,17 +329,24 @@ create .super  ( class metaclass -- parent-class )
 create .wid    ( class metaclass -- wid ) \ return wid of class
     1 cells , do-instance-var 
 
+\ #if FICL_WANT_VCALL
 create .vtCount   \ Number of VTABLE methods, if any
     2 cells , do-instance-var 
 
 create  .size  ( class metaclass -- size ) \ return class's payload size 
     3 cells , do-instance-var 
+\ #else
+create  .size  ( class metaclass -- size ) \ return class's payload size 
+    2 cells , do-instance-var 
+\ #endif
 
 : get-size    metaclass => .size  @ ;
 : get-wid     metaclass => .wid   @ ;
 : get-super   metaclass => .super @ ;
+\ #if FICL_WANT_VCALL
 : get-vtCount metaclass => .vtCount @ ;
 : get-vtAdd   metaclass => .vtCount ;
+\ #endif
 
 \ create an uninitialized instance of a class, leaving
 \ the address of the new instance and its class
@@ -442,7 +455,9 @@ create  .size  ( class metaclass -- size ) \ return class's payload size
     here current-class !    \ prep for do-do-instance
     parent ,                \ save parent class
     wid    ,                \ save wid
+\ #if FICL_WANT_VCALL
     parent meta --> get-vtCount , 
+\ #endif
     here parent meta --> get-size dup ,  ( addr[size] size )
     metaclass => .do-instance
     wid ficl-set-current -rot
@@ -503,9 +518,11 @@ constant meta
 \ This method is late bound for safety...
 : subclass   --> sub ;
 
+\ #if FICL_WANT_VCALL
 \ VTABLE Support extensions (Guy Carver)
 \ object --> sub mine hasvtable
 : hasvtable 4 + ; immediate
+\ #endif
 
 
 \ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

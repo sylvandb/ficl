@@ -1,5 +1,6 @@
 \ OOP test stuff
 
+only
 also oop definitions
 
 object subclass c-aggregate
@@ -42,7 +43,7 @@ c-ref  obj: payload
 end-class
 
 \ test stuff from ficl.html
-.( metaclass methods )
+.( metaclass methods ) cr
 metaclass --> methods
 
 cr .( c-foo class ) cr

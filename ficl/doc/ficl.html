@@ -22,14 +22,16 @@
 <font size=+1><a href="#whatis">What is ficl?</a></font></li>
 
 <li>
-<font size=+1><a href="#download">Download</a></font></li>
+<font size=+1><a href="http://sourceforge.net/projects/ficl">Ficl project page on Sourceforge</a></font></li>
+
+<li>
+<font size=+1><a href="http://sourceforge.net/project/showfiles.php?group_id=24441">Download</a></font></li>
 
 <li>
 <font size=+1><a href="#links">Tutorials and References</a></font></li>
 
 <li>
-<font size=+1><a href="#includesficl">Some software
-that incorporates Ficl</a></font></li>
+<font size=+1><a href="#includesficl">Ficl Inside!</a></font></li>
 
 <li>
 <font size=+1><a href="#lawyerbait">Disclaimer &amp; License</a></font></li>
@@ -61,7 +63,8 @@ that incorporates Ficl</a></font></li>
 <ul>
 <li>
 <font size=+1><a href="#exnumber">Number syntax</a></font></li>
-
+<li>
+<font size=+1><a href="ficl_parse.html">Parser extensions and prefix support</a></font></li>
 <li>
 <font size=+1><a href="#exsearch">Search order words</a></font></li>
 
@@ -83,20 +86,36 @@ that incorporates Ficl</a></font></li>
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
-<h1>
-<a NAME="whatis"></a>What is ficl?
-</h1>
+<h1><a NAME="whatis"></a>What is ficl?</h1>
+
 Ficl is a complete programming language interpreter designed
-to be embedded into other systems as a command/macro/development prototype
-language. Ficl provides object extensions that can be used to wrap methods
-and structures of the host system without altering them. The syntax is
-based on ANS Forth and the code is Standard C. See below for examples of
-<a href="#includesficl">software
-that includes ficl</a>. Ficl stands for "Forth inspired command language".&nbsp;</td>
+to be embedded into other systems as a command, macro, and development prototype
+language. Unlike other scripting interpreters, Ficl:
+<bl>
+<li>typically takes under 2 hours to port to a new system -- much less if the target 
+operating system is one of several already supported (Win32, Linux, FreeBSD, RiscOS, and more)</li>
+<li>has a small memory footprint: a fully featured Win32 console version takes less
+than 100K of memory, and a minimal version is less than half that
+</li>
+<li>is relatively quick thanks to its threaded code virtual machine design 
+and just in time compiling</li>
+<li>is a complete and powerful programming language</li>
+<li>is interactive</li>
+<li>has object oriented programming features that can be used to wrap data
+structures or classes of the host system without altering them - even if the host is 
+mainly written in a non-OO language</li>
+</bl>
+<p>
+Ficl syntax is based on ANS Forth and the code is Standard C. See below for examples of
+<a href="#includesficl">software and products that include ficl</a>. 
+Ficl stands for "Forth inspired command language".&nbsp;</p>
+</td>
 </tr>
 
 <tr>
-<td>Where Forths usually view themselves as the center of the system and
+<td>
+<h3>Ficl vs. other Forth interpreters</h3>
+Where Forths usually view themselves as the center of the system and
 expect the rest of the system to be coded in Forth, Ficl acts as a component
 of the system. It is easy to export code written in C or ASM to Ficl in
 the style of TCL, or to invoke Ficl code from a compiled module. This allows
@@ -109,7 +128,8 @@ oriented <i>adapter</i> for code written in C (or asm, Forth, C++...).&nbsp;</td
 </tr>
 
 <tr>
-<td><b>Ficl Design goals</b>
+<td>
+<h3>Ficl Design goals</h3>
 <ul>
 <li>
 Target 32 bit processors (<i>version 2.03 targets 64 bit processors too</i>)</li>
@@ -147,11 +167,6 @@ Provide object oriented extensions</li>
 <li>
 <b><a href="http://sourceforge.net/project/showfiles.php?group_id=24441">Download
 ficl (latest release)</a></b>
-</li>
-
-<li>
-<b><a href="http://sourceforge.net/project/showfiles.php?group_id=24441">Download
-ficlWin</a> (not for resale. please contact me for resale license arrangements)</b>
 </li>
 </ul>
 
@@ -234,33 +249,41 @@ Usher)</li>
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
-<h2>
-<a NAME="lawyerbait"></a>DISCLAIMER OF WARRANTY and LICENSE</h2>
-<p>Ficl is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.</p>
-
-<p>The ficl software code is provided on an "as is"  basis without
-warranty of any kind, including, without limitation, the implied
-warranties of merchantability and fitness for a particular purpose
-and their equivalents under the laws of any jurisdiction.  
-See the <a HREF="http://www.fsf.org/copyleft/lesser.html">
-GNU Lesser General Public License</a> for more details.</p>
-
-<p>Any third party may reproduce, distribute, or modify the ficl
-software code or any derivative works thereof without any 
-compensation, provided that the author information
-and license text are retained in the source code files.</p>
-
+<h2><a NAME="lawyerbait"></a>LICENSE and DISCLAIMER</h2>
+<p>
+Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
+All rights reserved.</p>
 <p>I am interested in hearing from anyone who uses ficl. If you have a
 problem, a success story, a defect, an enhancement request, or if you would
 like to contribute to the ficl release, please <a href="mailto:john_sadler@alum.mit.edu">send
-me email</a>.&nbsp;</td>
+me email</a>.&nbsp;
+<pre>
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+</pre>
+</td>
 </tr>
 </table>
 
-<br>&nbsp;
+&nbsp;
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
@@ -299,14 +322,13 @@ function called ficlLockDictionary() can control exclusive dictionary access.
 This function is stubbed out by default (See FICL_MULTITHREAD in sysdep.h).
 As long as there is only one "session" that can compile words into the
 dictionary, you do not need exclusive dictionary access for multithreading.
-<font color="#000099"><b>Note</b>:
-while the code is re-entrant, there are still restrictions on how you can
+<b>Note</b>: while the code is re-entrant, there are still restrictions on how you can
 use it safely in a multithreaded system. Specifically, the VM itself maintains
 state, so you generally need a VM per thread in a multithreaded system.
 If interrupt service routines make calls into Ficl code that alters VM
 state, then these generally need their own VM as well. Alternatively, you
 could provide a mutual exclusion mechanism to serialize access to a VM
-from multiple threads.</font></li>
+from multiple threads.</li>
 
 <li>
 ROMable: Ficl is designed to work in RAM based and ROM code / RAM data
@@ -405,14 +427,14 @@ the comments in ficl.c and ficl.h for additional information, and the example
 in file testmain.c.</i>
 <dl>
 <dt>
-<b>void ficlInitSystem(int nDictCells)</b></dt>
+<b>FICL_SYSTEM *ficlInitSystem(int nDictCells)</b></dt>
 
 <dd>
 Initializes Ficl's shared system data structures, and creates the dictionary
 allocating the specified number of CELLs from the heap (by a call to ficlMalloc)</dd>
 
 <dt>
-<b>void ficlTermSystem(void)</b></dt>
+<b>void ficlTermSystem(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Reclaims memory allocated for the ficl system including all dictionaries
@@ -420,7 +442,7 @@ and all virtual machines created by vmCreate. Any uses of the memory allocation
 words (allocate and resize) are your problem.</dd>
 
 <dt>
-<b>int ficlBuild(char *name, FICL_CODE code, char flags)</b></dt>
+<b>int ficlBuild(FICL_SYSTEM *pSys, char *name, FICL_CODE code, char flags)</b></dt>
 
 <dd>
 Create a primitive word in ficl's main dictionary with the given name,
@@ -469,14 +491,14 @@ will do this cleanup for you. This function is handy if you're going to
 do a lot of dynamic creation of VMs.</dd>
 
 <dt>
-<b>FICL_VM *ficlNewVM(void)</b></dt>
+<b>FICL_VM *ficlNewVM(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Create, initialize, and return a VM from the heap using ficlMalloc. Links
 the VM into the system VM list for later reclamation by ficlTermSystem.</dd>
 
 <dt>
-<b>FICL_WORD *ficlLookup(char *name)</b></dt>
+<b>FICL_WORD *ficlLookup(FICL_SYSTEM *pSys, char *name)</b></dt>
 
 <dd>
 Returns the address (also known as an XT in this case) of the specified
@@ -484,35 +506,35 @@ word in the main dictionary. If not found, returns NULL. The address can
 be used in a call to ficlExecXT.</dd>
 
 <dt>
-<b>FICL_DICT *ficlGetDict(void)</b></dt>
+<b>FICL_DICT *ficlGetDict(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Returns a pointer to the main system dictionary, or NULL if the system
 is uninitialized.</dd>
 
 <dt>
-<b>FICL_DICT *ficlGetEnv(void)</b></dt>
+<b>FICL_DICT *ficlGetEnv(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Returns a pointer to the environment dictionary. This dictionary stores
 information that describes this implementation as required by the Standard.</dd>
 
 <dt>
-<b>void ficlSetEnv(char *name, UNS32 value)</b></dt>
+<b>void ficlSetEnv(FICL_SYSTEM *pSys, char *name, UNS32 value)</b></dt>
 
 <dd>
 Enters a new constant into the environment dictionary, with the specified
 name and value.</dd>
 
 <dt>
-<b>void ficlSetEnvD(char *name, UNS32 hi, UNS32 lo)</b></dt>
+<b>void ficlSetEnvD(FICL_SYSTEM *pSys, char *name, UNS32 hi, UNS32 lo)</b></dt>
 
 <dd>
 Enters a new double-cell constant into the environment dictionary with
 the specified name and value.</dd>
 
 <dt>
-<b>FICL_DICT *ficlGetLoc(void)</b></dt>
+<b>FICL_DICT *ficlGetLoc(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Returns a pointer to the locals dictionary. This function is defined only
@@ -520,13 +542,13 @@ if FICL_WANT_LOCALS is #defined as non-zero (see sysdep.h). The locals
 dictionary is the symbol table for <a href="ficl_loc.html">local variables</a>.</dd>
 
 <dt>
-<b>void ficlCompileCore(FICL_DICT *dp)</b></dt>
+<b>void ficlCompileCore(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Defined in words.c, this function builds ficl's primitives.&nbsp;</dd>
 
 <dt>
-<b>void ficlCompileSoftCore(FICL_VM *pVM)</b></dt>
+<b>void ficlCompileSoftCore(FICL_SYSTEM *pSys)</b></dt>
 
 <dd>
 Defined in softcore.c, this function builds ANS required words and ficl
@@ -568,22 +590,9 @@ Edit this file to port to another system.</td>
 </tr>
 
 <tr>
-<td><b>words.c</b></td>
+<td><b>dict.c</b></td>
 
-<td>Exports ficlCompileCore(), the run-time dictionary builder, and contains
-all primitive words as static functions.</td>
-</tr>
-
-<tr>
-<td><b>vm.c</b></td>
-
-<td>Virtual Machine methods</td>
-</tr>
-
-<tr>
-<td><b>stack.c</b></td>
-
-<td>Stack methods</td>
+<td>Dictionary</td>
 </tr>
 
 <tr>
@@ -593,9 +602,10 @@ all primitive words as static functions.</td>
 </tr>
 
 <tr>
-<td><b>dict.c</b></td>
+<td><b>float.c</b></td>
 
-<td>Dictionary</td>
+<td>Adds precompiled definitions from the optional FLOAT word set. Most of the file
+is conditioned on FICL_WANT_FLOAT</td>
 </tr>
 
 <tr>
@@ -603,6 +613,14 @@ all primitive words as static functions.</td>
 
 <td>Implementation of 64 bit math words (except the two unsigned primitives
 declared in sysdep.h and implemented in sysdep.c)</td>
+</tr>
+
+<tr>
+<td><b>prefix.c</b></td>
+
+<td>The optional prefix parse step (conditioned on FICL_EXTENDED_PREFIX). This parse step
+handles numeric constructs like 0xa100, for example. See the release notes for more
+on parse steps.</td>
 </tr>
 
 <tr>
@@ -621,6 +639,21 @@ The files softwords/softcore.bat and softwords/softcore.pl generate softcore.c
 from the .fr sources.</td>
 </tr>
 
+<td><b>softwords/</b></td>
+
+<td>Directory contains sources and translation scripts for the words defined
+in softcore.c. Softcore.c depends on most of the files in this directory.
+See softcore.bat for the actual list of files that contribute to softcore.c.
+This is where you'll find source code for the object oriented extensions. PERL
+script softcore.pl converts the .fr files into softcore.c.</td>
+</tr>
+
+<tr>
+<td><b>stack.c</b></td>
+
+<td>Stack methods</td>
+</tr>
+
 <tr>
 <td><b>sysdep.c</b></td>
 
@@ -628,58 +661,86 @@ from the .fr sources.</td>
 </tr>
 
 <tr>
-<td><b>softwords/</b></td>
-
-<td>Directory contains sources and translation scripts for the words defined
-in softcore.c. Softcore.c depends on most of the files in this directory.
-See softcore.bat for the actual list of files that contribute to softcore.c.
-This is where you'll find source code for the object oriented extensions.</td>
+<td><b>testmain.c</b></td>
+<td>The main() function for unix/linux/win32 console applications - use this as an
+example to integrate ficl into your system. Also contains some definitions for
+testing - also useful in unix/linux/win32 land.
+</td>
 </tr>
+
+<tr>
+<td><b>tools.c</b></td>
+
+<td>Contains C implementations of TOOLS and TOOLS EXT
+words, the debugger, and debugger support words.</td>
+</tr>
+<tr>
+
+<tr>
+<td><b>vm.c</b></td>
+
+<td>Virtual Machine methods</td>
+</tr>
+
+<tr>
+<td><b>win32.c & unix.c</b></td>
+<td>Platform extensions words loaded in ficl.c by ficlCompilePlatform() - conditioned on FICL_WANT_PLATFORM</td>
+</tr>
+
+<tr>
+<td><b>words.c</b></td>
+
+<td>Exports ficlCompileCore(), the run-time dictionary builder, and contains
+most precompiled CORE and CORE-EXT words.</td>
+</tr>
+
 </table>
 
 <hr WIDTH="100%">
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
-<dl>
 <h2>
 <a NAME="extras"></a>Ficl extras</h2>
 
 <h3>
 <a NAME="exnumber"></a>Number syntax</h3>
 You can precede a number with "0x", as in C, and it will be interpreted
-as a hex value regardless of the value of <tt>BASE</tt>. Example:&nbsp;
-<dl>
-<dt>
-<tt>ok> decimal 123 . cr</tt>&nbsp;</dt>
+as a hex value regardless of the value of <code>BASE</code>. Likewise, numbers
+prefixed with "0d" will be interpreted as decimal values. Example:
+<pre>
+ok> decimal 123 . cr
+123
+ok> 0x123 . cr
+291
+ok> 0x123 x. cr
+123
+</pre>
+Note: ficl2.05 and later - this behavior is controlled by the <a href="ficl_parse.html">prefix parser</a> defined in 
+<code>prefix.c</code>. You can add other prefixes by defining handlers for them in ficl or C.
 
-<br><tt>123&nbsp;</tt>
-<br><tt>ok> 0x123 . cr</tt>
-<br><tt>291</tt>
-<br><tt>ok> 0x123 <a href="#xdot">x.</a> cr</tt>
-<br><tt>123</tt></dl>
-
-<h3>
-<a NAME="exsearch"></a>Search order words</h3>
-Ficl implements many of the search order words in terms of two primitives
-called <tt><a href="#tosearch">>SEARCH</a></tt> and <tt><a href="#searchfrom">SEARCH></a></tt>.
+<h3><a NAME="exsearch"></a>
+The <code>SEARCH</code> wordset and Ficl extensions
+</h3>
+<p>Ficl implements many of the search order words in terms of two primitives
+called <code><a href="#tosearch">>SEARCH</a></code> and <code><a href="#searchfrom">SEARCH></a></code>.
 As their names suggest (assuming you're familiar with Forth), they push
-and pop the search order stack.&nbsp;
-<br>The standard does not appear to specify any conditions under which
+and pop the search order stack.</p>
+<p>The standard does not appear to specify any conditions under which
 the search order is reset to a sane state. Ficl resets the search order
 to its default state whenever <tt>ABORT</tt> happens. This includes stack
 underflows and overflows. <tt>QUIT</tt> does not affect the search order.
-The minimum search order (set by <tt>ONLY</tt>) is equivalent to&nbsp;
-<dl><b><tt>FORTH-WORDLIST 1 SET-ORDER</tt></b></dl>
-There is a default maximum of 16 wordlists in the search order. This can
-be changed by redefining FICL_DEFAULT_VOCS (declared in sysdep.h).&nbsp;
+The minimum search order (set by <tt>ONLY</tt>) is equivalent to</p>
+<pre>
+FORTH-WORDLIST 1 SET-ORDER
+</pre>
+<p>There is a default maximum of 16 wordlists in the search order. This can
+be changed by redefining FICL_DEFAULT_VOCS (declared in sysdep.h).</p>
 <p><b>Note</b>: Ficl resets the search order whenever it does <tt>ABORT</tt>.
 If you don't like this behavior, just comment out the dictResetSearchOrder()
-lines in ficlExec().&nbsp;
-<br>&nbsp;
-<dt>
-<a NAME="tosearch"></a><tt>>search&nbsp;&nbsp; ( wid -- )</tt></dt>
-
+lines in ficlExec().</p>
+<dl>
+<dt><a NAME="tosearch"></a><code>>search   ( wid -- )</code></dt>
 <dd>
 Push <tt>wid</tt> onto the search order. Many of the other search order
 words are written in terms of the <tt>SEARCH></tt> and <tt>>SEARCH</tt>

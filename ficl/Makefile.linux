@@ -14,6 +14,9 @@ MINOR = 0.0
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
+ficl: testmain.o ficl.h sysdep.h libficl.a
+	$(CC) testmain.o -o ficl -L. -lficl -lm
+
 # static library build
 libficl.a: $(OBJECTS)
 	$(LIB) libficl.a $(OBJECTS)

@@ -1,3 +1,9 @@
+rel 3.00a -- July 2001
+
+- Fixed broken oo.fr by commenting out vcall stuff using FICL_WANT_VCALL. 
+  Vcall is still broken.
+
+
 rel 3.00 -- June 2001
 
 - Added pSys parameter to most ficlXXXX functions - multiple system support

@@ -159,7 +159,7 @@ It's helpful to have some familiarity with Forth and the customary Forth
 stack notation to understand this tutorial. To get started, take a look
 at this <a href="http://www.taygeta.com/forth_intro/stackflo.html">web-based
 Forth tutorial</a>. If you're comfortable with both OO and Forth, you can
-<a href="#ootutoial-finally">jump
+<a href="#ootutorial-finally">jump
 ahead</a>.
 <p>A Ficl <a href="oo_in_c.html#object-def">object</a> associates a <a href="oo_in_c.html#class-def">class</a>
 with an <a href="oo_in_c.html#instance-def">instance</a> (the storage for
@@ -219,21 +219,25 @@ word of the same name.&nbsp;</td>
 <tr>
 <td>
 <h3>
-<a NAME="ootutoial-finally"></a>Tutorial (finally!)</h3>
+<a NAME="ootutorial-finally"></a>Tutorial (finally!)</h3>
 This is a tutorial. It works best if you follow along by pasting the examples
 into ficlWin, the Win32 version of Ficl included with the release sources
 (or some other build that includes the OO part of softcore.c). If you're
 not familiar with Forth, please see one of these <a href="#links">references</a>.
 Ficl's OOP words are in vocabulary <tt>OOP</tt>. To put <tt>OOP</tt> in
 the search order and make it the compilation wordlist, type:&nbsp;
-<blockquote><b><tt>ONLY&nbsp;&nbsp; ( reset to default search order )</tt></b>
-<br><b><tt>ALSO OOP DEFINITIONS</tt></b></blockquote>
+<pre>
+ONLY   ( reset to default search order )
+ALSO OOP DEFINITIONS
+</pre>
 (<b>Note for beginners</b>: to see the effect of the commands above, type
 <tt>ORDER</tt>
 after each line. You can repeat the sequence above if you like.)
 <p>To start, we'll work with the two base classes <tt>OBJECT</tt> and <tt>METACLASS</tt>.
 Try this:&nbsp;
-<blockquote><b><tt>metaclass --> methods</tt></b></blockquote>
+<pre>
+metaclass --> methods
+</pre>
 The line above contains three words. The first is the name of a class,
 so it pushes its signature on the stack. Since all classes are instances
 of <tt>METACLASS</tt>, <tt>METACLASS</tt> behaves as if it is an instance
@@ -243,27 +247,30 @@ are the same. The next word finds a method in the context of a class and
 executes it. In this case, the name of the method is <tt>methods</tt>.
 Its job is to list all the methods that a class knows. What you get when
 you execute this line is a list of all the class methods Ficl provides.&nbsp;
-<blockquote><b><tt>object --> sub c-led</tt></b></blockquote>
+<pre>
+object --> sub c-led
+</pre>
 Causes base-class <tt>OBJECT</tt> to derive from itself a new class called
 c-led. Now we'll add some instance variables and methods to the new class...&nbsp;
 <br><b>Note</b>: I like to prefix the names of classes with "c-", and the
 names of member variables with a dot, but this is just a convention. If
 you don't like it, you can pick your own.
-<blockquote>
-<pre><b><tt>c-byte obj: .state</tt></b></pre>
-<b><tt>: init&nbsp;&nbsp; { 2this -- }</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; this --> super --> init</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; ." initializing an instance of "&nbsp;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; this --> class --> id type cr&nbsp; ;</tt></b>
-<p><b><tt>: on&nbsp;&nbsp; { led# 2this -- }</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; this --> .state --> get</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; 1 led# lshift or dup !oreg</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; this --> .state --> set&nbsp; ;</tt></b>
-<p><b><tt>: off&nbsp;&nbsp; { led# 2this -- }</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; this --> .state --> get</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; 1 led# lshift invert and dup !oreg</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; this --> .state --> set&nbsp; ;</tt></b>
-<p><b><tt>end-class</tt></b></blockquote>
+<pre>
+c-byte obj: .state
+: init   { 2:this -- }
+    this --> super --> init
+    ." initializing an instance of "
+    this --> class --> id type cr ;
+: on   { led# 2:this -- }
+    this --> .state --> get
+    1 led# lshift or dup !oreg
+    this --> .state --> set  ;
+: off   { led# 2:this -- }
+    this --> .state --> get
+    1 led# lshift invert and dup !oreg
+    this --> .state --> set&nbsp; ;
+end-class
+</pre>
 The first line adds an instance variable called <tt>.state</tt> to the
 class. This particular instance variable is an object - it will be an instance
 of c-byte, one of ficl's stock classes (the source for which can be found
@@ -289,14 +296,20 @@ is handled by <tt>!OREG</tt>. The class keeps the LED state in a shadow
 variable (<tt>.STATE</tt>) so that <tt>ON</tt> and <tt>OFF</tt> can work
 in terms of LED number rather than a bitmask.
 <p>Now make an instance of the new class:&nbsp;
-<blockquote><b><tt>c-led --> new led</tt></b></blockquote>
+<pre>
+c-led --> new led
+</pre>
 And try a few things...&nbsp;
-<blockquote><b><tt>led --> methods</tt></b>
-<br><b><tt>led --> pedigree</tt></b>
-<br><b><tt>1 led --> on</tt></b>
-<br><b><tt>1 led --> off</tt></b></blockquote>
+<pre>
+led --> methods
+led --> pedigree
+1 led --> on
+1 led --> off
+</pre>
 Or you could type this with the same effect:&nbsp;
-<blockquote><b><tt>led&nbsp; 2dup&nbsp; --> methods&nbsp; --> pedigree</tt></b></blockquote>
+<pre>
+led  2dup  --> methods  --> pedigree
+</pre>
 Notice (from the output of <tt>methods</tt>) that we've overridden the
 init method supplied by object, and added two more methods for the member
 variables. If you type <tt>WORDS</tt>, you'll see that these methods are
@@ -306,78 +319,86 @@ this word in a definition, as we did in <tt>init</tt>, and it performs
 late binding, meaning that the mapping from message (method name) to method
 (the code) is deferred until run-time. To see this, you can decompile the
 init method like this:&nbsp;
-<blockquote><b><tt>c-led --> see init</tt></b>
-<br>or&nbsp;
-<br><b><tt>led --> class --> see init</tt></b></blockquote>
+<pre>
+c-led --> see init
+</pre>
+or
+<pre>
+led --> class --> see init
+</pre>
 
 <h3>
 Early binding</h3>
 Ficl also provides early binding if you ask for it. Early binding is not
 as safe as late binding, but it produces code that is more compact and
-effiecient because it compiles method addresses rather then their names.
+efficient because it compiles method addresses rather then their names.
 In the preferred uses of early binding, the class is assumed to be the
 one you're defining. This kind of early binding can only be used inside
 a class definition. Early bound methods still expect to find a class and
 instance cell-pair on top of the stack when they run.
 <br>Here's an example that illustrates a potential problem:
-<blockquote><b><tt>object --> sub c1</tt></b>
-<br><b><tt>: m1&nbsp;&nbsp; { 2this -- }&nbsp; ." c1's m1" cr ;</tt></b>
-<br><b><tt>: m2&nbsp;&nbsp; { 2this -- }&nbsp; ." Running&nbsp; " this
-my=> m1 ;&nbsp; ( early )</tt></b>
-<br><b><tt>: m3&nbsp;&nbsp; { 2this -- }&nbsp; ." Running&nbsp; " this
--->&nbsp; m1 ;&nbsp; ( late )</tt></b>
-<br><b><tt>end-class</tt></b>
-<p><b><tt>c1&nbsp;&nbsp;&nbsp;&nbsp; --> sub c2</tt></b>
-<br><b><tt>: m1&nbsp;&nbsp; { 2this -- }&nbsp; ." c2's m1" cr ;</tt></b>
-<br><b><tt>end-class</tt></b>
-<p><b><tt>c2 --> new i2</tt></b>
-<br><b><tt>i2 --> m1&nbsp;&nbsp; ( runs the m1 defined in c2 )</tt></b>
-<br><b><tt>i2 --> m2&nbsp;&nbsp; ( is this what you wanted? )</tt></b>
-<br><b><tt>i2 --> m3&nbsp;&nbsp; { runs the overridden m1)</tt></b></blockquote>
+<pre>
+object --> sub c1
+: m1   { 2:this -- }  ." c1's m1" cr ;
+: m2   { 2:this -- }  ." Running  " this  my=> m1 ; ( early )
+: m3   { 2:this -- }  ." Running  " this --> m1     ( late )
+end-class
+c1     --> sub c2
+: m1   { 2:this -- }  ." c2's m1" cr ;
+end-class
+c2 --> new i2
+i2 --> m1   ( runs the m1 defined in c2 )
+i2 --> m2   ( is this what you wanted? )
+i2 --> m3   { runs the overridden m1)
+</pre>
 Even though we overrode method m1 in class c2, the definition of m2 with
 early binding forced the use of m1 as defined in c1. If that's what you
 want, great, but more often you'll want the flexibility of overriding parent
 class behaviors appropriately.&nbsp;
 <ol>
 <li>
-<b><tt>my=>&nbsp; </tt></b>binds early to a method in the class being defined,
-as in the example above.</li>
-
+<code>my=></code> binds early to a method in the class being defined,
+as in the example above.
+</li>
 <li>
-<b><tt>my=[ ] </tt></b>binds a sequence of methods in the current class.
-Useful when the class has object members. Lines like <b><tt>this --> state
---> set</tt></b> in the definition of c-led above can be replaced with
-<b><tt>this
-my=[ state set ]</tt></b> to get early binding.</li>
-
+<code>my=[ ]</code> binds a sequence of methods in the current class.
+Useful when the class has object members. Lines like <code>this --> state
+--> set</code> in the definition of c-led above can be replaced with
+<code>this my=[ state set ]</code> to get early binding.
+</li>
 <li>
-<b><tt>=> </tt>(dangerous)</b> pops a class off the stack and compiles
-the&nbsp; method in that class. Since you have to specify the class explicitly,
+<code>=></code> (dangerous) pops a class off the stack and compiles
+the method in that class. Since you have to specify the class explicitly,
 there is a real danger that this will be out of sync with the class you
-really wanted. I recommend the <b><tt>my=</tt></b> operations.</li>
+really wanted. I recommend the <code>my=</code> operations.
+</li>
 </ol>
-Early binding using <b><tt>=></tt></b> is dangerous because&nbsp; it partially
+Early binding using <code>=></code> is dangerous because it partially
 defeats the data-to-code matching mechanism object oriented languages were
 created to provide, but it does increase run-time speed by binding the
-method at compile time. In many cases, such as the <tt>init</tt> method,
+method at compile time. In many cases, such as the <code>init</code> method,
 you can be reasonably certain of the class of thing you're working on.
 This is also true when invoking class methods, since all classes are instances
-of <tt>metaclass</tt>. Here's an example from the definition of <tt>metaclass</tt>
-in oo.fr (don't paste this into ficlWin - it's already there):&nbsp;
-<blockquote><b><tt>: new&nbsp;&nbsp; \ ( class metaclass "name" -- )</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; metaclass => instance --> init ;</tt></b></blockquote>
-Try this...&nbsp;
-<blockquote><b><tt>metaclass --> see new</tt></b></blockquote>
-Decompiling the method with <tt>SEE</tt> shows the difference between the
+of <code>metaclass</code>. Here's an example from the definition of <code>metaclass</code>
+in oo.fr (don't paste this into ficlWin - it's already there):
+<pre>
+: new   \ ( class metaclass "name" -- )
+    metaclass => instance --> init ;
+</pre>
+Try this...
+<pre>
+metaclass --> see new
+</pre>
+Decompiling the method with <code>SEE</code> shows the difference between the
 two strategies. The early bound method is compiled inline, while the late-binding
 operator compiles the method name and code to find and execute it in the
-context of whatever class is supplied on the stack at&nbsp; run-time.&nbsp;
-<br>Notice that the primitive early-binding operator <tt>=></tt> requires
-a class at compile time. For this reason, classes are <tt>IMMEDIATE</tt>,
+context of whatever class is supplied on the stack at run-time.
+<br>Notice that the primitive early-binding operator <code>=></code> requires
+a class at compile time. For this reason, classes are <code>IMMEDIATE</code>,
 meaning that they push their signature at compile time or run time. I'd
 recommend that you avoid early binding until you're very comfortable with
-Forth, object-oriented programming,&nbsp; and Ficl's OOP syntax.&nbsp;
-<br>&nbsp;
+Forth, object-oriented programming, and Ficl's OOP syntax.
+<br>
 <h3>
 More About Instance Variables</h3>
 <i>Untyped</i> instance variable methods (created by <tt>cell: cells: char:</tt>
@@ -1325,31 +1346,31 @@ Dynamically allocated string similar to MFC CString (Partial list of methods
 follows)</dd>
 
 <dd>
-<font face="Courier New"><font size=-1>set ( c-addr u 2this -- ) </font></font><font size=+0>Initialize
+<font face="Courier New"><font size=-1>set ( c-addr u 2:this -- ) </font></font><font size=+0>Initialize
 buffer to the specified string</font></dd>
 
 <dd>
-<font face="Courier New"><font size=-1>get ( 2this -- c-addr u ) Return
+<font face="Courier New"><font size=-1>get ( 2:this -- c-addr u ) Return
 buffer contents as counted string</font></font></dd>
 
 <dd>
-<font face="Courier New"><font size=-1>cat ( c-addr u 2this -- ) Append
+<font face="Courier New"><font size=-1>cat ( c-addr u 2:this -- ) Append
 given string to end of buffer</font></font></dd>
 
 <dd>
-<font face="Courier New"><font size=-1>compare ( 2string 2this -- n ) Return
+<font face="Courier New"><font size=-1>compare ( 2string 2:this -- n ) Return
 result of lexical compare</font></font></dd>
 
 <dd>
-<font face="Courier New"><font size=-1>type ( 2this -- ) Print buffer to
+<font face="Courier New"><font size=-1>type ( 2:this -- ) Print buffer to
 the output stream</font></font></dd>
 
 <dd>
-<font face="Courier New"><font size=-1>hashcode ( 2this -- x ) Return hashcode
+<font face="Courier New"><font size=-1>hashcode ( 2:this -- x ) Return hashcode
 of string (as in dictionary)</font></font></dd>
 
 <dd>
-<font face="Courier New"><font size=-1>free ( 2this -- ) Release internal
+<font face="Courier New"><font size=-1>free ( 2:this -- ) Release internal
 buffer</font></font></dd>
 
 <dt>

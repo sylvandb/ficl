@@ -83,3 +83,7 @@ testing refill
 testing prefixes
 { 0x10 -> decimal 16 }
 { hex 0d10 -> decimal 10 }
+{ hex 100
+-> decimal 256 }
+
+load ooptest.fr
