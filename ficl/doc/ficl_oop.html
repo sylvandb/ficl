@@ -8,7 +8,7 @@
    <title>Ficl Object Oriented Programming</title>
     <LINK media="screen" href="ficlstyle.css" type="text/css" rel="stylesheet">
 <STYLE type="text/css">
-    
+    dt { font-family: monospace }
 </STYLE>
 
 </head>
@@ -20,22 +20,26 @@
 
 <script language="javascript" src="ficlheader.js"></script>
 
+<DIV style="width:675px">
 
 <h2>
 Contents</h2>
 
 <ul>
 <li>
-<a href="#objects">Object Oriented Programming in ficl</a></li>
+<a href="#objects">Introduction</a></li>
 
 <li>
-<a href="#ootutorial">Ficl OO Tutorial</a></li>
+<a href="#ootutorial">Tutorial</a></li>
 
 <li>
 <a href="#cstring">Ficl String Classes</a></li>
 
 <li>
-<a href="ficl.html#oopgloss">OOP glossary</a></li>
+<a href="#theory">Theory</a></li>
+<li>
+
+<a href="#oopgloss">OOP glossary</a></li>
 
 <li>
 <a href="#glossinstance">Instance variable glossary</a></li>
@@ -44,17 +48,13 @@ Contents</h2>
 <a href="#glossclass">Class methods glossary</a></li>
 
 <li>
-<a href="#objectgloss"><tt>OBJECT</tt> base class methods glossary</a></li>
+<a href="#objectgloss">OBJECT methods glossary</a></li>
 
 <li>
 <a href="#stockclasses">Supplied Classes</a></li>
 </ul>
-
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
-<h2>
-<a NAME="objects"></a>Object Oriented Programming in ficl</h2>
+<br><hr>
+<h2><a NAME="objects">Introduction</a></h2>
 
 <h3>
 Review of <a href="http://whatis.techtarget.com/definition/0,289893,sid9_gci212681,00.html">OO</a> ideas</h3>
@@ -66,7 +66,7 @@ Design goals of Ficl OO syntax</h3>
 Ficl's object extensions provide the traditional OO benefits of associating
 data with the code that manipulates it, and reuse through single inheritance.
 Ficl also has some unusual capabilities that support interoperation with
-systems written in C.&nbsp;
+systems written in C.
 <ul>
 <li>
 Ficl objects are normally late bound for safety (late binding guarantees
@@ -96,9 +96,8 @@ can then manipulate the structure directly. This lets you wrap data structures
 written and instantiated in C.</li>
 </ul>
 
-<h3>
-Acknowledgements</h3>
-Ficl is not the first Forth to include Object Oriented extensions. Ficl's
+<h3>Acknowledgements</h3>
+<p>Ficl is not the first Forth to include Object Oriented extensions. Ficl's
 OO syntax owes a debt to the work of John Hayes and Dick Pountain, among
 others. OO Ficl is different from other OO Forths in a few ways, though
 (some things never change). First, unlike several implementations, the
@@ -107,165 +106,77 @@ code. In Ficl's spirit of working with C code, the OO syntax provides means
 to adapt existing data structures. I've tried to make Ficl's OO model simple
 and safe by unifying classes and objects, providing late binding by default,
 and separating namespaces so that methods and regular Forth words are not
-easily confused.&nbsp;</td>
-</tr>
-</table>
-
-<br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
-<h3>
-Ficl Object Model</h3>
-All classes in Ficl are derived from the common base class <tt><a href="#objectgloss">OBJECT,</a></tt>
-as shown in the <a href="#figure1">figure</a> below. All classes are instances
-of <tt><a href="#glossclass">METACLASS</a></tt>. This means that classes
-are objects, too. <tt>METACLASS</tt> implements the methods for messages
-sent to classes. Class methods create instances and subclasses, and give
-information about the class. Each class is represented by a data stucture
-of three elements:&nbsp;
-<ul>
-<li>
-The address (named <tt>.CLASS</tt> ) of a parent class, or zero if it's
-a base class (only <tt>OBJECT</tt> and <tt>METACLASS</tt> have this property)</li>
-
-<li>
-The size (named <tt>.SIZE</tt> ) in address units of an instance of the
-class</li>
-
-<li>
-A wordlist ID (named <tt>.WID</tt> ) for the methods of the class</li>
-</ul>
-In the figure below, <tt>METACLASS</tt> and <tt>OBJECT</tt> are real system-supplied
-classes. The others are contrived to illustrate the relationships among
-derived classes, instances, and the two system base classes. The dashed
-line with an arrow at the end indicates that the object/class at the arrow
-end is an instance of the class at the other end. The vertical line with
-a triangle denotes inheritance.&nbsp;
-<p>Note for the curious: <tt>METACLASS</tt> behaves like a class - it responds
-to class messages and has the same properties as any other class. If you
-want to twist your brain in knots, you can think of <tt>METACLASS</tt>
-as an instance of itself.&nbsp;
-<br>&nbsp;</td>
-</tr>
-</table>
-
-<p><a NAME="figure1"></a><img SRC="ficl_oop.jpg" VSPACE=10 height=442 width=652>
-<br>&nbsp;
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
+easily confused.</p>
+<br>
+<hr>
 <h2>
-<a NAME="ootutorial"></a>Ficl OO Syntax Tutorial</h2>
-
-<h3>
-Introduction</h3>
+<a NAME="ootutorial"></a>Tutorial</h2>
 It's helpful to have some familiarity with Forth and the customary Forth
 stack notation to understand this tutorial. To get started, take a look
-at one of these <a href="ficl.html#tutorials">web-based
-Forth tutorials</a>. If you're comfortable with both OO and Forth, you can
-<a href="#ootutorial-finally">jump
-ahead</a>.
-<p>A Ficl <a href="oo_in_c.html#object-def">object</a> associates a <a href="oo_in_c.html#class-def">class</a>
-with an <a href="oo_in_c.html#instance-def">instance</a> (the storage for
-one set of instance variables). This is done explicitly on Ficl's stack,
-in that any Ficl object is represented by a cell pair:&nbsp;
-<blockquote><b><tt>( instance-addr class-addr )</tt></b></blockquote>
-The instance-addr is the address of the object's storage, and the class-addr
-is the address of its class. Whenever a named Ficl object executes (eg.
-when you type its name and press enter at the Ficl prompt), it leaves this
-"signature". All methods by convention expect a class and instance on the
-stack when they execute, too. In many other OO languages, including C++,
-instances contain information about their classes (a <a href="http://www.mvps.org/vbvision/vtable.htm">vtable</a>
-pointer, for example). By making this pairing explicit rather than implicit,
-Ficl can be OO about chunks of data that don't realize that they are objects,
-without sacrificing any robustness for native objects. That means that
-you can use Ficl to write object wrappers for data structures created in
-C or assembly language, as long as you can determine how they're laid out
-in memory.&nbsp;
-<br>Whenever&nbsp; you create an object in Ficl, you specify its class.
-After that, the object always pushes its class and the address of its <a href="http://www.aware.com/Glossary/main.htm#P">payload
-</a>(instance
-variable space) when invoked by name.&nbsp;
-<p>Classes are special kinds of objects that store the methods of their
-instances, the size of an instance's payload, and a parent class pointer.
-Classes themselves are instances of a special base class called <tt>METACLASS</tt>,
-and all classes inherit from class <tt>OBJECT</tt>. This is confusing at
-first, but it means that Ficl has a very simple syntax for constructing
-and using objects. Class methods include subclassing (<tt>SUB</tt>), creating
-initialized and uninitialized instances (<tt>NEW</tt> and <tt>INSTANCE</tt>),
-and creating reference instances (<tt>REF</tt>), described later. Classes
-also have methods for disassembling their methods (<tt>SEE</tt>), identifying
-themselves (<tt>ID</tt>), and listing their pedigree (<tt>PEDIGREE</tt>).
-All objects inherit (from <tt>OBJECT</tt>) methods for initializing instances
-and arrays of instances, for performing array operations, and for getting
-information about themselves.&nbsp;
-<h3>
-Methods and messages</h3>
-Methods are the functions that objects execute in response to messages.
-A message is a request to an object for a behavior that the object supports.
-When it receives a message, the target object looks up a method that performs
-the behavior for its class, and executes it. Any specific message may be
-bound to different methods in different objects, according to class. This
-separation of messages and methods allows objects to behave <a href="http://www.whatis.com/polymorp.htm">polymorphically</a>.
-(In Ficl, methods are words defined in the context of a class, and messages
-are the names of those words.) Ficl classes associate messages with methods
-for their instances (a fancy way of saying that each class owns a wordlist).
-Ficl provides a late-binding operator <b><tt>--></tt></b> that sends messages
-to objects at run-time, and an early-binding operator <b><tt>=></tt></b>
-that compiles a specific class's method. These operators are the only supported
-way to invoke methods. Regular Forth words are not visible to the method-binding
-operators,&nbsp; so there's no chance of confusing a message with a regular
-word of the same name.&nbsp;</td>
-</tr>
-</table>
-
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
-<h3>
-<a NAME="ootutorial-finally"></a>Tutorial (finally!)</h3>
-This is a tutorial. It works best if you follow along by pasting the examples
+at this <a href="primer.html">Forth tutorial</a>. 
+<p>
+This tutorial works best if you follow along by pasting the examples
 into ficlWin, the Win32 version of Ficl included with the release sources
-(or some other build that includes the OO part of softcore.c). If you're
-not familiar with Forth, please see one of these <a href="#links">references</a>.
-Ficl's OOP words are in vocabulary <tt>OOP</tt>. To put <tt>OOP</tt> in
-the search order and make it the compilation wordlist, type:&nbsp;
+(or some other build that includes the OO part of softcore.c). 
+<p>
+You need to use this incantation to make Ficl's OOP words visible to the interpreter:
 <pre>
-ONLY   ( reset to default search order )
-ALSO OOP DEFINITIONS
+ONLY   ( Reset to default search order )
+ALSO OOP DEFINITIONS  ( Add OOP wordlist to search order )
 </pre>
-(<b>Note for beginners</b>: to see the effect of the commands above, type
-<tt>ORDER</tt>
-after each line. You can repeat the sequence above if you like.)
-<p>To start, we'll work with the two base classes <tt>OBJECT</tt> and <tt>METACLASS</tt>.
-Try this:&nbsp;
+<dl>
+<dt>??? not found</dt> 
+<dd>
+If you run into this error message you will need to repeat the above incantation to reset the search order. Ficl resets to a default search order if it runs into an error.
+</dd>
+<dt>For beginners</dt> 
+<dd>
+To see the effect of the commands above, type <code>ORDER</code> after each word. You can repeat the sequence above if you like. All of the above words are described in the 
+<a href="http://ficl.sourceforge.net/dpans/dpansf.htm">Standard</a>
+</dd>
+</dl>
+<p>To start, we'll work with the base class <code>OBJECT</code>.
+Try this:
 <pre>
-metaclass --> methods
+object
+</pre>
+FiclWin's stack viewer shows that the stack now holds two values - the one on top is the address of <code>class</code> and the other is the address of a special class called <code>METACLASS</code> that describes the behavior of all classes (including itself). If you're using someother version of Ficl, you can type <code>.s</code> to view the contents of the stack non-destructively. 
+Now try:
+<pre> 
+object --> methods
 </pre>
 The line above contains three words. The first is the name of a class,
-so it pushes its signature on the stack. Since all classes are instances
-of <tt>METACLASS</tt>, <tt>METACLASS</tt> behaves as if it is an instance
-of itself (this is the only class with this property). It pushes the same
-address twice: once for the class and once for the payload, since they
-are the same. The next word finds a method in the context of a class and
-executes it. In this case, the name of the method is <tt>methods</tt>.
+so it pushes its signature on the stack. The next word (<code>--></code>) finds a method in the context of class <code>object</code> and executes it. In this case, the name of the method is <code>methods</code>.
 Its job is to list all the methods that a class knows. What you get when
-you execute this line is a list of all the class methods Ficl provides.&nbsp;
+you execute this line is a list of all the class methods Ficl provides.
+<p>
+Now let's create a class that can do something interesting with the simulated hardware that FiclWin provides...
 <pre>
 object --> sub c-led
 </pre>
-Causes base-class <tt>OBJECT</tt> to derive from itself a new class called
-c-led. Now we'll add some instance variables and methods to the new class...&nbsp;
-<br><b>Note</b>: I like to prefix the names of classes with "c-", and the
+<p>
+Causes base-class <code>OBJECT</code> to derive from itself a new class called
+<code>c-led</code>.</p>
+<dl> 
+<dt>About class naming</dt>
+<dd> I like to prefix the names of classes with "c-", and the
 names of member variables with a dot, but this is just a convention. If
-you don't like it, you can pick your own.
+you don't like it, you can pick your own.</dd>
+<dt>About !oreg</dt>
+<dd>The following methods use the !oreg word defined by FiclWin to control its simulated LED bar. Usage: <code>!oreg  ( value -- )</code>. To test it, try <code>0xff !oreg</code> or <code>0 !oreg</code>.</dd>
+</dl>
+<p>
+Now we'll add some instance variables and methods to the new class...</p> 
 <pre>
-c-byte obj: .state
+  
+c-byte obj: .state     \  an instance variable
+
 : init   { 2:this -- }
-    this --> super --> init
+    0 dup !oreg
+    this --> .state --> set 
     ." initializing an instance of "
     this --> class --> id type cr ;
+
 : on   { led# 2:this -- }
     this --> .state --> get
     1 led# lshift or dup !oreg
@@ -273,57 +184,56 @@ c-byte obj: .state
 : off   { led# 2:this -- }
     this --> .state --> get
     1 led# lshift invert and dup !oreg
-    this --> .state --> set&nbsp; ;
+    this --> .state --> set ;
 end-class
 </pre>
-The first line adds an instance variable called <tt>.state</tt> to the
+The first line adds an instance variable called <code>.state</code> to the
 class. This particular instance variable is an object - it will be an instance
-of c-byte, one of ficl's stock classes (the source for which can be found
-in the distribution in sorftowrds/classes.fr).&nbsp;
-<br>Next we've defined a method called <tt>init</tt>. This line also declares
-a <a href="ficl_loc.html">local variable</a> called <b><tt>this</tt></b>
+of <code>c-byte</code>, one of ficl's stock classes (the source for which can be found in the distribution in sorftowrds/classes.fr). Try this...
+<pre>
+c-led --> see .state
+</pre>
+The <code>see</code> method (inherited from <code>object</code>) decompiles methods so that you can see exactly what they do. There's also a <code>debug</code> method that lets you step through a method.
+<p>
+Next we've defined a method called <code>init</code>. This line also declares
+a <a href="ficl_loc.html">local variable</a> called <code>this</code>
 (the 2 in front tells Ficl that this is a double-cell local). All methods
 by convention expect the address of the class and instance on top of the
-stack when called.&nbsp; The next three lines define <tt>init</tt>'s behavior.
-It first calls its superclass's version of <tt>init</tt> (which in this
-case is <tt>object => init</tt> - this default implementation clears all
-instance variables). The rest displays some text and causes the instance
-to print its class name (<tt>this --> class --> id</tt>).
-<br>The <b><tt>init</tt></b> method is special for Ficl objects: whenever
-you create an initialized instance using <b><tt>new</tt></b> or <b><tt>new-array</tt></b>,
-Ficl calls the class's <tt>init</tt> method for you on that instance. The
-default <tt>init</tt> method supplied by <tt>object</tt> clears the instance,
-so we didn't really need to override it in this case (see the source code
-in ficl/softwords/oo.fr).&nbsp;
-<br>The <tt>ON</tt> and <tt>OFF</tt> methods defined above hide the details
+stack when called. The next four lines define <code>init</code>'s behavior.
+It first clears the simulated LED bar and <code>.state</code>. The rest displays some text and causes the instance to print its class name (<code>this --> class --> id</code>).
+<br>The <code>init</code> method is special for Ficl objects: whenever
+you create an initialized instance using <code>new</code> or <code>new-array</code>,
+Ficl calls the class's <code>init</code> method for you on that instance. The
+default <code>init</code> method supplied by <code>object</code> sets the instance variables to zero (see the source code in ficl/softwords/oo.fr).
+<br>The <code>ON</code> and <code>OFF</code> methods defined above hide the details
 of turning LEDs on and off. The interface to FiclWin's simulated hardware
-is handled by <tt>!OREG</tt>. The class keeps the LED state in a shadow
-variable (<tt>.STATE</tt>) so that <tt>ON</tt> and <tt>OFF</tt> can work
+is handled by <code>!OREG</code>. The class keeps the LED state in a shadow
+variable (<code>.STATE</code>) so that <code>ON</code> and <code>OFF</code> can work
 in terms of LED number rather than a bitmask.
 <p>Now make an instance of the new class:&nbsp;
 <pre>
 c-led --> new led
 </pre>
-And try a few things...&nbsp;
+And try a few things...
 <pre>
 led --> methods
 led --> pedigree
 1 led --> on
 1 led --> off
 </pre>
-Or you could type this with the same effect:&nbsp;
+Or you could type this with the same effect:
 <pre>
 led  2dup  --> methods  --> pedigree
 </pre>
-Notice (from the output of <tt>methods</tt>) that we've overridden the
+Notice (from the output of <code>methods</code>) that we've overridden the
 init method supplied by object, and added two more methods for the member
-variables. If you type <tt>WORDS</tt>, you'll see that these methods are
+variables. If you type <code>WORDS</code>, you'll see that these methods are
 not visible outside the context of the class that contains them. The method
-finder <b><tt>--></tt></b> uses the class to look up methods. You can use
-this word in a definition, as we did in <tt>init</tt>, and it performs
+finder <code>--></code> uses the class to look up methods. You can use
+this word in a definition, as we did in <code>init</code>, and it performs
 late binding, meaning that the mapping from message (method name) to method
 (the code) is deferred until run-time. To see this, you can decompile the
-init method like this:&nbsp;
+init method like this:
 <pre>
 c-led --> see init
 </pre>
@@ -333,7 +243,85 @@ led --> class --> see init
 </pre>
 
 <h3>
-Early binding</h3>
+More About Instance Variables</h3>
+<i>Untyped</i> instance variable methods (created by <code>cell: cells: char:</code>
+and <code>chars:</code>) just push the address of the corresponding instance
+variable when invoked on an instance of the class. It's up to you to remember
+the size of the instance variable and manipulate it with the usual Forth
+words for fetching and storing.&nbsp;
+<p>As advertised earlier, Ficl provides ways to objectify existing data
+structures without changing them. Instead, you can create a Ficl class
+that models the structure, and instantiate a <b>ref </b>from this class,
+supplying the address of the structure. After that, the <i>ref instance</i>
+behaves as a Ficl object, but its instance variables take on the values
+in the existing structure. Example (from ficlclass.fr):
+<pre>
+object subclass c-wordlist
+    c-wordlist ref: .parent
+    c-ptr     obj: .name
+    c-cell    obj: .size
+    c-word    ref: .hash
+    : ?
+        2drop ." ficl wordlist " cr ;
+    : push  drop  >search ;
+    : pop   2drop previous ;
+    : set-current   drop set-current ;
+    : words   --> push  words previous ;
+end-class
+</pre>
+In this case, <code>c-wordlist</code> describes Ficl's wordlist structure;
+named-wid creates a wordlist and binds it to a ref instance of <code>c-wordlist</code>.
+The fancy footwork with <code>POSTPONE</code> and early binding is required
+because classes are immediate. An equivalent way to define named-wid with
+late binding is:
+<pre>
+: named-wid   ( "name" -- )
+    wordlist  postpone c-wordlist --> ref ;
+</pre>
+To do the same thing at run-time (and call it my-wordlist):
+<pre>
+wordlist   
+c-wordlist --> ref  my-wordlist
+</pre>
+Now you can deal with the wordlist through the ref instance:
+<pre>
+my-wordlist --> push
+my-wordlist --> set-current
+order
+</pre>
+Ficl can also model linked lists and other structures that contain pointers
+to structures of the same or different types. The class constructor word
+<code><a href="#exampleref:">ref:</a></code>
+makes an aggregate reference to a particular class. See the <a href="#glossinstance">instance
+variable glossary</a> for an <a href="#exampleref:">example</a>.
+<p>Ficl can make arrays of instances, and aggregate arrays into class descripions.
+The <a href="#glossclass">class methods</a> <code>array</code> and <code>new-array</code>
+create uninitialized and initialized arrays, respectively, of a class.
+In order to initialize an array, the class must define (or inherit) a reasonable
+<code>init</code>
+method. <code>New-array</code> invokes it on each member of the array
+in sequence from lowest to highest. Array instances and array members use
+the object methods <code>index</code>, <code>next</code>, and <code>prev</code>
+to navigate. Aggregate a member array of objects using <code><a href="#arraycolon">array:</a></code>.
+The objects are not automatically initialized in this case - your class
+initializer has to call <code>array-init</code> explicitly if you want
+this behavior.
+<p>For further examples of OOP in Ficl, please see the source file <code>ficl/softwords/ficlclass.fr</code>.
+This file wraps several Ficl internal data structures in objects and gives
+use examples.
+<br>
+<h3><a NAME="cstring"></a>Ficl String classes</h3>
+<code>c-string</code> (ficl 2.04 and later) is a reasonably useful dynamic string class. Source code for the class is located in <code>ficl/softwords/string.fr</code>. Features: dynamic creation and resizing; deletion, concatenation, output,
+comparison; creation from quoted string constant (<code>s"</code>).
+<p>Examples of use:
+<pre>
+c-string --> new homer
+s" In this house, " homer --> set
+s" we obey the laws of thermodynamics!" homer --> cat
+homer --> type
+</pre>
+<br>
+<h3>Early binding</h3>
 Ficl also provides early binding if you ask for it. Early binding is not
 as safe as late binding, but it produces code that is more compact and
 efficient because it compiles method addresses rather then their names.
@@ -394,6 +382,7 @@ Try this...
 <pre>
 metaclass --> see new
 </pre>
+<p>
 Decompiling the method with <code>SEE</code> shows the difference between the
 two strategies. The early bound method is compiled inline, while the late-binding
 operator compiles the method name and code to find and execute it in the
@@ -403,196 +392,186 @@ a class at compile time. For this reason, classes are <code>IMMEDIATE</code>,
 meaning that they push their signature at compile time or run time. I'd
 recommend that you avoid early binding until you're very comfortable with
 Forth, object-oriented programming, and Ficl's OOP syntax.
+</p>
+<br><hr>
+<h2><a name="theory"></a>Theory</h2>
+All classes in Ficl are derived from the common base class <code><a href="#objectgloss">OBJECT,</a></code>
+as shown in the <a href="#figure1">figure</a> below. All classes are instances
+of <code><a href="#glossclass">METACLASS</a></code>. This means that classes
+are objects, too. <code>METACLASS</code> implements the methods for messages
+sent to classes. Class methods create instances and subclasses, and give
+information about the class. Each class is represented by a data stucture
+of three elements:&nbsp;
+<ul>
+<li>
+The address (named <code>.CLASS</code> ) of a parent class, or zero if it's
+a base class (only <code>OBJECT</code> and <code>METACLASS</code> have this property)</li>
+
+<li>
+The size (named <code>.SIZE</code> ) in address units of an instance of the
+class</li>
+
+<li>
+A wordlist ID (named <code>.WID</code> ) for the methods of the class</li>
+</ul>
+In the figure below, <code>METACLASS</code> and <code>OBJECT</code> are real system-supplied
+classes. The others are contrived to illustrate the relationships among
+derived classes, instances, and the two system base classes. The dashed
+line with an arrow at the end indicates that the object/class at the arrow
+end is an instance of the class at the other end. The vertical line with
+a triangle denotes inheritance.&nbsp;
+<p>Note for the curious: <code>METACLASS</code> behaves like a class - it responds
+to class messages and has the same properties as any other class. If you
+want to twist your brain in knots, you can think of <code>METACLASS</code>
+as an instance of itself.&nbsp;
+<br>&nbsp;
+
+<p><a NAME="figure1"></a><img SRC="ficl_oop.jpg" VSPACE=10 height=442 width=652>
 <br>
-<h3>
-More About Instance Variables</h3>
-<i>Untyped</i> instance variable methods (created by <tt>cell: cells: char:</tt>
-and <tt>chars:</tt>) just push the address of the corresponding instance
-variable when invoked on an instance of the class. It's up to you to remember
-the size of the instance variable and manipulate it with the usual Forth
-words for fetching and storing.&nbsp;
-<p>As advertised earlier, Ficl provides ways to objectify existing data
-structures without changing them. Instead, you can create a Ficl class
-that models the structure, and instantiate a <b>ref </b>from this class,
-supplying the address of the structure. After that, the <i>ref instance</i>
-behaves as a Ficl object, but its instance variables take on the values
-in the existing structure. Example (from ficlclass.fr):&nbsp;
-<blockquote><b><tt>object subclass c-wordlist</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; c-wordlist ref: .parent</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; c-ptr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; obj:
-.name</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; c-cell&nbsp;&nbsp;&nbsp;&nbsp; obj: .size</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; c-word&nbsp;&nbsp;&nbsp;&nbsp; ref: .hash</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; : ?</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2drop ." ficl wordlist
-" cr ;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; : push&nbsp; drop&nbsp; >search ;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; : pop&nbsp;&nbsp; 2drop previous ;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; : set-current&nbsp;&nbsp; drop set-current
-;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; : words&nbsp;&nbsp; --> push&nbsp; words
-previous ;</tt></b>
-<br><b><tt>end-class</tt></b></blockquote>
-In this case, <tt>c-wordlist</tt> describes Ficl's wordlist structure;
-named-wid creates a wordlist and binds it to a ref instance of <tt>c-wordlist</tt>.
-The fancy footwork with <tt>POSTPONE</tt> and early binding is required
-because classes are immediate. An equivalent way to define named-wid with
-late binding is:&nbsp;
-<blockquote><b><tt>: named-wid&nbsp;&nbsp; ( "name" -- )</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; wordlist&nbsp; postpone c-wordlist&nbsp;
---> ref ;</tt></b></blockquote>
-To do the same thing at run-time (and call it my-wordlist):&nbsp;
-<blockquote><b><tt>wordlist&nbsp; c-wordlist --> ref&nbsp; my-wordlist</tt></b></blockquote>
-Now you can deal with the wordlist through the ref instance:&nbsp;
-<blockquote><b><tt>my-wordlist --> push</tt></b>
-<br><b><tt>my-wordlist --> set-current</tt></b>
-<br><b><tt>order</tt></b></blockquote>
-Ficl can also model linked lists and other structures that contain pointers
-to structures of the same or different types. The class constructor word
-<b><tt><a href="#exampleref:">ref:</a></tt></b>
-makes an aggregate reference to a particular class. See the <a href="#glossinstance">instance
-variable glossary</a> for an <a href="#exampleref:">example</a>.&nbsp;
-<p>Ficl can make arrays of instances, and aggregate arrays into class descripions.
-The <a href="#glossclass">class methods</a> <b><tt>array</tt></b> and <b><tt>new-array</tt></b>
-create uninitialized and initialized arrays, respectively, of a class.
-In order to initialize an array, the class must define (or inherit) a reasonable
-<b><tt>init</tt></b>
-method. <b><tt>New-array</tt></b> invokes it on each member of the array
-in sequence from lowest to highest. Array instances and array members use
-the object methods <b><tt>index</tt></b>, <b><tt>next</tt></b>, and <b><tt>prev</tt></b>
-to navigate. Aggregate a member array of objects using <b><tt><a href="#arraycolon">array:</a></tt></b>.
-The objects are not automatically initialized in this case - your class
-initializer has to call <b><tt>array-init</tt></b> explicitly if you want
-this behavior.&nbsp;
-<p>For further examples of OOP in Ficl, please see the source file ficl/softwords/ficlclass.fr.
-This file wraps several Ficl internal data structures in objects and gives
-use examples.&nbsp;</td>
-</tr>
+<p>A Ficl <a href="oo_in_c.html#object-def">object</a> associates a <a href="oo_in_c.html#class-def">class</a>
+with an <a href="oo_in_c.html#instance-def">instance</a> (the storage for
+one set of instance variables). This is done explicitly on Ficl's stack:
+any Ficl object is represented by a cell pair:
+<pre>
+( instance-addr class-addr )
+</pre>
+The <code>instance-addr</code> is the address of the object's storage, and the <code>class-addr</code> is the address of its class. Whenever a named Ficl object executes (eg. when you type its name and press enter at the Ficl prompt), it leaves this "signature". All methods by convention expect a class and instance on the
+stack when they execute, too. In many other OO languages, including C++,
+instances contain information about their classes (a <a href="http://www.mvps.org/vbvision/vtable.htm">vtable</a>
+pointer, for example). By making this pairing explicit, Ficl can be OO about chunks of data that don't realize that they are objects, without sacrificing any robustness for native objects. That means that you can use Ficl to write object wrappers for data structures created in C, C++, or even assembly language, as long as you can determine how they're laid out in memory.
+<br>Whenever you create an object in Ficl, you specify its class.
+After that, the object always pushes its class and the address of its payload (instance variable space) when invoked by name. 
+<p>Classes are special kinds of objects that store the methods of their
+instances, the size of an instance's payload, and a parent class pointer.
+Classes themselves are instances of a special base class called <code>METACLASS</code>,
+and all classes inherit from class <code>OBJECT</code>. While confusing at
+first, this gives Ficl a very simple syntax for constructing
+and using objects. Class methods include subclassing (<code>SUB</code>), creating
+initialized and uninitialized instances (<code>NEW</code> and <code>INSTANCE</code>),
+and creating reference instances (<code>REF</code>), described later. Classes
+also have methods for disassembling their methods (<code>SEE</code>), identifying
+themselves (<code>ID</code>), and listing their pedigree (<code>PEDIGREE</code>).
+All objects inherit (from <code>OBJECT</code>) methods for initializing instances
+and arrays of instances, for performing array operations, and for getting
+information about themselves.
 
-<tr>
-<td>
-<h2>
-<a NAME="cstring"></a>Ficl String classes</h2>
-c-string (ficl 2.04 and later) is a reasonably useful dynamic string class.
-Source code for the class is located in ficl/softwords/string.fr. Features:
-dynamic creation and resizing; deletion, char cout, concatenation, output,
-comparison; creation from quoted string constant (s").
-<p>Examples of use:
-<blockquote>
-<pre><b>c-string --> new homer
-s" In this house, " homer --> set
-s" we obey the laws of thermodynamics!" homer --> cat
-homer --> type</b></pre>
-</blockquote>
-</td>
-</tr>
-</table>
-
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
-<h2>
-<a NAME="oopgloss"></a>OOP Glossary</h2>
+<h3>Methods and messages</h3>
+Methods are the functions that objects execute in response to messages.
+A message is a request to an object for a behavior that the object supports.
+When it receives a message, the target object looks up a method that performs
+the behavior for its class, and executes it. Any specific message may be
+bound to different methods in different objects, according to class. This
+separation of messages and methods allows objects to behave <a href="http://whatis.techtarget.com/definition/0,,sid9_gci212803,00.html">
+polymorphically</a>.
+(In Ficl, methods are words defined in the context of a class, and messages
+are the names of those words.) Ficl classes associate messages with methods
+for their instances (a fancy way of saying that each class owns a wordlist).
+Ficl provides a late-binding operator <code>--></code> that sends messages
+to objects at run-time, and an early-binding operator <code>=></code>
+that compiles a specific class's method. These operators are the only supported
+way to invoke methods. Regular Forth words are not visible to the method-binding
+operators, so there's no chance of confusing a message with a regular
+word of the same name.
+<br><hr>
+<h2><a NAME="oopgloss"></a>OOP Glossary</h2>
 Note: with the exception of the binding operators (the first two definitions
 here), all of the words in this section are internal factors that you don't
 need to worry about. These words provide method binding for all classes
 and instances. Also described are supporting words and execution factors.
-All are defined in softwords/oo.fr.&nbsp;
+All are defined in <code>softwords/oo.fr</code>.
 <dl>
 <dt>
-<b><tt>-->&nbsp;&nbsp; ( instance class "method-name" -- xn )</tt></b></dt>
-
+-->   ( instance class "method-name" -- xn )
+</dt>
 <dd>
 Late binding: looks up and executes the given method in the context of
-the class on top of the stack.&nbsp;</dd>
+the class on top of the stack.</dd>
 
 <dt>
-<b><tt>c->&nbsp;&nbsp; ( instance class "method-name" -- xn exc )</tt></b></dt>
-
+c->   ( instance class "method-name" -- xn exc )
+</dt>
 <dd>
-Late binding with <tt>CATCH</tt>: looks up and <tt>CATCH</tt>es the given
+Late binding with <code>CATCH</code>: looks up and <code>CATCH</code>es the given
 method in the context of the class on top of the stack, pushes zero or
 exception code upon return.</dd>
 
 <dt>
-<b><tt>my=> comp: ( "method-name" -- )&nbsp; exec: ( inst class -- xn )</tt></b></dt>
+my=> comp: ( "method-name" -- )&nbsp; exec: ( inst class -- xn )
+</dt>
 
 <dd>
 Early binding: compiles code to execute the method of the class being defined.
-Only visible and valid in the scope of a <tt>--> sub</tt> .. <tt>end-class</tt>
+Only visible and valid in the scope of a <code>--> sub</code> .. <code>end-class</code>
 class definition.</dd>
 
 <dt>
-<b><tt>my=[ comp: ( "obj1 obj2 .. method ]" -- ) exec:( inst class -- xn
-)</tt></b></dt>
-
+my=[ comp: ( "obj1 obj2 .. method ]" -- ) exec:( inst class -- xn )
+</dt>
 <dd>
 Early binding: compiles code to execute a chain of methods of the class
-being defined. Only visible and valid in the scope of a <tt>--> sub</tt>
-.. <tt>end-class</tt> class definition.</dd>
+being defined. Only visible and valid in the scope of a <code>--> sub</code>
+.. <code>end-class</code> class definition.</dd>
 
 <dt>
-<b><tt>=>&nbsp;&nbsp; comp: ( class meta "method-name" -- )&nbsp; exec:
-( inst class -- xn )</tt></b></dt>
-
+=>   comp: ( class meta "method-name" -- )  exec: ( inst class -- xn )
+</dt>
 <dd>
 Early binding: compiles code to execute the method of the class specified
-at compile time.</dd>
+at compile time.
+</dd>
 
 <dt>
-<b><tt>do-do-instance</tt></b></dt>
-
+do-do-instance
+</dt>
 <dd>
 When executed, causes the instance to push its ( instance class ) stack
-signature. Implementation factor of <b><tt>metaclass --> sub</tt></b>.
-Compiles <b><tt>.do-instance</tt></b> in the context of a class; <tt>.do-instance</tt>
-implements the <tt>does></tt> part of a named instance.&nbsp;</dd>
+signature. Implementation factor of <code>metaclass --> sub</code>.
+Compiles <code>.do-instance</code> in the context of a class; <code>.do-instance</code>
+implements the <code>does></code> part of a named instance.
+</dd>
 
 <dt>
-<b><tt>exec-method&nbsp;&nbsp; ( instance class c-addr u -- xn )</tt></b></dt>
-
+exec-method   ( instance class c-addr u -- xn )
+</dt>
 <dd>
 Given the address and length of a message (method name) on the stack, finds
 the method in the context of the specified class and invokes it. Upon entry
 to the method, the instance and class are on top of the stack, as usual.
-If unable to find the method, prints an error message and aborts.</dd>
+If unable to find the method, prints an error message and aborts.
+</dd>
 
 <dt>
-<b><tt>find-method-xt&nbsp;&nbsp; ( class "method-name" -- class xt )</tt></b></dt>
-
+find-method-xt   ( class "method-name" -- class xt )
+</dt>
 <dd>
 Attempts to map the message to a method in the specified class. If successful,
 leaves the class and the execution token of the method on the stack. Otherwise
-prints an error message and aborts.</dd>
+prints an error message and aborts.
+</dd>
 
 <dt>
-<b><tt>lookup-method&nbsp;&nbsp; ( class c-addr u -- class xt )</tt></b></dt>
+lookup-method   ( class c-addr u -- class xt )
+</dt>
 
 <dd>
 Given the address and length of a message (method name) on the stack, finds
 the method in the context of the specified class. If unable to find the
-method, prints an error message and aborts.</dd>
+method, prints an error message and aborts.
+</dd>
 
 <dt>
-<b><tt>parse-method&nbsp;&nbsp; comp: ( "method-name" -- )&nbsp; exec:
-( -- c-addr u )</tt></b></dt>
+parse-method   comp: ( "method-name" -- )  exec: ( -- c-addr u )
+</dt>
 
 <dd>
 Parse "name" from the input stream and compile code to push its length
 and address when the enclosing definition runs.</dd>
 </dl>
-</td>
-</tr>
-</table>
-
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
 <h3>
 <a NAME="glossinstance"></a>Instance Variable Glossary</h3>
 <b>Note</b>: these words are only visible when creating a subclass! To
-create a subclass, use the <tt>sub</tt> method on <tt>object</tt> or any
-class derived from it (<i>not</i> <tt>metaclass</tt>). Source code for
+create a subclass, use the <code>sub</code> method on <code>object</code> or any
+class derived from it (<i>not</i> <code>metaclass</code>). Source code for
 Ficl OOP is in ficl/softwords/oo.fr.&nbsp;
 <br>Instance variable words do two things: they create methods that do
 an action appropriate for the type of instance variable they represent,
@@ -602,544 +581,482 @@ that gives access to a particular field of an object, and to the field
 itself. Rather than give esentially the same example over and over, here's
 one example that shows several of the instance variable construction words
 in use:
-<blockquote><tt>object subclass c-example</tt>
-<br><tt>&nbsp;&nbsp; cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.cell0</tt>
-<br><tt>&nbsp;&nbsp; c-4byte&nbsp;&nbsp; obj: .nCells</tt>
-<br><tt>&nbsp;4 c-4byte array: .quad</tt>
-<br><tt>&nbsp;&nbsp; char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.length</tt>
-<br><tt>79 chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .name</tt>
-<br><tt>end-class</tt>&nbsp;</blockquote>
+<pre>
+object subclass c-example
+   cell:          .cell0
+   c-4byte   obj: .nCells
+ 4 c-4byte array: .quad
+            char: .length
+79         chars: .name
+end-clas
+</pre>
 This class only defines instance variables, and it inherits some methods
-from <tt>object</tt>. Each untyped instance variable (.cell0, .length,
+from <code>object</code>. Each untyped instance variable (.cell0, .length,
 .name) pushes its address when executed. Each object instance variable
 pushes the address and class of the aggregate object. Similar to C, an
 array instance variable leaves its base address (and its class) when executed.
-The word <tt>subclass</tt> is shorthand for "<tt>--> sub</tt>"&nbsp;
+The word <code>subclass</code> is shorthand for <code>--> sub</code>
 <dl>
-<dt>
-<b><font face="Courier New"><font size=-1>cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-( offset "name" -- offset' )</font></font></b></dt>
-
-<dt>
-<b><font face="Courier New"><font size=-1>Execution:&nbsp; ( -- cell-addr
-)</font></font></b></dt>
+<dt>cell:   ( offset "name" -- offset' )
+<br>
+Execution:  ( -- cell-addr )
+</dt>
 
 <dd>
 Create an untyped instance variable one cell wide. The instance variable
-leaves its payload's address when executed.&nbsp;</dd>
+leaves its payload's address when executed.</dd>
 
 <dt>
-<b><tt>cells:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset nCells "name"
--- offset' )</tt></b></dt>
-
+cells:    ( offset nCells "name" -- offset' )
+</dt>
 <dt>
-<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- cell-addr )</tt></b></dt>
+Execution:  ( -- cell-addr )
+</dt>
 
 <dd>
 Create an untyped instance variable n cells wide.</dd>
 
 <dt>
-<b><tt>char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset "name"
--- offset' )</tt></b></dt>
+char:   ( offset "name" -- offset' )
+</dt>
 
 <dt>
-<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- char-addr )</tt></b></dt>
-
+Execution:  ( -- char-addr )
+</dt>
 <dd>
 Create an untyped member variable one char wide</dd>
 
 <dt>
-<b><tt>chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset nChars "name"
--- offset' )</tt></b></dt>
-
+chars:   ( offset nChars "name" -- offset' )
+</dt>
 <dt>
-<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- char-addr )</tt></b></dt>
-
+Execution:  ( -- char-addr )
+</dt>
 <dd>
-Create an untyped member variable n chars wide.</dd>
+Create an untyped member variable n chars wide.
+</dd>
 
 <dt>
-<b><tt>obj:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset class
-meta "name" -- offset' )</tt></b></dt>
-
+obj:   ( offset class meta "name" -- offset' )
+</dt>
 <dt>
-<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- instance class )</tt></b></dt>
-
+Execution:  ( -- instance class )
+</dt>
 <dd>
-Aggregate an uninitialized instance of <b>class</b> as a member variable
-of the class under construction.</dd>
+Aggregate an uninitialized instance of <code>class</code> as a member variable
+of the class under construction.
+</dd>
 
 <dt>
-<a NAME="arraycolon"></a><b><tt>array:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-( offset n class meta "name" -- offset' )</tt></b></dt>
-
+<a NAME="arraycolon"></a>
+array:  ( offset n class meta "name" -- offset' )
+</dt>
 <dt>
-<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- instance class )</tt></b></dt>
+Execution:  ( -- instance class )
+</dt>
 
 <dd>
 Aggregate an uninitialized array of instances of the class specified as
 a member variable of the class under construction.</dd>
 
 <dt>
-<a NAME="exampleref:"></a><b><tt>ref:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-( offset class meta "name" -- offset' )</tt></b></dt>
-
-<dt>
-<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- ref-instance ref-class )</tt></b></dt>
-
+<a NAME="exampleref:"></a>
+ref:  ( offset class meta "name" -- offset' )
+<br>
+Execution:&nbsp; ( -- ref-instance ref-class )
+</dt>
 <dd>
 Aggregate a reference to a class instance. There is no way to set the value
 of an aggregated ref - it's meant as a way to manipulate existing data
 structures with a Ficl OO model. For example, if your system contains a
 linked list of 4 byte quantities, you can make a class that represents
-a list element like this:&nbsp;</dd>
-
-<dl>
-<dd>
-<tt>object subclass c-4list</tt></dd>
-
-<dd>
-<tt>c-4list ref: .link</tt></dd>
-
-<dd>
-<tt>c-4byte obj: .payload</tt></dd>
-
-<dd>
-<tt>end-class;</tt></dd>
-
-<dd>
-<tt>address-of-existing-list c-4list --> ref mylist</tt></dd>
+a list element like this:
+</dd>
 </dl>
 
-<dd>
+<pre>
+object subclass c-4list
+c-4list ref: .link
+c-4byte obj: .payload
+end-class;
+
+address-of-existing-list c-4list --> ref mylist
+</pre>
+<p>
 The last line binds the existing structure to an instance of the class
 we just created. The link method pushes the link value and the class c_4list,
 so that the link looks like an object to Ficl and like a struct to C (it
 doesn't carry any extra baggage for the object model - the Ficl methods
-alone take care of storing the class information).&nbsp;</dd>
+alone take care of storing the class information).</p>
 
-<dd>
+<p>
 Note: Since a ref: aggregate can only support one class, it's good for
 modeling static structures, but not appropriate for polymorphism. If you
 want polymorphism, aggregate a c_ref (see classes.fr for source) into your
-class - it has methods to set and get an object.</dd>
+class - it has methods to set and get an object.</p>
 
-<dd>
+<p>
 By the way, it is also possible to construct a pair of classes that contain
-aggregate pointers to each other. Here's an example:</dd>
+aggregate pointers to each other. Here's an example:</p>
 
-<dl>
-<dd>
-<tt>object subclass akbar</tt></dd>
+<pre>
+object subclass akbar
+suspend-class          \ put akbar on hold while we define jeff
 
-<dd>
-<tt>suspend-class&nbsp;&nbsp;&nbsp;&nbsp; \ put akbar on hold while we
-define jeff</tt></dd>
+object subclass jeff
+    akbar ref: .significant-other
+  ( your additional methods here )
 
-<dd>
-<tt>object subclass jeff</tt></dd>
+end-class              \ done with jeff
 
-<dd>
-<tt>&nbsp;&nbsp;&nbsp; akbar ref: .significant-other</tt></dd>
+akbar --> resume-class \ resume defining akbar
+    jeff ref: .significant-other
+  ( your additional methods here )
+end-class              \ done with akbar
+</pre>
 
-<dd>
-<tt>&nbsp;&nbsp;&nbsp; ( your additional methods here )</tt></dd>
-
-<dd>
-<tt>end-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ done with
-jeff</tt></dd>
-
-<dd>
-<tt>akbar --> resume-class&nbsp; \ resume defining akbar</tt></dd>
-
-<dd>
-<tt>&nbsp;&nbsp;&nbsp; jeff ref: .significant-other</tt></dd>
-
-<dd>
-<tt>&nbsp;&nbsp;&nbsp; ( your additional methods here )</tt></dd>
-
-<dl><tt>end-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ done
-with akbar</tt></dl>
-</dl>
-</dl>
-</td>
-</tr>
-</table>
-
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
 <h3>
-<a NAME="glossclass"></a>Class Methods Glossary</h3>
-These words are methods of <tt>metaclass</tt>. They define the manipulations
+<a NAME="glossclass"></a>
+Class Methods Glossary
+</h3>
+These words are methods of <code>metaclass</code>. They define the manipulations
 that can be performed on classes. Methods include various kinds of instantiation,
 programming tools, and access to member variables of classes. Source is
-in softwords/oo.fr.&nbsp;
+in <code>softwords/oo.fr</code>.
 <dl>
 <dt>
-<b><tt>instance&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass "name" -- instance
-class )</tt></b>&nbsp;</dt>
-
+instance     ( class metaclass "name" -- instance class )
+</dt>
 <dd>
 Create an uninitialized instance of the class, giving it the name specified.
 The method leaves the instance 's signature on the stack (handy if you
-want to initialize). Example:</dd>
-
-<dd>
-<tt>c_ref --> instance uninit-ref&nbsp; 2drop</tt></dd>
-
+want to initialize). Example:
+</dd>
+</dl>
+<pre>
+c_ref --> instance uninit-ref  2drop
+</pre>
+<dl>
 <dt>
-<b><tt>new&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
-metaclass "name" -- )</tt></b>&nbsp;</dt>
-
+new    ( class metaclass "name" -- )
+</dt>
 <dd>
 Create an initialized instance of class, giving it the name specified.
-This method calls init to perform initialization.&nbsp;</dd>
+This method calls init to perform initialization.
+</dd>
 
 <dt>
-<b><tt>array&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( nObj class metaclass
-"name" -- nObjs instance class )</tt></b>&nbsp;</dt>
-
+array    ( nObj class metaclass "name" -- nObjs instance class )
+</dt>
 <dd>
 Create an array of nObj instances of the specified class. Instances are
-not initialized. Example:</dd>
-
-<dd>
-<tt>10 c_4byte --> array&nbsp; 40-raw-bytes&nbsp; 2drop drop</tt></dd>
-
+not initialized. Example:
+</dd>
+</dl>
+<pre>
+c_4byte --> array  40-raw-bytes  2drop drop
+</pre>
+<dl>
 <dt>
-<b><tt>new-array&nbsp;&nbsp;&nbsp; ( nObj class metaclass "name" -- )</tt></b>&nbsp;</dt>
-
+new-array    ( nObj class metaclass "name" -- )
+</dt>
 <dd>
 Creates an initialized array of nObj instances of the class. Same syntax
-as <tt>array</tt></dd>
+as <code>array</code>
 
 <dt>
-<a NAME="alloc"></a><b><tt>alloc&nbsp;&nbsp; ( class metaclass -- instance
-class )</tt></b></dt>
-
+<a NAME="alloc"></a>
+alloc   ( class metaclass -- instance class )
+</dt>
 <dd>
-Creates an anonymous instance of <b>class</b> from the heap (using a call
+Creates an anonymous instance of <code>class</code> from the heap (using a call
 to ficlMalloc() to get the memory). Leaves the payload and class addresses
-on the stack. Usage example:</dd>
-
-<dd>
-<tt>c-ref --> alloc&nbsp; 2constant instance-of-ref</tt></dd>
-
+on the stack. Usage example:
+</dd>
+</dl>
+<pre>
+c-ref --> alloc  2constant instance-of-ref
+</pre>
+<dl>
 <dd>
 Creates a double-cell constant that pushes the payload and class address
-of a heap instance of c-ref.</dd>
+of a heap instance of c-ref.
+</dd>
 
 <dt>
-<a NAME="allocarray"></a><b><tt>alloc-array&nbsp;&nbsp; ( nObj class metaclass
--- instance class )</tt></b></dt>
-
+<a NAME="allocarray"></a>
+alloc-array   ( nObj class metaclass -- instance class )
+</dt>
 <dd>
 Same as new-array, but creates anonymous instances from the heap using
 a call to ficlMalloc(). Each instance is initialized using the class's
-<tt>init</tt>
-method</dd>
+<code>init</code> method
+</dd>
 
 <dt>
-<a NAME="allot"></a><b><tt>allot&nbsp;&nbsp; ( class metaclass -- instance
-class )</tt></b></dt>
-
+<a NAME="allot"></a>
+allot   ( class metaclass -- instance class )
+</dt>
 <dd>
-Creates an anonymous instance of <b>class</b> from the dictionary. Leaves
-the payload and class addresses on the stack. Usage example:</dd>
-
-<dd>
-<tt>c-ref --> allot&nbsp; 2constant instance-of-ref</tt></dd>
-
+Creates an anonymous instance of <code>class</code> from the dictionary. Leaves
+the payload and class addresses on the stack. Usage example:
+</dd>
+</dl>
+<pre>
+c-ref --> allot  2constant instance-of-ref
+</pre>
+<dl>
 <dd>
 Creates a double-cell constant that pushes the payload and class address
-of a heap instance of c-ref.</dd>
+of a heap instance of c-ref.
+</dd>
 
 <dt>
-<a NAME="allotarray"></a><b><tt>allot-array&nbsp;&nbsp; ( nObj class metaclass
--- instance class )</tt></b></dt>
-
+<a NAME="allotarray"></a>
+allot-array   ( nObj class metaclass -- instance class )
+</dt>
 <dd>
 Same as new-array, but creates anonymous instances from the dictionary.
 Each instance is initialized using the class's
-<tt>init</tt> method</dd>
+<code>init</code> method
+</dd>
 
 <dt>
-<b><tt>ref&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance-addr
-class metaclass "name" -- )</tt></b>&nbsp;</dt>
-
+ref    ( instance-addr class metaclass "name" -- )
+</dt>
 <dd>
 Make a ref instance of the class that points to the supplied instance address.
 No new instance space is allotted. Instead, the instance refers to the
 address supplied on the stack forever afterward. For wrapping existing
-structures.</dd>
-</dl>
+structures.
+</dd>
 
-<dl>
 <dt>
-<b><tt>sub&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
-metaclass -- old-wid addr[size] size )</tt></b></dt>
-
+sub    ( class metaclass -- old-wid addr[size] size )
+</dt>
 <dd>
 Derive a subclass. You can add or override methods, and add instance variables.
-Alias: <tt>subclass</tt>. Examples:</dd>
-
-<dl>
-<dd>
-<tt>c_4byte --> sub c_special4byte</tt></dd>
-
-<dd>
-<tt>( your new methods and instance variables here )</tt></dd>
-
-<dd>
-<tt>end-class</tt></dd>
-
-<dd>
-or</dd>
-
-<dd>
-<tt>c_4byte subclass c_special4byte</tt></dd>
-
-<dd>
-<tt>( your new methods and instance variables here )</tt></dd>
-
-<dd>
-<tt>end-class</tt></dd>
+Alias: <code>subclass</code>. Examples:
+</dd>
 </dl>
+<pre>
+c_4byte --> sub c_special4byte
+( your new methods and instance variables here )
+end-class
 
+( --OR-- )
+
+c_4byte subclass c_special4byte
+( your new methods and instance variables here )
+end-class
+</pre>
+<dl>
 <dt>
-<b><tt>.size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass
--- instance-size )</tt></b>&nbsp;</dt>
-
+.size   ( class metaclass -- instance-size )
+</dt>
 <dd>
 Returns address of the class's instance size field, in address units. This
 is a metaclass member variable.</dd>
 
 <dt>
-<b><tt>.super&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass --
-superclass )</tt></b>&nbsp;</dt>
-
+.super   ( class metaclass -- superclass )
+</dt>
 <dd>
 Returns address of the class's superclass field. This is a metaclass member
 variable.</dd>
 
 <dt>
-<b><tt>.wid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass
--- wid )</tt></b>&nbsp;</dt>
-
+.wid   ( class metaclass -- wid )
+</dt>
 <dd>
 Returns the address of the class's wordlist ID field. This is a metaclass
 member variable.</dd>
 
 <dt>
-<b><tt>get-size</tt></b></dt>
-
+get-size
+</dt>
 <dd>
 Returns the size of an instance of the class in address units. Imeplemented
 as</dd>
+</dl>
 
-<dd>
-<tt>: get-size&nbsp;&nbsp; metaclass => .size @ ;</tt></dd>
-
-<dt>
-<b><tt>get-wid</tt></b></dt>
-
-<dd>
-Returns the wordlist ID of the class. Implemented as&nbsp;</dd>
-
-<dd>
-<tt>: get-wid&nbsp;&nbsp; metaclass => .wid @ ;</tt></dd>
+<pre>
+: get-size   metaclass => .size @ ;
+</pre>
+<dl>
 
 <dt>
-<b><tt>get-super</tt></b></dt>
+get-wid
+</dt>
+<dd>
+Returns the wordlist ID of the class. Implemented as</dd>
 
+</dl>
+<pre>
+: get-wid   metaclass => .wid @ ;
+</pre>
+<dl>
+<dt>
+get-super</dt>
 <dd>
 Returns the class's superclass. Implemented as</dd>
-
-<dd>
-<tt>: get-super&nbsp;&nbsp; metaclass => .super @ ;</tt></dd>
-
-<dt>
-<b><tt>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (
-class metaclass -- c-addr u )</tt></b>&nbsp;</dt>
-
+</dl><pre>
+: get-super   metaclass => .super @ ;
+</pre>
+<dl>
+id   ( class metaclass -- c-addr u )
+</dt>
 <dd>
 Returns the address and length of a string that names the class.</dd>
 
 <dt>
-<b><tt>methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass -- )</tt></b>&nbsp;</dt>
-
+methods   ( class metaclass -- )
+</dt>
 <dd>
 Lists methods of the class and all its superclasses</dd>
 
 <dt>
-<b><tt>offset-of&nbsp;&nbsp;&nbsp; ( class metaclass "name" -- offset )</tt></b></dt>
-
+offset-of   ( class metaclass "name" -- offset )
+</dt>
 <dd>
 Pushes the offset from the instance base address of the named member variable.
 If the name is not that of an instance variable method, you get garbage.
 There is presently no way to detect this error. Example:</dd>
 
-<dl>
-<dd>
-<tt>metaclass --> offset-of .wid</tt></dd>
 </dl>
-
+<pre>
+metaclass --> offset-of .wid
+</pre>
+<dl>
 <dt>
-<b><tt>pedigree&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass -- )</tt></b>&nbsp;</dt>
-
+pedigree   ( class metaclass -- )
+</dt>
 <dd>
 Lists the pedigree of the class (inheritance trail)</dd>
 
 <dt>
-<b><tt>see&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
-metaclass "name" -- )</tt></b>&nbsp;</dt>
-
+see   ( class metaclass "name" -- )
+</dt>
 <dd>
-Decompiles the specified method - obect version of <tt>SEE</tt>, from the
-<tt>TOOLS</tt>
-wordset.</dd>
+Decompiles the specified method - obect version of <code>SEE</code>, from the
+<code>TOOLS</code>
+wordset.
+</dd>
+<dt>
+debug   ( class metaclass "name" -- )
+</dt>
+<dd>
+Invokes the debugger on the specified method - obect version of <code>DEBUG</code>.
+</dd>
 </dl>
-</td>
-</tr>
-</table>
 
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
 <h3>
-<a NAME="objectgloss"></a><tt>object</tt> base-class Methods Glossary</h3>
+<a NAME="objectgloss"></a>
+OBJECT Methods Glossary
+</h3>
 These are methods that are defined for all instances by the base class
-<tt>object</tt>.
-The methods include default initialization, array manipulations, aliases
-of class methods, upcasting, and programming tools.&nbsp;
+<code>object</code>. The methods include default initialization, array manipulations, aliases of class methods, upcasting, and programming tools.
 <dl>
 <dt>
-<b><tt>init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance
-class -- )</tt>&nbsp;</b></dt>
-
+init   ( instance class -- )
+</dt>
 <dd>
 Default initializer called automatically for all instances created with
-<tt>new</tt>
-or <tt>new-array</tt>. Zero-fills the instance. You do not normally need
-to invoke <tt>init</tt> explicitly.</dd>
+<code>new</code> or <code>new-array</code>. Zero-fills the instance. You do not normally need to invoke <code>init</code> explicitly.</dd>
 
 <dt>
-<b><tt>array-init&nbsp;&nbsp; ( nObj instance class -- )</tt></b>&nbsp;</dt>
-
+array-init   ( nObj instance class -- )
+</dt>
 <dd>
-Applies <tt>init</tt> to an array of objects created by <tt>new-array</tt>.
-Note that <tt>array:</tt> does not cause aggregate arrays to be initialized
-automatically. You do not normally need to invoke <tt>array-init</tt> explicitly.</dd>
+Applies <code>init</code> to an array of objects created by <code>new-array</code>.
+Note that <code>array:</code> does not cause aggregate arrays to be initialized
+automatically. You do not normally need to invoke <code>array-init</code> explicitly.</dd>
 
 <dt>
-<a NAME="oofree"></a><b><tt>free&nbsp;&nbsp; ( instance class -- )</tt></b></dt>
-
+<a NAME="oofree"></a>
+free   ( instance class -- )
+</dt>
 <dd>
-Releases memory used by an instance previously created with <tt>alloc</tt>
-or <tt>alloc-array</tt>. Note - this method is not presently protected
+Releases memory used by an instance previously created with <code>alloc</code>
+or <code>alloc-array</code>. Note - this method is not presently protected
 against accidentally deleting something from the dictionary. If you do
 this, Bad Things are likely to happen. Be careful for the moment to apply
-free only to instances created with <tt>alloc</tt> or <tt>alloc-array</tt>.</dd>
+free only to instances created with <code>alloc</code> or <code>alloc-array</code>.
+</dd>
 
 <dt>
-<b><tt>class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class
--- class metaclass )</tt></b>&nbsp;</dt>
-
+class   ( instance class -- class metaclass )
+</dt>
 <dd>
 Convert an object signature into that of its class. Useful for calling
 class methods that have no object aliases.</dd>
 
 <dt>
-<b><tt>super&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class
--- instance parent-class )</tt></b>&nbsp;</dt>
-
+super   ( instance class -- instance parent-class )
+</dt>
 <dd>
-Upcast an object to its parent class. The parent class of <tt>object</tt>
+Upcast an object to its parent class. The parent class of <code>object</code>
 is zero. Useful for invoking an overridden parent class method.</dd>
 
 <dt>
-<b><tt>pedigree&nbsp;&nbsp;&nbsp;&nbsp; ( instance class -- )</tt></b>&nbsp;</dt>
-
+pedigree   ( instance class -- )
+</dt>
 <dd>
 Display an object's pedigree - its chain of inheritance. This is an alias
 for the corresponding class method.</dd>
 
 <dt>
-<b><tt>size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance
-class -- sizeof(instance) )</tt></b>&nbsp;</dt>
-
+size   ( instance class -- sizeof(instance) )
+</dt>
 <dd>
 Returns the size, in address units, of one instance. Does not know about
-arrays! This is an alias for the class method <tt>get-size</tt></dd>
+arrays! This is an alias for the class method <code>get-size</code></dd>
 
 <dt>
-<b><tt>methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class -- )</tt></b>&nbsp;</dt>
-
+methods   ( instance class -- )
+</dt>
 <dd>
 Class method alias. Displays the list of methods of the class and all superclasses
 of the instance.</dd>
 
 <dt>
-<b><tt>index&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( n instance class
--- instance[n] class )</tt></b>&nbsp;</dt>
-
+index   ( n instance class -- instance[n] class )
+</dt>
 <dd>
 Convert array-of-objects base signature into signature for array element
-n. No check for bounds overflow. Index is zero-based, like C, so&nbsp;</dd>
-
+n. No check for bounds overflow. Index is zero-based, like C, so:
+</dd>
+</dl>
+<pre>
+0 my-obj --> index
+\  is equivalent to
+my-obj
+</pre>
 <dl>
 <dd>
-<tt>0 my-obj --> index</tt>&nbsp;</dd>
-</dl>
-
-<dd>
-is equivalent to&nbsp;</dd>
-
-<dl>
-<dd>
-<tt>my-obj</tt></dd>
-</dl>
-
-<dd>
-Check out the <a href="#minusrot">description of <tt>-ROT</tt></a> for
+Check out the <a href="#minusrot">description of <code>-ROT</code></a> for
 help in dealing with indices on the stack.</dd>
 
 <dt>
-<b><tt>next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance[n]
-class -- instance[n+1] class )</tt></b>&nbsp;</dt>
-
+next   ( instance[n] class -- instance[n+1] class )
+</dt>
 <dd>
 Convert an array-object signature&nbsp; into the signature of the next
 object in the array. No check for bounds overflow.</dd>
 
 <dt>
-<b><tt>prev&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance[n]
-class -- instance[n-1] class )</tt></b>&nbsp;</dt>
+prev    ( instance[n] class -- instance[n-1] class )
+</dt>
+<dd>Convert an object signature into the signature of the previous object
+in the array. No check for bounds underflow.
+</dd>
+</dl>
 
-<br>Convert an object signature into the signature of the previous object
-in the array. No check for bounds underflow.</dl>
-</td>
-</tr>
-</table>
-
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
-<tr>
-<td>
 <h3>
 <a NAME="stockclasses"></a>Supplied Classes (See classes.fr)</h3>
 
 <dl>
-<dt>
-<b><tt>metaclass&nbsp;</tt></b></dt>
+<dt>metaclass</dt>
 
 <dd>
 Describes all classes of Ficl. Contains class methods. Should never be
@@ -1147,246 +1064,204 @@ directly instantiated or subclassed. Defined in oo.fr. Methods described
 above.</dd>
 
 <dt>
-<b><tt>object</tt>&nbsp;</b></dt>
-
+object
+</dt>
 <dd>
 Mother of all Ficl objects. Defines default initialization and array indexing
 methods. Defined in oo.fr. Methods described above.</dd>
 
-<dt>
-<b><tt>c-ref</tt>&nbsp;</b></dt>
-
+<dt>c-ref</dt>
 <dd>
 Holds the signature of another object. Aggregate one of these into a data
 structure or container class to get polymorphic behavior. Methods &amp;
-members:&nbsp;</dd>
+members:</dd>
+</dl>
 
-<dd>
-<tt>get&nbsp;&nbsp; ( inst class -- ref-inst ref-class )</tt></dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( ref-inst ref-class inst class -- )</tt></dd>
-
-<dd>
-<tt>.instance&nbsp;&nbsp; ( inst class -- a-addr ) </tt>cell member that
-holds the instance</dd>
-
-<dd>
-<tt>.class&nbsp;&nbsp; ( inst class -- a-addr ) </tt>cell member that holds
-the class</dd>
-
+<pre>
+get   ( inst class -- ref-inst ref-class )
+set   ( ref-inst ref-class inst class -- )
+.instance   \  cell member that holds the instance
+      ( inst class -- a-addr ) 
+.class      \  cell member that holds the class
+      ( inst class -- a-addr )
+</pre>
+<dl>
 <dt>
-<b><tt>c-byte&nbsp;</tt></b></dt>
-
+c-byte
+</dt>
 <dd>
-Primitive class derived from <tt>object</tt>, with a 1-byte payload. Set
-and get methods perform correct width fetch and store. Methods &amp; members:</dd>
+Primitive class derived from <code>object</code>, with a 1-byte payload. Set
+and get methods perform correct width fetch and store. Methods and members:
+</dd>
+</dl>
+<pre>
+get   ( inst class -- c )
+set   ( c inst class -- )
+.payload    \ member holds instance's value
+      ( inst class -- addr ) 
 
+</pre>
+<dl>
+<dt>c-2byte</dt>
 <dd>
-<tt>get&nbsp;&nbsp; ( inst class -- c )</tt></dd>
-
+Primitive class derived from <code>object</code>, with a 2-byte payload. Set
+and get methods perform correct width fetch and store. Methods and members:
+</dd>
+</dl>
+<pre>
+get   ( inst class -- 2byte )
+set   ( 2byte inst class -- )
+.payload   \ member holds instance's value
+      ( inst class -- addr ) 
+</pre>
+<dl>
+<dt>c-4byte</dt>
 <dd>
-<tt>set&nbsp;&nbsp; ( c inst class -- )</tt></dd>
-
+Primitive class derived from <code>object</code>, with a 4-byte payload. Set
+and get methods perform correct width fetch and store. Methods and members:</dd>
+</dl>
+<pre>
+get   ( inst class -- x )
+set   ( x inst class -- )
+.payload    \ member holds instance's value
+      ( inst class -- addr ) 
+</pre>
+<dl>
+<dt>c-cell</dt>
 <dd>
-<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
-value</dd>
-
-<dt>
-<b><tt>c-2byte</tt></b>&nbsp;</dt>
-
-<dd>
-Primitive class derived from <tt>object</tt>, with a 2-byte payload. Set
-and get methods perform correct width fetch and store. Methods &amp; members:</dd>
-
-<dd>
-<tt>get&nbsp;&nbsp; ( inst class -- 2byte )</tt></dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( 2byte inst class -- )</tt></dd>
-
-<dd>
-<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
-value</dd>
-
-<dt>
-<b><tt>c-4byte</tt></b>&nbsp;</dt>
-
-<dd>
-Primitive class derived from <tt>object</tt>, with a 4-byte payload. Set
-and get methods perform correct width fetch and store. Methods &amp; members:</dd>
-
-<dd>
-<tt>get&nbsp;&nbsp; ( inst class -- x )</tt></dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( x inst class -- )</tt></dd>
-
-<dd>
-<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
-value</dd>
-
-<dt>
-<b><tt>c-cell</tt></b>&nbsp;</dt>
-
-<dd>
-Primitive class derived from <tt>object</tt>, with a cell payload (equivalent
+Primitive class derived from <code>object</code>, with a cell payload (equivalent
 to c-4byte in 32 bit implementations, 64 bits wide on Alpha). Set and get
-methods perform correct width fetch and store. Methods &amp; members:</dd>
-
+methods perform correct width fetch and store. Methods and members:
+</dd>
+</dl>
+<pre>
+get   ( inst class -- x )
+set   ( x inst class -- )
+.payload    \ member holds instance's value
+      ( inst class -- addr ) 
+</pre>
+<dl>
+<dt>c-ptr</dt>
 <dd>
-<tt>get&nbsp;&nbsp; ( inst class -- x )</tt></dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( x inst class -- )</tt></dd>
-
-<dd>
-<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
-value</dd>
-
-<dt>
-<b><tt>c-ptr</tt></b></dt>
-
-<dd>
-Base class derived from <tt>object</tt> for pointers to non-object types.
+Base class derived from <code>object</code> for pointers to non-object types.
 This class is not complete by itself: several methods depend on a derived
-class definition of <tt>@size</tt>. Methods &amp; members:</dd>
+class definition of <code>@size</code>. Methods and members:</dd>
+</dl>
+<pre>
+.addr   ( inst class -- a-addr )
+\  member variable - holds the pointer address
 
+get-ptr   ( inst class -- ptr )
+set-ptr   ( ptr inst class -- )
+inc-ptr   ( inst class -- )
+\ Adds @size to pointer address
+dec-ptr   ( inst class -- )
+\ Subtracts @size from pointer address
+
+index-ptr   ( i inst class -- )
+\ Adds i*@size to pointer address
+</pre>
+<dl>
+<dt>c-bytePtr</dt>
 <dd>
-<tt>.addr&nbsp;&nbsp; ( inst class -- a-addr )</tt> member variable - holds
-the pointer address</dd>
+Pointer to byte derived from c-ptr. Methods and members:
+</dd>
+</dl>
+<pre>
+@size   ( inst class -- size )
+\  Push size of the pointed-to thing
 
+get   ( inst class -- c )
+\ Fetch the pointer's referent byte
+
+set   ( c inst class -- ) 
+\ Store c at the pointer address
+</pre>
+<dl>
+<dt>c-2bytePtr</dt>
 <dd>
-<tt>get-ptr&nbsp;&nbsp; ( inst class -- ptr )</tt></dd>
+Pointer to double byte derived from c-ptr. Methods and members:</dd>
+</dl>
+<pre>
+@size   ( inst class -- size )
+\  Push size of the pointed-to thing
 
+get   ( inst class -- n )
+\ Fetch the pointer's referent c-2byte
+
+set   ( n inst class -- ) 
+\ Store n at the pointer address
+</pre>
+
+<dl>
+<dt>c-4bytePtr</dt>
 <dd>
-<tt>set-ptr&nbsp;&nbsp; ( ptr inst class -- )</tt></dd>
+Pointer to quad-byte derived from c-ptr. Methods and members:
+</dd>
+</dl>
+<pre>
+@size   ( inst class -- size )
+\  Push size of the pointed-to thing (a c-4byte)
 
+get   ( inst class -- n )
+\ Fetch the pointer's referent c-4byte
+
+set   ( n inst class -- ) 
+\ Store n at the pointer address
+</pre>
+
+<dl>
+<dt>c-cellPtr</dt>
 <dd>
-<tt>inc-ptr&nbsp;&nbsp; ( inst class -- )</tt> Adds @size to pointer address</dd>
+Pointer to cell derived from c-ptr. Methods and members:</dd>
+</dl>
+<pre>
+@size   ( inst class -- size )
+\  Push size of the pointed-to thing (a cell)
 
-<dd>
-<tt>dec-ptr&nbsp;&nbsp; ( inst class -- )</tt> Subtracts @size from pointer
-address</dd>
+get   ( inst class -- x )
+\ Fetch the pointer's referent cell
 
-<dd>
-<tt>index-ptr&nbsp;&nbsp; ( i inst class -- )</tt> Adds i*@size to pointer
-address</dd>
+set   ( x inst class -- ) 
+\ Store n at the pointer address
+</pre>
 
-<dt>
-<b><tt>c-bytePtr</tt></b></dt>
-
-<dd>
-Pointer to byte derived from c-ptr. Methods &amp; members:</dd>
-
-<dd>
-<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
-thing</dd>
-
-<dd>
-<tt>get&nbsp;&nbsp; (&nbsp; inst class -- c ) </tt>Fetch the pointer's
-referent byte</dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( c inst class -- ) </tt>Store c at the pointer address</dd>
-
-<dt>
-<b><tt>c-2bytePtr</tt></b></dt>
-
-<dd>
-Pointer to double byte derived from c-ptr. Methods &amp; members:</dd>
-
-<dd>
-<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
-thing</dd>
-
-<dd>
-<tt>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </tt>Fetch the pointer's
-referent 2byte</dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( x inst class -- )</tt> Store 2byte x at the pointer
-address</dd>
-
-<dt>
-<b><tt>c-4bytePtr</tt></b></dt>
-
-<dd>
-Pointer to quad-byte derived from c-ptr. Methods &amp; members:</dd>
-
-<dd>
-<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
-thing</dd>
-
-<dd>
-<tt>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </tt>Fetch the pointer's
-referent 2byte</dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( x inst class -- )</tt> Store 2byte x at the pointer
-address</dd>
-
-<dt>
-<b><tt>c-cellPtr</tt></b></dt>
-
-<dd>
-Pointer to cell derived from c-ptr. Methods &amp; members:</dd>
-
-<dd>
-<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
-thing</dd>
-
-<dd>
-<tt>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </tt>Fetch the pointer's
-referent cell</dd>
-
-<dd>
-<tt>set&nbsp;&nbsp; ( x inst class -- )</tt> Storex at the pointer address</dd>
-
-<dt>
-<b><tt>c-string</tt></b>&nbsp; (see string.fr)</dt>
-
+<dl>
+<dt>c-string (see string.fr)</dt>
 <dd>
 Dynamically allocated string similar to MFC CString (Partial list of methods
 follows)</dd>
+</dl>
+<pre>
+set ( c-addr u 2:this -- )
+\ Initialize buffer to the specified string
 
-<dd>
-<font face="Courier New"><font size=-1>set ( c-addr u 2:this -- ) </font></font><font size=+0>Initialize
-buffer to the specified string</font></dd>
+get ( 2:this -- c-addr u ) 
+\ Return buffer contents as counted string
 
-<dd>
-<font face="Courier New"><font size=-1>get ( 2:this -- c-addr u ) Return
-buffer contents as counted string</font></font></dd>
+cat ( c-addr u 2:this -- ) 
+\ Append given string to end of buffer
 
-<dd>
-<font face="Courier New"><font size=-1>cat ( c-addr u 2:this -- ) Append
-given string to end of buffer</font></font></dd>
+compare ( 2string 2:this -- n )
+\ Return result of lexical compare
 
-<dd>
-<font face="Courier New"><font size=-1>compare ( 2string 2:this -- n ) Return
-result of lexical compare</font></font></dd>
+type ( 2:this -- )
+\ Print buffer to the output stream
 
-<dd>
-<font face="Courier New"><font size=-1>type ( 2:this -- ) Print buffer to
-the output stream</font></font></dd>
 
-<dd>
-<font face="Courier New"><font size=-1>hashcode ( 2:this -- x ) Return hashcode
-of string (as in dictionary)</font></font></dd>
+hashcode ( 2:this -- x )
+\ Return hashcode of string (as in dictionary)
 
-<dd>
-<font face="Courier New"><font size=-1>free ( 2:this -- ) Release internal
-buffer</font></font></dd>
+free ( 2:this -- )
+\ Release internal buffer
+</pre>
 
-<dt>
-<b><tt>c-hashstring</tt>&nbsp; </b>(see string.fr)</dt>
-
+<dl>
+<dt>c-hashstring (see string.fr)</dt>
 <dd>
 Derived from c-string. This class adds a hashcode member variable.</dd>
 </dl>
-</td>
-</tr>
-</table>
-
+</div>
 </body>
 </html>
+
