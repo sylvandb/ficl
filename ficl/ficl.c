@@ -217,7 +217,7 @@ int ficlExec(FICL_VM *pVM, char *pText)
         break;
 
     case VM_OUTOFTEXT:
-        if ((pVM->state != COMPILE) && (pVM->sourceID == 0))
+        if ((pVM->state != COMPILE) && (pVM->sourceID.i == 0))
             ficlTextOut(pVM, FICL_PROMPT, 0);
         break;
 
@@ -235,11 +235,11 @@ int ficlExec(FICL_VM *pVM, char *pText)
         if (pVM->state == COMPILE)
         {
             dictAbortDefinition(dp);
-            dictResetSearchOrder(dp);
 #if FICL_WANT_LOCALS
             dictEmpty(localp, localp->pForthWords->size);
 #endif
         }
+        dictResetSearchOrder(dp);
         vmReset(pVM);
         break;
    }

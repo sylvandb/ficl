@@ -1317,6 +1317,9 @@ static void listWords(FICL_VM *pVM)
     {
         for (wp = pHash->table[i]; wp != NULL; wp = wp->link, nWords++)
         {
+            if (wp->nName == 0) /* ignore :noname defs */
+                continue;
+
             cp = wp->name;
             nChars += sprintf(pPad + nChars, "%s", cp);
 
@@ -1958,7 +1961,12 @@ static void postponeCoIm(FICL_VM *pVM)
 
 static void execute(FICL_VM *pVM)
 {
-    FICL_WORD *pFW = stackPopPtr(pVM->pStack);
+    FICL_WORD *pFW;
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM, 1, 0);
+#endif
+
+    pFW = stackPopPtr(pVM->pStack);
     vmExecute(pVM, pFW);
 
     return;
@@ -2662,11 +2670,11 @@ static void evaluate(FICL_VM *pVM)
 {
     UNS32 count = stackPopUNS32(pVM->pStack);
     char *cp    = stackPopPtr(pVM->pStack);
-    UNS32 id;
+    CELL id;
 
     IGNORE(count);
     id = pVM->sourceID;
-    pVM->sourceID = -1;
+    pVM->sourceID.i = -1;
     vmPushIP(pVM, &pInterpret);
     ficlExec(pVM, cp);
     vmPopIP(pVM);
@@ -3326,19 +3334,30 @@ static void setOrder(FICL_VM *pVM)
 ** lists or may be dynamically allocated in data space. A system shall
 ** allow the creation of at least 8 new word lists in addition to any
 ** provided as part of the system. 
-** Note: ficl creates a new single-list hash in the dictionary and returns
-** its address.
+** Notes: 
+** 1. ficl creates a new single-list hash in the dictionary and returns
+**    its address.
+** 2. ficl-wordlist takes an arg off the stack indicating the number of
+**    hash entries in the wordlist. Ficl 2.02 and later define WORDLIST as
+**    : wordlist 1 ficl-wordlist ;
 **************************************************************************/
 static void wordlist(FICL_VM *pVM)
 {
     FICL_DICT *dp = ficlGetDict();
     FICL_HASH *pHash;
+    UNS32 nBuckets;
+    
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM, 1, 1);
+#endif
+    nBuckets = stackPopUNS32(pVM->pStack);
 
     dictAlign(dp);
     pHash    = (FICL_HASH *)dp->here;
-    dictAllot(dp, sizeof (FICL_HASH));
+    dictAllot(dp, sizeof (FICL_HASH) 
+        + (nBuckets-1) * sizeof (FICL_WORD *));
 
-    pHash->size = 1;
+    pHash->size = nBuckets;
     hashReset(pHash);
 
     stackPushPtr(pVM->pStack, pHash);
@@ -3404,9 +3423,9 @@ static void colonNoName(FICL_VM *pVM)
     SI_SETPTR(si, NULL);
 
     pVM->state = COMPILE;
-    markControlTag(pVM, colonTag);
     pFW = dictAppendWord2(dp, si, colonParen, FW_DEFAULT | FW_SMUDGE);
     stackPushPtr(pVM->pStack, pFW);
+    markControlTag(pVM, colonTag);
     return;
 }
 
@@ -3949,10 +3968,49 @@ static void compareString(FICL_VM *pVM)
 **************************************************************************/
 static void refill(FICL_VM *pVM)
 {
-    INT32 ret = (pVM->sourceID == -1) ? FICL_FALSE : FICL_TRUE;
+    INT32 ret = (pVM->sourceID.i == -1) ? FICL_FALSE : FICL_TRUE;
     stackPushINT32(pVM->pStack, ret);
     if (ret)
         vmThrow(pVM, VM_OUTOFTEXT);
+    return;
+}
+
+
+/**************************************************************************
+                        f o r g e t
+** TOOLS EXT  ( "<spaces>name" -- )
+** Skip leading space delimiters. Parse name delimited by a space.
+** Find name, then delete name from the dictionary along with all
+** words added to the dictionary after name. An ambiguous
+** condition exists if name cannot be found. 
+** 
+** If the Search-Order word set is present, FORGET searches the
+** compilation word list. An ambiguous condition exists if the
+** compilation word list is deleted. 
+**************************************************************************/
+static void forgetWid(FICL_VM *pVM)
+{
+    FICL_DICT *pDict = ficlGetDict();
+    FICL_HASH *pHash;
+
+    pHash = (FICL_HASH *)stackPopPtr(pVM->pStack);
+    hashForget(pHash, pDict->here);
+
+    return;
+}
+
+
+static void forget(FICL_VM *pVM)
+{
+    void *where;
+    FICL_DICT *pDict = ficlGetDict();
+    FICL_HASH *pHash = pDict->pCompile;
+
+    tick(pVM);
+    where = ((FICL_WORD *)stackPopPtr(pVM->pStack))->name;
+    hashForget(pHash, where);
+    pDict->here = PTRtoCELL where;
+
     return;
 }
 
@@ -4196,7 +4254,7 @@ void ficlCompileCore(FICL_DICT *dp)
     dictAppendWord(dp, "set-current",  
                                     setCurrent,     FW_DEFAULT);
     dictAppendWord(dp, "set-order", setOrder,       FW_DEFAULT);
-    dictAppendWord(dp, "wordlist",  wordlist,       FW_DEFAULT);
+    dictAppendWord(dp, "ficl-wordlist", wordlist,   FW_DEFAULT);
 
     /*
     ** Set SEARCH environment query values
@@ -4210,6 +4268,7 @@ void ficlCompileCore(FICL_DICT *dp)
     */
     dictAppendWord(dp, ".s",        displayStack,   FW_DEFAULT);
     dictAppendWord(dp, "bye",       bye,            FW_DEFAULT);
+    dictAppendWord(dp, "forget",    forget,         FW_DEFAULT);
     dictAppendWord(dp, "see",       see,            FW_DEFAULT);
     dictAppendWord(dp, "words",     listWords,      FW_DEFAULT);
 
@@ -4233,6 +4292,7 @@ void ficlCompileCore(FICL_DICT *dp)
     dictAppendWord(dp, "compile-only",
                                     compileOnly,    FW_DEFAULT);
     dictAppendWord(dp, "endif",     endifCoIm,      FW_COMPIMMED);
+    dictAppendWord(dp, "forget-wid",forgetWid,      FW_DEFAULT);
     dictAppendWord(dp, "parse-word",parseNoCopy,    FW_DEFAULT);
     dictAppendWord(dp, "sliteral",  sLiteralCoIm,   FW_COMPIMMED); /* STRING */
     dictAppendWord(dp, "wid-set-super", 

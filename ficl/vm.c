@@ -300,7 +300,7 @@ void vmQuit(FICL_VM *pVM)
     pVM->tib.cp      = NULL;
     pVM->tib.index   = 0;
     pVM->pad[0]      = '\0';
-    pVM->sourceID    = 0;
+    pVM->sourceID.i  = 0;
     return;
 }
 

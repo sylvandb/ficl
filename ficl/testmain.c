@@ -113,7 +113,7 @@ static void ficlLoad(FICL_VM *pVM)
     int     nLine = 0;
     FILE   *fp;
     int     result;
-    UNS32   id;
+    CELL    id;
 #ifdef WIN32       
     struct _stat buf;
 #else
@@ -154,7 +154,7 @@ static void ficlLoad(FICL_VM *pVM)
     }
 
     id = pVM->sourceID;
-    pVM->sourceID = -1;
+    pVM->sourceID.p = (void *)fp;
 
     /* feed each line to ficlExec */
     while (fgets(cp, nLINEBUF, fp))
@@ -177,6 +177,12 @@ static void ficlLoad(FICL_VM *pVM)
             break; 
         }
     }
+    /*
+    ** Pass an empty line with SOURCE-ID == 0 to flush
+    ** any pending REFILLs (as required by FILE wordset)
+    */
+    pVM->sourceID.i = -1;
+    ficlExec(pVM, "");
 
     pVM->sourceID = id;
     fclose(fp);

@@ -3,7 +3,7 @@
 \ ** john sadler aug 1998
 
 .( loading ficl O-O extensions ) cr
-vocabulary oop
+7 ficl-vocabulary oop
 also oop definitions
 
 \ Design goals:
@@ -68,7 +68,9 @@ user current-class
 	2 pick cell+ @		( -- class c-addr u wid )
 	search-wordlist 	( -- class 0 | xt 1 | xt -1 )
 	0= if
-		." Method <" c-addr u type ." > not found" cr abort 
+		c-addr u type ."  not found in " 
+        body> >name type
+        cr abort 
 	endif
 ;
 
@@ -105,7 +107,7 @@ user current-class
 \   my-class get-wid  ( -- wid-of-my-class )
 \
 : =>   \ c:( class meta -- ) run: ( -- ??? ) invokes compiled method
-	drop find-method-xt , drop
+	drop find-method-xt compile, drop
 ; immediate compile-only
 
 
@@ -215,8 +217,9 @@ set-current previous
 \ the wordlist of every class by the SUB method.
 \ PRECONDITION: current-class contains the class address
 \
-: do-do-instance  \ c:( -- )  r: ( -- )
-    s" : .do-instance does> [ current-class @ ] literal ;" evaluate 
+: do-do-instance  ( -- )
+    s" : .do-instance does> [ current-class @ ] literal ;" 
+    evaluate 
 ;
 
 \ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -227,7 +230,7 @@ set-current previous
 \ Classes are IMMEDIATE to make early binding simpler
 \ See above...
 \
-: meta-class
+:noname
 	wordlist
 	create  immediate
 	0       ,	\ NULL parent class
@@ -235,9 +238,7 @@ set-current previous
 	3 cells ,	\ instance size 
 	ficl-set-current
 	does> dup
-;
-
-meta-class metaclass
+;  execute metaclass
 
 metaclass drop current-class !
 do-do-instance
@@ -269,7 +270,7 @@ previous
     locals| meta parent |
 	create
     here parent --> .do-instance \ ( inst class )
-    parent meta --> get-size 
+    parent meta metaclass => get-size 
     allot                        \ allocate payload space
 ;
 
@@ -278,7 +279,7 @@ previous
     locals| meta parent nobj |
 	create  nobj
     here parent --> .do-instance \ ( nobj inst class )
-    parent meta --> get-size
+    parent meta metaclass => get-size
 	nobj *  allot			\ allocate payload space
 ;
 
@@ -290,7 +291,7 @@ previous
 
 \ create an initialized array of instances
 : new-array   ( n class metaclass "name" -- ) 
-	--> array 
+	metaclass => array 
 	--> array-init
 ;
 
@@ -312,7 +313,7 @@ previous
 	wid    ,	\ save wid
 	here parent meta --> get-size dup ,  ( addr[size] size )
 	metaclass => .do-instance
-	wid ficl-set-current rot rot
+	wid ficl-set-current -rot
 	do-do-instance
 	instance-vars >search	\ push struct builder wordlist
 ;
@@ -351,11 +352,14 @@ previous
 
 \ decompile a method
 : see  ( class meta -- )   
-    --> get-wid >search see previous ;
+    metaclass => get-wid >search see previous ;
 
 set-current	
 \ E N D   M E T A C L A S S
 
+\ META is a nickname for the address of METACLASS...
+metaclass drop  
+constant meta
 
 \ SUBCLASS is a nickname for a class's SUB method...
 \ Subclass compilation ends when you invoke end-class
@@ -366,26 +370,30 @@ set-current
 \ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \ ** O B J E C T
 \ Root of all classes
-: root-class
+:noname
 	wordlist
 	create  immediate
 	0       ,	\ NULL parent class
 	dup     ,	\ wid
 	0       ,	\ instance size 
 	ficl-set-current
-	does> [ metaclass drop ] literal
-;
-
-root-class object
+	does> meta
+;  execute object
 
 object drop current-class ! 
 do-do-instance
 
 \ O B J E C T   M E T H O D S
+\ Convert instance cell-pair to class cell-pair
+\ Useful for binding class methods from an instance
+: class  ( instance class -- class metaclass )
+	nip meta ;
+
 \ default INIT method zero fills an instance
 : init   ( instance class -- )
-	over swap ( inst inst class ) 
-	--> size 0 fill ;
+    meta 
+    metaclass => get-size   ( inst size )
+    erase ;
 
 \ Apply INIT to an array of NOBJ objects...
 \
@@ -404,24 +412,22 @@ do-do-instance
 	loop
 ;
 
-\ Convert object cell-pair to class cell-pair
-: class  ( instance class -- class metaclass )
-	nip [ metaclass nip ] literal 
-;
-
 \ Instance aliases for common class methods
 \ Upcast to parent class
 : super     ( instance class -- instance parent-class )
-    dup --> class --> get-super ;
+    meta  metaclass => get-super ;
 
 : pedigree  ( instance class -- )
-	--> class --> pedigree ;
+	object => class 
+    metaclass => pedigree ;
 
 : size      ( instance class -- sizeof-instance )
-	--> class  --> get-size ;
+	object => class 
+    metaclass => get-size ;
 
 : methods   ( instance class -- )
-	--> class --> methods ;
+	object => class 
+    metaclass => methods ;
 
 \ Array indexing methods...
 \ Usage examples:
@@ -430,20 +436,23 @@ do-do-instance
 \
 : index   ( n instance class -- instance[n] class )
 	locals| class inst |
-	inst class --> class
+	inst class 
+    object => class
 	metaclass => get-size  *   ( n*size )
 	inst +  class ;
 
 : next   ( instance[n] class -- instance[n+1] class )
 	locals| class inst |
-	inst class --> class
+	inst class 
+    object => class
 	metaclass => get-size 
 	inst +
 	class ;
 
 : prev   ( instance[n] class -- instance[n-1] class )
 	locals| class inst |
-	inst class --> class
+	inst class 
+    object => class
 	metaclass => get-size
 	inst swap -
 	class ;
@@ -452,3 +461,4 @@ set-current
 \ E N D   O B J E C T
 
 
+previous definitions

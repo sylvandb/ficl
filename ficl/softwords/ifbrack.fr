@@ -1,9 +1,8 @@
 \ ** ficl/softwords/ifbrack.fr
 \ ** ANS conditional compile directives [if] [else] [then]
 \ ** Requires ficl 2.0 or greater...
-\ Does not work correctly with ficl's load command
-\ bacause load sets SOURCE-ID to -1, causing REFILL to
-\ return FALSE.                                    
+
+hidden dup >search ficl-set-current
 
 : ?[if]   ( c-addr u -- c-addr u flag )
     2dup 2dup
@@ -25,6 +24,8 @@
     s" [THEN]" compare 0= r> 
     or
 ;
+
+set-current
 
 : [else]  ( -- )
     1                                     \ ( level )
@@ -50,3 +51,4 @@
 
 : [then]  ( -- )  ;  immediate
 
+previous

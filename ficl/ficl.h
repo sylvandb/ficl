@@ -9,7 +9,8 @@
 ** N O T I C E -- DISCLAIMER OF WARRANTY
 ** 
 ** Ficl is freeware. Use it in any way that you like, with
-** the understanding that the code is not supported.
+** the understanding that the code is supported on a "best effort"
+** basis only.
 ** 
 ** Any third party may reproduce, distribute, or modify the ficl
 ** software code or any derivative  works thereof without any 
@@ -205,7 +206,7 @@ struct ficl_dict;
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "2.01"
+#define FICL_VER    "2.02"
 #define FICL_PROMPT "ok> "
 
 /*
@@ -404,7 +405,7 @@ typedef struct vm
     UNS32           base;       /* number conversion base           */
     FICL_STACK     *pStack;     /* param stack                      */
     FICL_STACK     *rStack;     /* return stack                     */
-    INT32           sourceID;   /* -1 if string, 0 if normal input  */
+    CELL            sourceID;   /* -1 if string, 0 if normal input  */
     TIB             tib;        /* address of incoming text string  */
 #if FICL_WANT_USER
     CELL            user[FICL_USER_CELLS];
@@ -558,12 +559,13 @@ typedef struct ficl_hash
     FICL_WORD *table[1];
 } FICL_HASH;
 
+void        hashForget(FICL_HASH *pHash, void *where);
 UNS16       hashHashCode(STRINGINFO si);
-void        hashReset(FICL_HASH *pHash);
 void        hashInsertWord(FICL_HASH *pHash, FICL_WORD *pFW);
 FICL_WORD  *hashLookup(struct ficl_hash *pHash, 
                        STRINGINFO si, 
                        UNS16 hashCode);
+void        hashReset(FICL_HASH *pHash);
 
 /*
 ** A Dictionary is a linked list of FICL_WORDs. It is also Ficl's

@@ -277,7 +277,7 @@ void dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int nCells)
         dictResetSearchOrder(pDict);
         vmThrowErr(pVM, "Error: search order overflow");
     }
-    else if (pDict->nLists < 1)
+    else if (pDict->nLists < 0)
     {
         dictResetSearchOrder(pDict);
         vmThrowErr(pVM, "Error: search order underflow");
@@ -602,7 +602,11 @@ void dictUnsmudge(FICL_DICT *pDict)
 
     assert(pHash);
     assert(pFW);
-    hashInsertWord(pHash, pFW);
+    /*
+    ** :noname words never get linked into the list...
+    */
+    if (pFW->nName > 0)
+        hashInsertWord(pHash, pFW);
     pFW->flags &= ~(FW_SMUDGE);
     return;
 }
@@ -620,7 +624,37 @@ CELL *dictWhere(FICL_DICT *pDict)
 
 
 /**************************************************************************
-                             h a s h H a s h C o d e
+                        h a s h F o r g e t
+** Unlink all words in the hash that have addresses greater than or
+** equal to the address supplied. Implementation factor for FORGET
+** and MARKER.
+**************************************************************************/
+void hashForget(FICL_HASH *pHash, void *where)
+{
+    FICL_WORD *pWord;
+    unsigned i;
+
+    assert(pHash);
+    assert(where);
+
+    for (i = 0; i < pHash->size; i++)
+    {
+        pWord = pHash->table[i];
+
+        while ((void *)pWord >= where)
+        {
+            pWord = pWord->link;
+        }
+
+        pHash->table[i] = pWord;
+    }
+
+    return;
+}
+
+
+/**************************************************************************
+                        h a s h H a s h C o d e
 ** 
 ** Generate a 16 bit hashcode from a character string using a rolling
 ** shift and add stolen from PJ Weinberger of Bell Labs fame. Case folds
@@ -653,27 +687,7 @@ UNS16 hashHashCode(STRINGINFO si)
 
 
 /**************************************************************************
-                             h a s h R e s e t
-** Initialize a FICL_HASH to empty state.
-**************************************************************************/
-void hashReset(FICL_HASH *pHash)
-{
-    unsigned i;
-
-    assert(pHash);
-
-    for (i = 0; i < pHash->size; i++)
-    {
-        pHash->table[i] = NULL;
-    }
-
-    pHash->link = NULL;
-    return;
-}
-
-
-/**************************************************************************
-                         h a s h I n s e r t W o r d
+                        h a s h I n s e r t W o r d
 ** Put a word into the hash table using the word's hashcode as
 ** an index (modulo the table size).
 **************************************************************************/
@@ -700,7 +714,7 @@ void hashInsertWord(FICL_HASH *pHash, FICL_WORD *pFW)
 
 
 /**************************************************************************
-                             h a s h L o o k u p
+                        h a s h L o o k u p
 ** Find a name in the hash table given the hashcode and text of the name.
 ** Returns the address of the corresponding FICL_WORD if found, 
 ** otherwise NULL.
@@ -737,4 +751,25 @@ FICL_WORD *hashLookup(FICL_HASH *pHash, STRINGINFO si, UNS16 hashCode)
 
     return NULL;
 }
+
+
+/**************************************************************************
+                             h a s h R e s e t
+** Initialize a FICL_HASH to empty state.
+**************************************************************************/
+void hashReset(FICL_HASH *pHash)
+{
+    unsigned i;
+
+    assert(pHash);
+
+    for (i = 0; i < pHash->size; i++)
+    {
+        pHash->table[i] = NULL;
+    }
+
+    pHash->link = NULL;
+    return;
+}
+
 
