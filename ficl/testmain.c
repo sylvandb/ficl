@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #ifdef WIN32
 #include <direct.h>
 #endif
@@ -169,7 +170,7 @@ static void ficlLoad(FICL_VM *pVM)
             cp[len] = '\0';
 
         result = ficlExec(pVM, cp);
-        if (result >= VM_ERREXIT)
+        if (result != VM_OUTOFTEXT)
         {
             pVM->sourceID = id;
             fclose(fp);
@@ -178,7 +179,7 @@ static void ficlLoad(FICL_VM *pVM)
         }
     }
     /*
-    ** Pass an empty line with SOURCE-ID == 0 to flush
+    ** Pass an empty line with SOURCE-ID == -1 to flush
     ** any pending REFILLs (as required by FILE wordset)
     */
     pVM->sourceID.i = -1;
@@ -245,24 +246,56 @@ static void ficlBreak(FICL_VM *pVM)
     return;
 }
 
+static void ficlClock(FICL_VM *pVM)
+{
+    clock_t now = clock();
+    stackPushUNS(pVM->pStack, (UNS32)now);
+    return;
+}
+
+static void clocksPerSec(FICL_VM *pVM)
+{
+    stackPushUNS(pVM->pStack, CLOCKS_PER_SEC);
+    return;
+}
+
+
+static void execxt(FICL_VM *pVM)
+{
+    FICL_WORD *pFW;
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM, 1, 0);
+#endif
+
+    pFW = stackPopPtr(pVM->pStack);
+    ficlExecXT(pVM, pFW);
+
+    return;
+}
+
+
 void buildTestInterface(void)
 {
     ficlBuild("break",    ficlBreak,    FW_DEFAULT);
+    ficlBuild("clock",    ficlClock,    FW_DEFAULT);
     ficlBuild("cd",       ficlChDir,    FW_DEFAULT);
+    ficlBuild("execxt",   execxt,       FW_DEFAULT);
     ficlBuild("load",     ficlLoad,     FW_DEFAULT);
     ficlBuild("pwd",      ficlGetCWD,   FW_DEFAULT);
     ficlBuild("system",   ficlSystem,   FW_DEFAULT);
     ficlBuild("spewhash", spewHash,     FW_DEFAULT);
+    ficlBuild("clocks/sec", 
+                          clocksPerSec, FW_DEFAULT);
 
     return;
 }
 
 
 #if !defined (_WINDOWS)
-
+#define nINBUF 256
 int main(int argc, char **argv)
 {
-    char in[256];
+    char in[nINBUF];
     FICL_VM *pVM;
 
     ficlInitSystem(10000);
@@ -283,7 +316,7 @@ int main(int argc, char **argv)
     for (;;)
     {
         int ret;
-        gets(in);
+        fgets(in, nINBUF, stdin);
         ret = ficlExec(pVM, in);
         if (ret == VM_USEREXIT)
         {

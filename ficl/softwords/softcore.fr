@@ -47,6 +47,8 @@ decimal 32 constant bl
 : erase   ( addr u -- )    0 fill ; 
 : nip     ( y x -- x )     swap drop ; 
 : tuck    ( y x -- x y x)  swap over ; 
+: within  ( test low high -- flag )   over - >r - r>  u<  ;
+
 
 \ ** LOCAL EXT word set
 \ #if FICL_WANT_LOCALS

@@ -1,104 +1,113 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
-   <META NAME="Author" CONTENT="john sadler">
-   <META NAME="GENERATOR" CONTENT="Mozilla/4.07 [en] (Win95; U) [Netscape]">
-   <TITLE>ficl 2.0 release notes</TITLE>
-</HEAD>
-<BODY>
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="john sadler">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win95; U) [Netscape]">
+   <meta name="Description" content="all about the coolest scripting language ever">
+   <title>ficl 2.03 release notes</title>
+</head>
+<body>
 
-<CENTER>
-<H1>
-<B>ficl 2.02 release notes</B></H1></CENTER>
+<center>
+<h1>
+<b>ficl 2.03 release notes</b></h1></center>
 
-<TABLE BORDER=0 CELLSPACING=3 WIDTH="600" >
-<TR>
-<TD><B>Forth Inspired Command Language&nbsp;</B></TD>
+<table BORDER=0 CELLSPACING=3 WIDTH="600" >
+<tr>
+<td><b>Forth Inspired Command Language&nbsp;</b></td>
 
-<TD ROWSPAN="4"><IMG SRC="ficl_logo.jpg" HEIGHT=64 WIDTH=64></TD>
-</TR>
+<td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
+</tr>
 
-<TR>
-<TD><B>Author: John Sadler (john_sadler@alum.mit.edu)</B></TD>
-</TR>
+<tr>
+<td><b>Author: John Sadler (<a href="mailto:john_sadler@alum.mit.edu">john_sadler@alum.mit.edu</a>)</b></td>
+</tr>
 
-<TR>
-<TD><B>Created: 19 July 1997&nbsp;</B></TD>
-</TR>
+<tr>
+<td><b>Created: 19 July 1997&nbsp;</b></td>
+</tr>
 
-<TR>
-<TD><B>Revision 2.02: 10 October 1998&nbsp;</B></TD>
-</TR>
-</TABLE>
+<tr>
+<td><b>Revision 2.03: 20 May 1999&nbsp;</b></td>
+</tr>
+</table>
 
-<H2>
-Contents</H2>
+<h2>
+Contents</h2>
 
-<UL>
-<LI>
-<A HREF="#whatis">What is ficl?</A></LI>
+<ul>
+<li>
+<a href="#whatis">What is ficl?</a></li>
 
-<LI>
-<A HREF="#features">Ficl features</A></LI>
+<li>
+<a href="#features">Ficl features</a></li>
 
-<LI>
-<A HREF="#porting">Porting</A></LI>
+<li>
+<a href="#porting">Porting</a></li>
 
-<LI>
-<A HREF="#manifest">Distribution source files</A></LI>
+<li>
+<a href="#api">Application Programming Interface</a></li>
 
-<LI>
-<A HREF="#whatsnew">What's new in this release</A></LI>
+<li>
+<a href="#manifest">Distribution source files</a></li>
 
-<LI>
-<A HREF="#objects">Objects in ficl</A></LI>
+<li>
+<a href="#whatsnew">What's new in this release</a></li>
 
-<UL>
-<LI>
-<A HREF="ficl.html#oopgloss">OOP glossary</A></LI>
+<li>
+<a href="#objects">Objects in ficl</a></li>
 
-<LI>
-<A HREF="#glossinstance">Instance variable glossary</A></LI>
+<ul>
+<li>
+<a href="ficl.html#oopgloss">OOP glossary</a></li>
 
-<LI>
-<A HREF="#glossclass">Class methods glossary</A></LI>
+<li>
+<a href="#glossinstance">Instance variable glossary</a></li>
 
-<LI>
-<A HREF="#objectgloss">Object base class methods glossary</A></LI>
+<li>
+<a href="#glossclass">Class methods glossary</a></li>
 
-<LI>
-<A HREF="#stockclasses">Supplied Classes</A></LI>
-</UL>
+<li>
+<a href="#objectgloss">Object base class methods glossary</a></li>
 
-<LI>
-<A HREF="#extras">Ficl extras</A></LI>
+<li>
+<a href="#stockclasses">Supplied Classes</a></li>
+</ul>
 
-<LI>
-<A HREF="#ansinfo">ANS required information</A></LI>
+<li>
+<a href="#extras">Ficl extras</a></li>
 
-<LI>
-<A HREF="#links">Forth references</A></LI>
+<li>
+<a href="#ansinfo">ANS required information</a></li>
 
-<LI>
-<A HREF="#lawyerbait">Disclaimer &amp; License</A></LI>
-</UL>
+<li>
+<a href="#links">Forth and Ficl references, <b><font color="#000000">download</font></b></a></li>
 
-<HR WIDTH="100%">
-<TABLE CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="whatis"></A>What is ficl?</H2>
+<li>
+<font color="#000000"><a href="#includesficl">Some software that includes
+ficl</a></font></li>
+
+<li>
+<a href="#lawyerbait">Disclaimer &amp; License</a></li>
+</ul>
+
+<hr WIDTH="100%">
+<table CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="whatis"></a>What is ficl?</h2>
 Ficl (Forth inspired command language) is an ANS Forth interpreter written
 in C. Unlike traditional Forths, this interpreter is designed to be embedded
 into other systems as a command/macro/development prototype language. Ficl
 provides object extensions that can be used to wrap methods and structures
-of the host system without altering them.</TD>
-</TR>
+of the host system without altering them. See below for examples of <a href="#includesficl">software
+that includes ficl</a>.</td>
+</tr>
 
-<TR>
-<TD>Where Forths usually view themselves as the center of the system and
+<tr>
+<td>Where Forths usually view themselves as the center of the system and
 expect the rest of the system to be coded in Forth, Ficl acts as a component
 of the system. It is easy to export code written in C or ASM to Ficl in
 the style of TCL, or to invoke Ficl code from a compiled module. This allows
@@ -107,125 +116,133 @@ of threaded languages (rapid development, quick code/test/debug cycle,
 reasonably fast) with the best features of C (everyone knows it, easier
 to support large blocks of code, efficient, type checking). In addition,
 Ficl provides a simple object model that can act as an object oriented
-adapter for code written in C (or asm, Forth, C++...).&nbsp;</TD>
-</TR>
+adapter for code written in C (or asm, Forth, C++...).&nbsp;</td>
+</tr>
 
-<TR>
-<TD><B>Ficl Design goals</B>
-<UL>
-<LI>
-Target 32 bit processors&nbsp;</LI>
+<tr>
+<td><b>Ficl Design goals</b>
+<ul>
+<li>
+Target 32 bit processors (<i>version 2.03 targets 64 bit processors too</i>)</li>
 
-<LI>
+<li>
 Scripting, prototyping, and extension language for systems written also
-in C</LI>
+in C</li>
 
-<LI>
-Supportable - code is as transparent as I can make it</LI>
+<li>
+Supportable - code is as transparent as I can make it</li>
 
-<LI>
-Interface to functions written in C</LI>
+<li>
+Interface to functions written in C</li>
 
-<LI>
-Conform to the Forth DPANS 94</LI>
+<li>
+Conform to the Forth DPANS 94</li>
 
-<LI>
+<li>
 Minimize porting effort - require an ANSI C runtime environment and minimal
-glue code</LI>
+glue code</li>
 
-<LI>
-Provide object oriented extensions</LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+<li>
+Provide object oriented extensions</li>
+</ul>
+</td>
+</tr>
+</table>
 
-<BR>&nbsp;
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="features"></A>Ficl features</H2>
+<br>&nbsp;
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="features"></a>Ficl features</h2>
 
-<UL>
-<LI>
-Code is written in ANSI C for portability.</LI>
+<ul>
+<li>
+Code is written in ANSI C for portability.&nbsp;</li>
 
-<LI>
+<li>
 Standard: Implements the ANS Forth CORE word set, part of the CORE EXT
 word set, SEARCH and SEARCH EXT, TOOLS and part of TOOLS EXT, LOCAL and
-LOCAL EXT and various extras.</LI>
+LOCAL EXT, EXCEPTION, MEMORY,&nbsp; and various extras.</li>
 
-<LI>
+<li>
 Extensible: you can export code written in Forth, C, or asm in a straightforward
 way. Ficl provides open facilities for extending the language in an application
 specific way. You can even add new control structures (not surprising if
-you're familiar with Forth)</LI>
+you're familiar with Forth)</li>
 
-<LI>
+<li>
 Ficl and C can interact in two ways: Ficl can wrap C code, and C functions
-can invoke ficl code.</LI>
+can invoke ficl code.</li>
 
-<LI>
-Ficl is thread safe and re-entrant:&nbsp; All Ficl VMs share one system
+<li>
+Ficl code is thread safe and re-entrant:&nbsp; All Ficl VMs share one system
 dictionary; each Ficl virtual machine has an otherwise complete state,
 and each can be bound to a separate I/O channel (or none at all). An optional
 function called ficlLockDictionary() can control exclusive dictionary access.
 This function is stubbed out by default (See FICL_MULTITHREAD in sysdep.h).
 As long as there is only one "session" that can compile words into the
-dictionary, you do not need exclusive dictionary access for multithreading.</LI>
+dictionary, you do not need exclusive dictionary access for multithreading.
+<font color="#000099"><b>Note</b>:
+while the code is re-entrant, there are still restrictions on how you can
+use it safely in a multithreaded system. Specifically, the VM itself maintains
+state, so you generally need a VM per thread in a multithreaded system.
+If interrupt service routines make calls into Ficl code that alters VM
+state, then these generally need their own VM as well. Alternatively, you
+could provide a mutual exclusion mechanism to serialize access to a VM
+from multiple threads.</font></li>
 
-<LI>
+<li>
 Simple incorporation into existing systems: the sample implementation requires
-three Ficl function calls (see the example program in testmain.c).</LI>
+three Ficl function calls (see the example program in testmain.c).</li>
 
-<LI>
+<li>
 ROM able: Ficl is designed to work in RAM based and ROM code / RAM data
 environments. It does require somewhat more memory than a pure ROM implementation
-because it builds its system dictionary in RAM at startup time.</LI>
+because it builds its system dictionary in RAM at startup time.</li>
 
-<LI>
+<li>
 Written an ANSI C to be as simple as I can make it to understand, support,
 debug, and port. Compiles without complaint at /Az /W4 (require ANSI C,
-max. warnings) under Microsoft VC++ 5.</LI>
+max. warnings) under Microsoft VC++</li>
 
-<LI>
+<li>
 Does full 32 bit math (but you need to implement two mixed precision math
-primitives (see sysdep.c))</LI>
+primitives (see sysdep.c))</li>
 
-<LI>
-Type 1 indirect threaded interpreter</LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+<li>
+Type 1 indirect threaded interpreter</li>
+</ul>
+</td>
+</tr>
+</table>
 
-<P>
-<HR WIDTH="100%">
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="porting"></A>Porting ficl</H2>
+<p>
+<hr WIDTH="100%">
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="porting"></a>Porting ficl</h2>
 To install ficl on your target system, you need an ANSI C compiler and
 its runtime library. Inspect the system dependent macros and functions
-in <TT>sysdep.h</TT> and <TT>sysdep.c</TT> and edit them to suit your system.
-For example, <TT>INT16</TT> is a <TT>short</TT> on some compilers and an
-<TT>int</TT>
-on others. Check the default <TT>CELL</TT> alignment controlled by <TT>FICL_ALIGN</TT>.
-If necessary, add new definitions of <TT>ficlMalloc, ficlFree, ficlLockDictionary</TT>,
-and <TT>ficlTextOut</TT> to work with your operating system. Finally, use
-<TT>testmain.c</TT>
+in <tt>sysdep.h</tt> and <tt>sysdep.c</tt> and edit them to suit your system.
+For example, <tt>INT16</tt> is a <tt>short</tt> on some compilers and an
+<tt>int</tt>
+on others. Check the default <tt>CELL</tt> alignment controlled by <tt>FICL_ALIGN</tt>.
+If necessary, add new definitions of <tt>ficlMalloc, ficlFree, ficlLockDictionary</tt>,
+and <tt>ficlTextOut</tt> to work with your operating system. Finally, use
+<tt>testmain.c</tt>
 as a guide to installing the ficl system and one or more virtual machines
-into your code. You do not need to include <TT>testmain.c</TT> in your
+into your code. You do not need to include <tt>testmain.c</tt> in your
 build.&nbsp;
-<P>Feel free to stub out the double precision math functions (which are
+<p>Feel free to stub out the double precision math functions (which are
 presently implemented as inline assembly because it's so easy on many 32
 bit processors) with kludge code that only goes to 32 bit precision. In
 most applications, you won't notice the difference. If you're doing a lot
 of number crunching, consider implementing them correctly.&nbsp;
-<H3>
-Build controls</H3>
+<h3>
+Build controls</h3>
 The file sysdep.h contains default values for build controls. Most of these
 are written such that if you define them on the compiler command line,
 the defaults are overridden. I suggest you take the defaults on everything
@@ -233,329 +250,659 @@ below the "build controls" section until you're confident of your port.
 Beware of declaring too small a dictionary, for example. You need about
 3200 cells for a full system, about 2000 if you strip out most of the "soft"
 words.&nbsp;
-<H3>
-To-Do List (target system dependent words)</H3>
+<h3>
+To-Do List (target system dependent words)</h3>
 
-<UL>
-<LI>
-Unimplemented system dependent <TT>CORE</TT> word: <TT>KEY</TT>&nbsp;</LI>
+<ul>
+<li>
+Unimplemented system dependent <tt>CORE</tt> word: <tt>KEY</tt>&nbsp;</li>
 
-<LI>
-Kludged <TT>CORE</TT> word: <TT>ACCEPT</TT></LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+<li>
+Kludged <tt>CORE</tt> word: <tt>ACCEPT</tt></li>
+</ul>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=5 WIDTH="600" >
-<TR>
-<TD COLSPAN="2">
-<H2>
-&nbsp;<A NAME="manifest"></A>Ficl Source Files</H2>
-</TD>
-</TR>
+<br>&nbsp;
+<table COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="api"></a>Application Programming Interface</h2>
+<i>See the comments in ficl.c and ficl.h for additional information, and
+the example in file testmain.c.</i>
+<br>&nbsp;
+<dl>
+<dt>
+<b>void ficlInitSystem(int nDictCells)</b></dt>
 
-<TR>
-<TD><B>ficl.h</B></TD>
+<dd>
+Initializes Ficl's shared system data structures, and creates the dictionary
+allocating the specified number of CELLs from the heap (by a call to ficlMalloc)</dd>
 
-<TD>Declares most public functions and all data structures. Includes sysdep.h
-and math.h</TD>
-</TR>
+<dt>
+<b>void ficlTermSystem(void)</b></dt>
 
-<TR>
-<TD><B>sysdep.h</B></TD>
+<dd>
+Reclaims memory allocated for the ficl system including all dictionaries
+and all virtual machines created by vmCreate. Any uses of the memory allocation
+words (allocate and resize) are your problem.</dd>
 
-<TD>Declares system dependent functions and contains build control macros.
-Edit this file to port to another system.</TD>
-</TR>
+<dt>
+<b>int ficlBuild(char *name, FICL_CODE code, char flags)</b></dt>
 
-<TR>
-<TD><B>math.h</B></TD>
+<dd>
+Create a primitive word in ficl's main dictionary with the given name,
+code pointer, and properties (immediate, compile only, etc) as described
+by the flags (see ficl.h for flag descriptions of the form FW_XXXX)</dd>
 
-<TD>Declares functions for 64 bit math</TD>
-</TR>
+<dt>
+<b>int ficlExec(FICL_VM *pVM, char *text)</b></dt>
 
-<TR>
-<TD><B>words.c</B></TD>
+<dd>
+Feed the specified C string ('\0' terminated) to the given virtual machine
+for evaluation. Returns various exception codes (VM_XXXX in ficl.h) to
+indicate the reason for returning. Normal exit condition is VM_OUTOFTEXT,
+indicating that the VM consumed the string successfully and is back for
+more. ficlExec calls can be nested, and the function itself is re-entrant,
+but note that a VM is static, so you have to take reasonable precautions
+(for example, use one VM per thread in a multithreaded system if you want
+multiple threads to be able to execute commands).</dd>
 
-<TD>Exports ficlCompileCore(), the run-time dictionary builder, and contains
-all primitive words as static functions.</TD>
-</TR>
+<dt>
+<b>int ficlExecC(FICL_VM *pVM, char *text, int nChars)</b></dt>
 
-<TR>
-<TD><B>vm.c</B></TD>
+<dd>
+Same as ficlExec, but takes a count indicating the length of the supplied
+string. Setting nChars to -1 is equivalent to ficlExec (expects '\0' termination).</dd>
 
-<TD>Virtual Machine methods</TD>
-</TR>
+<dt>
+<b>int ficlExecXT(FICL_VM *pVM, FICL_WORD *pFW)</b></dt>
 
-<TR>
-<TD><B>stack.c</B></TD>
+<dd>
+Same as ficlExec, but takes a pointer to a FICL_WORD instead of a string.
+Executes the word and returns after it has finished. If executing the word
+results in an exception, this function will re-throw the same code if it
+is nested under another ficlExec family function, or return the exception
+code directly if not. This function is useful if you need to execute the
+same word repeatedly - you save the dictionary search and outer interpreter
+overhead.</dd>
 
-<TD>Stack methods</TD>
-</TR>
+<dt>
+<b>FICL_VM *ficlNewVM(void)</b></dt>
 
-<TR>
-<TD><B>ficl.c</B></TD>
+<dd>
+Create, initialize, and return a VM from the heap using ficlMalloc. Links
+the VM into the system VM list for later reclamation by ficlTermSystem.</dd>
 
-<TD>System initialization, termination, and ficlExec</TD>
-</TR>
+<dt>
+<b>FICL_WORD *ficlLookup(char *name)</b></dt>
 
-<TR>
-<TD><B>dict.c</B></TD>
+<dd>
+Returns the address (also known as an XT in this case) of the specified
+word in the main dictionary. If not found, returns NULL. The address can
+be used in a call to ficlExecXT.</dd>
 
-<TD>Dictionary</TD>
-</TR>
+<dt>
+<b>FICL_DICT *ficlGetDict(void)</b></dt>
 
-<TR>
-<TD><B>math64.c</B></TD>
+<dd>
+Returns a pointer to the main system dictionary, or NULL if the system
+is uninitialized.</dd>
 
-<TD>Implementation of 64 bit math words (except the two unsigned primitives
-declared in sysdep.h and implemented in sysdep.c)</TD>
-</TR>
+<dt>
+<b>FICL_DICT *ficlGetEnv(void)</b></dt>
 
-<TR>
-<TD><B>softcore.c</B></TD>
+<dd>
+Returns a pointer to the environment dictionary. This dictionary stores
+information that describes this implementation as required by the Standard.</dd>
 
-<TD>Contains all of the "soft" words - those written in Forth and compiled
+<dt>
+<b>void ficlSetEnv(char *name, UNS32 value)</b></dt>
+
+<dd>
+Enters a new constant into the environment dictionary, with the specified
+name and value.</dd>
+
+<dt>
+<b>void ficlSetEnvD(char *name, UNS32 hi, UNS32 lo)</b></dt>
+
+<dd>
+Enters a new double-cell constant into the environment dictionary with
+the specified name and value.</dd>
+
+<dt>
+<b>FICL_DICT *ficlGetLoc(void)</b></dt>
+
+<dd>
+Returns a pointer to the locals dictionary. This function is defined only
+if FICL_WANT_LOCALS is #defined as non-zero (see sysdep.h). The locals
+dictionary is the symbol table for <a href="#locals">local variables</a>.</dd>
+
+<dt>
+<b>void ficlCompileCore(FICL_DICT *dp)</b></dt>
+
+<dd>
+Defined in words.c, this function builds ficl's primitives.&nbsp;</dd>
+
+<dt>
+<b>void ficlCompileSoftCore(FICL_VM *pVM)</b></dt>
+
+<dd>
+Defined in softcore.c, this function builds ANS required words and ficl
+extras by evaluating a text string (think of it as a memory mapped file
+;-) ). The string itself is built from files in the softwords directory
+by PERL script softcore.pl.&nbsp;</dd>
+</dl>
+</td>
+</tr>
+</table>
+
+<hr WIDTH="100%">
+<table BORDER=0 CELLSPACING=5 WIDTH="600" >
+<tr>
+<td COLSPAN="2">
+<h2>
+&nbsp;<a NAME="manifest"></a>Ficl Source Files</h2>
+</td>
+</tr>
+
+<tr>
+<td><b>ficl.h</b></td>
+
+<td>Declares most public functions and all data structures. Includes sysdep.h
+and math.h</td>
+</tr>
+
+<tr>
+<td><b>sysdep.h</b></td>
+
+<td>Declares system dependent functions and contains build control macros.
+Edit this file to port to another system.</td>
+</tr>
+
+<tr>
+<td><b>math.h</b></td>
+
+<td>Declares functions for 64 bit math</td>
+</tr>
+
+<tr>
+<td><b>words.c</b></td>
+
+<td>Exports ficlCompileCore(), the run-time dictionary builder, and contains
+all primitive words as static functions.</td>
+</tr>
+
+<tr>
+<td><b>vm.c</b></td>
+
+<td>Virtual Machine methods</td>
+</tr>
+
+<tr>
+<td><b>stack.c</b></td>
+
+<td>Stack methods</td>
+</tr>
+
+<tr>
+<td><b>ficl.c</b></td>
+
+<td>System initialization, termination, and ficlExec</td>
+</tr>
+
+<tr>
+<td><b>dict.c</b></td>
+
+<td>Dictionary</td>
+</tr>
+
+<tr>
+<td><b>math64.c</b></td>
+
+<td>Implementation of 64 bit math words (except the two unsigned primitives
+declared in sysdep.h and implemented in sysdep.c)</td>
+</tr>
+
+<tr>
+<td><b>softcore.c</b></td>
+
+<td>Contains all of the "soft" words - those written in Forth and compiled
 by Ficl at startup time. Sources for these words are in the softwords directory.
 The files softwords/softcore.bat and softwords/softcore.pl generate softcore.c
-from the .fr sources.</TD>
-</TR>
+from the .fr sources.</td>
+</tr>
 
-<TR>
-<TD><B>sysdep.c</B></TD>
+<tr>
+<td><b>sysdep.c</b></td>
 
-<TD>Implementation of system dependent functions declared in sysdep.h</TD>
-</TR>
+<td>Implementation of system dependent functions declared in sysdep.h</td>
+</tr>
 
-<TR>
-<TD><B>softwords/</B></TD>
+<tr>
+<td><b>softwords/</b></td>
 
-<TD>Directory contains sources and translation scripts for the words defined
+<td>Directory contains sources and translation scripts for the words defined
 in softcore.c. Softcore.c depends on most of the files in this directory.
 See softcore.bat for the actual list of files that contribute to softcore.c.
-This is where you'll find source code for the object oriented extensions.</TD>
-</TR>
-</TABLE>
+This is where you'll find source code for the object oriented extensions.</td>
+</tr>
+</table>
 
-<HR WIDTH="100%">
-<TABLE BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="whatsnew"></A>What's new in version 2.02</H2>
-New words
-<UL>
-<LI>
-<TT><A HREF="http://www.taygeta.com/forth/dpans6.htm#6.2.1850">marker</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(CORE EXT)</TT></LI>
+<hr WIDTH="100%">
+<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="whatsnew"></a>What's new in version 2.03</h2>
+This is the first version of Ficl that includes contributed code. Thanks
+especially to Daniel Sobral, Michael Gauland for contributions and bug
+finding.&nbsp;
+<p>New words
+<ul>
+<li>
+<tt><a href="#clock">clock</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
 
-<LI>
-<TT><A HREF="http://www.taygeta.com/forth/dpans15.htm#15.6.2.1580">forget</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(TOOLS EXT)</TT></LI>
+<li>
+<tt><a href="#clockspersec">clocks/sec</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
 
-<LI>
-<TT><A HREF="#ficlforgetwid">forget-wid</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</TT></LI>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans8.htm#8.6.1.1230">dnegate</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(DOUBLE)</tt></li>
 
-<LI>
-<TT><A HREF="#ficlwordlist">ficl-wordlist</A>&nbsp;&nbsp;&nbsp;&nbsp; (FICL)</TT></LI>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans10.htm#10.6.2.1905">ms</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FACILITY EXT - replaces MSEC)</tt></li>
 
-<LI>
-<TT><A HREF="#ficlvocabulary">ficl-vocabulary</A>&nbsp;&nbsp; (FICL)</TT></LI>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans9.htm#9.6.1.2275">throw</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(EXCEPTION)</tt></li>
 
-<LI>
-<TT><A HREF="#ficlhide">hide</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</TT></LI>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans9.htm#9.6.1.0875">catch</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(EXCEPTION)</tt></li>
 
-<LI>
-<TT><A HREF="#ficlhidden">hidden</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</TT></LI>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.0707">allocate</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(MEMORY)</tt></li>
 
-<LI>
-<A HREF="#jhlocal">Johns Hopkins local variable syntax</A> (as best I can
-determine)</LI>
-</UL>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.1605">free</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(MEMORY)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.2145">resize</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(MEMORY)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.2440">within</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(CORE EXT)</tt></li>
+
+<li>
+<tt><a href="#alloc">alloc</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+
+<li>
+<tt><a href="#allocarray">alloc-array</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+
+<li>
+<tt><a href="#oofree">free</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+</ul>
 Bugs Fixed
-<UL>
-<LI>
-<TT>forget</TT> now adjusts the dictionary pointer to remove the name of
+<ul>
+<li>
+Bug fix in isNumber(): used to treat chars between 'Z' and 'a' as valid
+in base 10... (harmless, but weird)</li>
+
+<li>
+ficlExec pushes the <i>ip</i> and <tt>interpret</tt>s at the right times
+so that nested calls to ficlExec behave the way you'd expect them to.</li>
+
+<li>
+<tt>evaluate</tt> respects count parameter, and also passes exceptional
+return conditions back out to the calling instance of ficlExec.</li>
+
+<li>
+VM_QUIT now clears the locals dictionary in ficlExec.</li>
+</ul>
+Ficlwin Enhancements
+<ul>
+<li>
+File Menu: recent file list and Open now load files.</li>
+
+<li>
+Text ouput function is now faster through use of string caching. Cache
+flushes at the end of each line and each time ficlExec returns.</li>
+
+<li>
+Edit/paste now behaves more reasonably for text. File/open loads the specified
+file.</li>
+
+<li>
+Registry entries specify dictionary and stack sizes, default window placement,
+and whether or not to create a splitter for multiple VMs. See HKEY_CURRENT_USER/Software/CodeLab/ficlwin/Settings</li>
+</ul>
+Ficl Enhancements
+<ul>
+<li>
+This version includes changes to make it <b>64 bit friendly</b>. This unfortunately
+meant that I had to tweak some core data types and structures. I've tried
+to make this transparent to 32 bit code, but a couple of things got renamed.
+INT64 is now DPINT. UNS64 is now DPUNS. FICL_INT and FICL_UNS are synonyms
+for INT32 and UNS32 in 32 bit versions, but a are obsolescent. Please use
+the new data types instead. Typed stack operations on INT32 and UNS32 have
+been renamed because they operate on CELL scalar types, which are 64 bits
+wide on 64 bit systems. Added BITS_PER_CELL, which has legal values of
+32 or 64. Default is 32.</li>
+
+<li>
+ficl.c: Added ficlExecXT() - executes an xt completely before returning,
+passing back any exception codes generated in the process. Normal exit
+code is VM_INNEREXIT.</li>
+
+<li>
+ficl.c: Added ficlExecC() to operate on counted strings as opposed to zero
+terminated ones.</li>
+
+<li>
+ficlExec pushes ip and executes interpret at the right times so that nested
+calls to ficlExec behave the way you'd expect them to.</li>
+
+<li>
+ficlSetStackSize() allows specification of stack size at run-time (affects
+subsequent invocations of ficlNewVM()).</li>
+
+<li>
+vm.c: vmThrow() checks for (pVM->pState != NULL) before longjmping it.
+vmCreate nulls this pointer initially.&nbsp;</li>
+
+<li>
+EXCEPTION wordset contributed by Daniel Sobral of FreeBSD</li>
+
+<li>
+MEMORY-ALLOC wordset contributed by Daniel Sobral, too. Added class methods
+<tt>alloc</tt>
+and <tt>alloc-array</tt> in softwords/oo.fr to allocate objects from the
+heap.</li>
+
+<li>
+Control structure match check upgraded (thanks to Daniel Sobral for this
+suggestion). Control structure mismatches are now errors, not warnings,
+since the check accepts all syntactally legal constructs.</li>
+
+<li>
+Added vmInnerLoop() to vm.h. This function/macro factors the inner&nbsp;
+interpreter out of ficlExec so it can be used in other places. Function/macro
+behavior is conditioned on INLINE_INNER_LOOP in sysdep.h. Default: 1 unless
+_DEBUG is set. In part, this is because VC++ 5 goes apoplectic when trying
+to compile it as a function. See&nbsp;</li>
+
+<br>comments in vm.c
+<li>
+EVALUATE respects the count parameter, and also passes exceptional return
+conditions back out to the calling instance of ficlExec.</li>
+
+<li>
+VM_QUIT clears locals dictionary in ficlExec()</li>
+
+<li>
+Added Michael Gauland's ficlLongMul and ficlLongDiv and support routines
+to math64.c and .h. These routines are coded in C, and are compiled only
+if PORTABLE_LONGMULDIV == 1 (default is 0).</li>
+
+<li>
+Added definition of ficlRealloc to sysdep.c (needed for memory allocation
+wordset). If your target OS supports realloc(), you'll probably want to
+redefine ficlRealloc in those terms. The default version does ficlFree
+followed by ficlMalloc.</li>
+
+<li>
+testmain.c: Changed gets() in testmain to fgets() to appease the security
+gods.</li>
+
+<li>
+testmain: <tt>msec</tt> renamed to <tt><a href="#ficlms">ms</a></tt> in
+line with the ANS</li>
+
+<li>
+softcore.pl now removes comments &amp; spaces at the start and end of lines.
+As a result: sizeof (softWords) == 7663 bytes (used to be 20000)&nbsp;
+and consumes 11384 bytes of dictionary when compiled</li>
+
+<li>
+Deleted license paste-o in readme.txt (oops).</li>
+</ul>
+</td>
+</tr>
+</table>
+
+<hr WIDTH="100%">
+<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+What's new in version 2.02</h2>
+New words
+<ul>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.1850">marker</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(CORE EXT)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans15.htm#15.6.2.1580">forget</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(TOOLS EXT)</tt></li>
+
+<li>
+<tt><a href="#ficlforgetwid">forget-wid</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlwordlist">ficl-wordlist</a>&nbsp;&nbsp;&nbsp;&nbsp; (FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlvocabulary">ficl-vocabulary</a>&nbsp;&nbsp; (FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlhide">hide</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlhidden">hidden</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<a href="#jhlocal">Johns Hopkins local variable syntax</a> (as best I can
+determine)</li>
+</ul>
+Bugs Fixed
+<ul>
+<li>
+<tt>forget</tt> now adjusts the dictionary pointer to remove the name of
 the word being forgotten (name chars come before the word header in ficl's
-dictionary)</LI>
+dictionary)</li>
 
-<LI>
-<TT>:noname</TT> used to push the colon control marker and its execution
-token in the wrong order</LI>
+<li>
+<tt>:noname</tt> used to push the colon control marker and its execution
+token in the wrong order</li>
 
-<LI>
-<TT>source-id</TT> now behaves correctly when loading a file.</LI>
+<li>
+<tt>source-id</tt> now behaves correctly when loading a file.</li>
 
-<LI>
-<TT>refill</TT> returns zero at EOF (Win32 load). Win32 <TT><A HREF="#ficlload">load</A></TT>
-command continues to be misnamed. Really ought to be called <TT>included</TT>,
-but does not exactly conform to that spec either (because <TT>included</TT>
-expects a string signature on the stack, while Ficl's <TT><A HREF="#ficlload">load</A></TT>
-expects a filename upon invocation). The "real" <TT>LOAD</TT> is a <TT>BLOCK</TT>
-word.</LI>
-</UL>
+<li>
+<tt>refill</tt> returns zero at EOF (Win32 load). Win32 <tt><a href="#ficlload">load</a></tt>
+command continues to be misnamed. Really ought to be called <tt>included</tt>,
+but does not exactly conform to that spec either (because <tt>included</tt>
+expects a string signature on the stack, while Ficl's <tt><a href="#ficlload">load</a></tt>
+expects a filename upon invocation). The "real" <tt>LOAD</tt> is a <tt>BLOCK</tt>
+word.</li>
+</ul>
 Enhancements (IMHO)
-<UL>
-<LI>
-dictUnsmudge no longer links anonymous definitions into the dictionary</LI>
+<ul>
+<li>
+dictUnsmudge no longer links anonymous definitions into the dictionary</li>
 
-<LI>
-<TT>oop</TT> is no longer the default compile wordlist at startup, nor
-is it in the search order. Execute <B><TT>also oop definitions</TT></B>
-to use Ficl OOP.</LI>
+<li>
+<tt>oop</tt> is no longer the default compile wordlist at startup, nor
+is it in the search order. Execute <b><tt>also oop definitions</tt></b>
+to use Ficl OOP.</li>
 
-<LI>
-Revised oo.fr extensively to make more use of early binding</LI>
+<li>
+Revised oo.fr extensively to make more use of early binding</li>
 
-<LI>
-Added <TT>meta</TT> - a constant that pushes the address of metaclass.
-See oo.fr for examples of use.</LI>
+<li>
+Added <tt>meta</tt> - a constant that pushes the address of metaclass.
+See oo.fr for examples of use.</li>
 
-<LI>
-Added classes: <TT>c-ptr&nbsp; c-bytePtr&nbsp; c-2bytePtr&nbsp; c-cellPtr
-</TT>These
+<li>
+Added classes: <tt>c-ptr&nbsp; c-bytePtr&nbsp; c-2bytePtr&nbsp; c-cellPtr
+</tt>These
 classes model pointers to non-object data, but each knows the size of its
-referent.</LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+referent.</li>
+</ul>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-What's new in version 2.01</H2>
+<hr WIDTH="100%">
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+What's new in version 2.01</h2>
 
-<UL>
-<LI>
-Bug fix: <TT>(local)</TT> used to leave a value on the stack between the
-first and last locals declared. This value is now stored in a static.</LI>
+<ul>
+<li>
+Bug fix: <tt>(local)</tt> used to leave a value on the stack between the
+first and last locals declared. This value is now stored in a static.</li>
 
-<LI>
-Added new local syntax with parameter re-ordering. <A HREF="#newlocal">See
-description below</A>. (No longer compiled in version 2.02, in favor of
-the Johns Hopkins syntax)</LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+<li>
+Added new local syntax with parameter re-ordering. <a href="#newlocal">See
+description below</a>. (No longer compiled in version 2.02, in favor of
+the Johns Hopkins syntax)</li>
+</ul>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-What's new in version 2.0</H2>
+<hr WIDTH="100%">
+<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+What's new in version 2.0</h2>
 
-<UL>
-<LI>
-New ANS Forth words: <TT>TOOLS</TT> and part of <TT>TOOLS EXT, SEARCH</TT>
-and <TT>SEARCH EXT, LOCALS</TT> and <TT>LOCALS EXT</TT> word sets, additional
-words from <TT>CORE EXT, DOUBLE</TT>, and <TT>STRING</TT>. (See the function
-ficlCompileCore in words.c for an alphabetical list by word set).</LI>
+<ul>
+<li>
+New ANS Forth words: <tt>TOOLS</tt> and part of <tt>TOOLS EXT, SEARCH</tt>
+and <tt>SEARCH EXT, LOCALS</tt> and <tt>LOCALS EXT</tt> word sets, additional
+words from <tt>CORE EXT, DOUBLE</tt>, and <tt>STRING</tt>. (See the function
+ficlCompileCore in words.c for an alphabetical list by word set).</li>
 
-<LI>
-Simple <TT>USER</TT> variable support - a user variable is a virtual machine
-instance variable. User variables behave as <TT>VARIABLE</TT>s in all other
-respects.</LI>
+<li>
+Simple <tt>USER</tt> variable support - a user variable is a virtual machine
+instance variable. User variables behave as <tt>VARIABLE</tt>s in all other
+respects.</li>
 
-<LI>
-Object oriented syntax extensions (see below)</LI>
+<li>
+Object oriented syntax extensions (see below)</li>
 
-<LI>
+<li>
 Optional stack underflow and overflow checking in many CORE words (enabled
-when FICL_ROBUST is set to 2)</LI>
+when FICL_ROBUST >= 2)</li>
 
-<LI>
-Various bug fixes</LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+<li>
+Various bug fixes</li>
+</ul>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-Local Variables</H3>
-Ficl includes support for <TT>LOCALS</TT> and <TT>LOCALS EXT</TT> words
+<hr WIDTH="100%">
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+<a NAME="locals"></a>Local Variables</h3>
+Ficl includes support for <tt>LOCALS</tt> and <tt>LOCALS EXT</tt> words
 (all three of them!). I've implemented both of the local variable syntaxes
 suggested in DPANS Appendix A.13. Examples: (By the way, Ficl implements
-<TT>-ROT</TT>
-as <TT>: -rot&nbsp;&nbsp; 2 -roll ;</TT> )&nbsp;
-<UL><B><TT>\ Using LOCALS| from LOCALS EXT</TT></B>
-<BR><B><TT>: -rot&nbsp;&nbsp; ( a b c -- c a b )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; locals| c b a |</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; c a b&nbsp;</TT></B>
-<BR><B><TT>;</TT></B>
-<BR><B><TT>\ Using LOCAL END-LOCAL</TT></B>
-<BR><B><TT>: -rot&nbsp;&nbsp; ( a b c -- c a b )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; local c</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; local b</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; local a</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; end-locals</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; c a b</TT></B>
-<BR><B><TT>;</TT></B></UL>
+<tt>-ROT</tt>
+as <tt>: -rot&nbsp;&nbsp; 2 -roll ;</tt> )&nbsp;
+<ul><b><tt>\ Using LOCALS| from LOCALS EXT</tt></b>
+<br><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; locals| c b a |</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; c a b&nbsp;</tt></b>
+<br><b><tt>;</tt></b>
+<br><b><tt>\ Using LOCAL END-LOCAL</tt></b>
+<br><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; local c</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; local b</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; local a</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; end-locals</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; c a b</tt></b>
+<br><b><tt>;</tt></b></ul>
 Local variable support is optional because it adds a small amount of overhead
 to the outer interpreter. You can disable it by setting FICL_WANT_LOCALS
 to 0 in sysdep.h. Beware: much of the OOP code described below uses local
 variables, so if you disable locals, you're going to lose other capabilities
 too. Local variables can make Forth code quite a bit easier to read, so
 I'd encourage you to experiment with them.&nbsp;
-<BR>The default maximum number of local variables is 16. It's controlled
+<br>The default maximum number of local variables is 16. It's controlled
 by FICL_MAX_LOCALS in sysdep.h.&nbsp;
-<BR><A NAME="jhlocal"></A>Ficl 2.02 includes by default an implementation
+<br><a NAME="jhlocal"></a>Ficl 2.02 includes by default an implementation
 of the Johns Hopkins local syntax (as best I can determine it from examples
 on the web). This syntax lets you declare local variables that look very
 much like a stack comment. Variables in the declaration appear in the "correct"
 order for a stack comment. Everything after the -- is treated as a comment.
 In addition, you can insert a | before the -- to declare one or more zero-initialized
 locals. Example:
-<BLOCKQUOTE><B><TT>:tuck0&nbsp;&nbsp; { a b c | d -- 0 a b c }</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; d a b c ;</TT></B></BLOCKQUOTE>
+<blockquote><b><tt>:tuck0&nbsp;&nbsp; { a b c | d -- 0 a b c }</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; d a b c ;</tt></b></blockquote>
 The | and -- delimiters can appear at most once, and must appear in the
 order shown in the example to work correctly. The local declaration ends
 at the first occurrence of }. The declaration must all be on one line as
 presently implemented.
-<BR><A NAME="newlocal"></A>Ficl 2.01 added yet another local syntax that
+<br><a NAME="newlocal"></a>Ficl 2.01 added yet another local syntax that
 models a stack comment. This one is not compiled in the release, but you
 can add it by editing softwords/softcore.bat to include the file ficllocal.fr.
 In this case, parameters are re-ordered so that the rightmost initialized
 param comes from the top of the stack. The syntax is:&nbsp;
-<UL><B><TT>{{ &lt;initialized params> -- &lt;cleared params> }}</TT></B></UL>
+<ul><b><tt>{{ &lt;initialized params> -- &lt;cleared params> }}</tt></b></ul>
 You can omit either the initialized or the cleared parameters. Parameters
 after the double dash are set to zero initially. Those to the left are
 initialized from the stack at execution time. Examples (lame ones, admittedly):&nbsp;
-<UL><B><TT>: -rot&nbsp;&nbsp; ( a b c -- c a b )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; {{ a b c }}</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; c a b&nbsp;</TT></B>
-<BR><B><TT>;</TT></B>
-<BR><B><TT>: tuck0&nbsp; ( a b c -- 0 a b c )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; {{ a b c -- d }}</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; d a b c&nbsp;</TT></B>
-<BR><B><TT>;&nbsp;</TT></B></UL>
+<ul><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {{ a b c }}</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; c a b&nbsp;</tt></b>
+<br><b><tt>;</tt></b>
+<br><b><tt>: tuck0&nbsp; ( a b c -- 0 a b c )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {{ a b c -- d }}</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; d a b c&nbsp;</tt></b>
+<br><b><tt>;&nbsp;</tt></b></ul>
 
-<H3>
-Search Order</H3>
+<h3>
+Search Order</h3>
 Ficl implements many of the search order words in terms of two primitives
-called <TT><A HREF="#tosearch">>SEARCH</A></TT> and <TT><A HREF="#searchfrom">SEARCH></A></TT>.
+called <tt><a href="#tosearch">>SEARCH</a></tt> and <tt><a href="#searchfrom">SEARCH></a></tt>.
 As their names suggest (assuming you're familiar with Forth), they push
-and pop the search order stack. See the list of <A HREF="#extras">Ficl
-extras</A> for details.&nbsp;
-<BR>The standard does not appear to specify any conditions under which
+and pop the search order stack. See the list of <a href="#extras">Ficl
+extras</a> for details.&nbsp;
+<br>The standard does not appear to specify any conditions under which
 the search order is reset to a sane state. Ficl resets the search order
-to its default state whenever <TT>ABORT</TT> happens. This includes stack
-underflows and overflows. <TT>QUIT</TT> does not affect the search order.
-The minimum search order (set by <TT>ONLY</TT>) is equivalent to&nbsp;
-<BR><B><TT>FORTH-WORDLIST 1 SET-ORDER</TT></B>
-<BR>There is a default maximum of 16 wordlists in the search order. This
+to its default state whenever <tt>ABORT</tt> happens. This includes stack
+underflows and overflows. <tt>QUIT</tt> does not affect the search order.
+The minimum search order (set by <tt>ONLY</tt>) is equivalent to&nbsp;
+<br><b><tt>FORTH-WORDLIST 1 SET-ORDER</tt></b>
+<br>There is a default maximum of 16 wordlists in the search order. This
 can be changed by redefining FICL_DEFAULT_VOCS (declared in sysdep.h).&nbsp;
-<H3>
-Soft Words</H3>
+<h3>
+Soft Words</h3>
 Many words from all the supported wordsets are written in Forth, and stored
 as a big string that Ficl compiles when it starts. The sources for all
 of these words are in directory ficl/softwords. There is a .bat file (softcore.bat)
@@ -563,115 +910,115 @@ and a PERL 5 script (softcore.pl) that convert Forth files into the file
 softcore.c, so softcore.c is really dependent on the Forth sources. This
 is not reflected in the Visual C++ project database. For the time being,
 it's a manual step. You can edit softcore.bat to change the list of files
-that contribute to softcore.c.&nbsp;</TD>
-</TR>
-</TABLE>
+that contribute to softcore.c.&nbsp;</td>
+</tr>
+</table>
 
-<H2>
+<h2>
 
-<HR WIDTH="100%"></H2>
+<hr WIDTH="100%"></h2>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="objects"></A>Objects in ficl</H2>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="objects"></a>Objects in ficl</h2>
 Ficl is not the first Forth to include Object Oriented extensions. Ficl's
 OO syntax owes a debt to the work of John Hayes and Dick Pountain, among
 others. OO Ficl is different from other OO Forths in a few ways, though
 (some things never change). First, unlike several implementations, the
-syntax is documented (<A HREF="#ootutorial">below</A>) beyond the source
+syntax is documented (<a href="#ootutorial">below</a>) beyond the source
 code. In Ficl's spirit of working with C code, the OO syntax provides means
 to adapt existing data structures. I've tried to make Ficl's OO model simple
 and safe by unifying classes and objects, providing late binding by default,
 and separating namespaces so that methods and regular Forth words are not
 easily confused.&nbsp;
-<H3>
-Design goals of Ficl OO syntax</H3>
+<h3>
+Design goals of Ficl OO syntax</h3>
 Ficl's object extensions provide the traditional OO benefits of associating
 data with the code that manipulates it, and reuse through single inheritance.
 Ficl also has some unusual capabilities that support interoperation with
 systems written in C.&nbsp;
-<UL>
-<LI>
+<ul>
+<li>
 Ficl objects are normally late bound for safety (late binding guarantees
 that the appropriate method will always be invoked for a particular object).
 Early binding is also available, provided you know the object's class at
-compile-time.</LI>
+compile-time.</li>
 
-<LI>
-Ficl OOP supports single inheritance, aggregation, and arrays of objects.</LI>
+<li>
+Ficl OOP supports single inheritance, aggregation, and arrays of objects.</li>
 
-<LI>
+<li>
 Classes have independent name spaces for their methods: methods are only
 visible in the context of a class or object. Methods can be overridden
 or added in subclasses; there is no fixed limit on the number of methods
-of a class or subclass.</LI>
+of a class or subclass.</li>
 
-<LI>
+<li>
 Ficl OOP syntax is regular and unified over classes and objects. In ficl,
 a classes are objects. Class methods include the ability to subclass and
-instantiate.</LI>
+instantiate.</li>
 
-<LI>
+<li>
 Ficl can adapt legacy data structures with object wrappers. You can model
 a structure in a Ficl class, and create an instance that refers to an address
-in memory that holds an instance of the structure. The <I>ref object</I>
+in memory that holds an instance of the structure. The <i>ref object</i>
 can then manipulate the structure directly. This lets you wrap data structures
-written and instantiated in C.</LI>
-</UL>
-</TD>
-</TR>
-</TABLE>
+written and instantiated in C.</li>
+</ul>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-Ficl Object Model</H3>
-All classes in Ficl are derived from the common base class <TT><A HREF="#objectgloss">OBJECT</A></TT>.
-All classes are instances of <TT><A HREF="#glossclass">METACLASS</A></TT>.
-This means that classes are objects, too. <TT>METACLASS</TT> implements
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+Ficl Object Model</h3>
+All classes in Ficl are derived from the common base class <tt><a href="#objectgloss">OBJECT</a></tt>.
+All classes are instances of <tt><a href="#glossclass">METACLASS</a></tt>.
+This means that classes are objects, too. <tt>METACLASS</tt> implements
 the methods for messages sent to classes. Class methods create instances
 and subclasses, and give information about the class. Classes have exactly
-three elements:&nbsp;
-<UL>
-<LI>
-The address ( <TT>.CLASS</TT> ) of a parent class, or zero if it's a base
-class (only <TT>OBJECT</TT> and <TT>METACLASS</TT> have this property)</LI>
+three elements:
+<ul>
+<li>
+The address ( <tt>.CLASS</tt> ) of a parent class, or zero if it's a base
+class (only <tt>OBJECT</tt> and <tt>METACLASS</tt> have this property)</li>
 
-<LI>
-The size ( <TT>.SIZE</TT> ) in address units of an instance of the class</LI>
+<li>
+The size ( <tt>.SIZE</tt> ) in address units of an instance of the class</li>
 
-<LI>
-A wordlist ID ( <TT>.WID</TT> ) for the methods of the class</LI>
-</UL>
-In the figure below, <TT>METACLASS</TT> and <TT>OBJECT</TT> are system-supplied
+<li>
+A wordlist ID ( <tt>.WID</tt> ) for the methods of the class</li>
+</ul>
+In the figure below, <tt>METACLASS</tt> and <tt>OBJECT</tt> are system-supplied
 classes. The others are contrived to illustrate the relationships among
 derived classes, instances, and the two system base classes. The dashed
 line with an arrow at the end indicates that the object/class at the arrow
 end is an instance of the class at the other end. The vertical line with
 a triangle denotes inheritance.&nbsp;
-<P>Note for the curious: <TT>METACLASS</TT> behaves like a class - it responds
+<p>Note for the curious: <tt>METACLASS</tt> behaves like a class - it responds
 to class messages and has the same properties as any other class. If you
-want to twist your brain in knots, you can think of <TT>METACLASS</TT>
+want to twist your brain in knots, you can think of <tt>METACLASS</tt>
 as an instance of itself.&nbsp;
-<BR>&nbsp;</TD>
-</TR>
-</TABLE>
-<IMG SRC="ficl_oop.jpg" VSPACE=10 HEIGHT=442 WIDTH=652>
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="ootutorial"></A>Ficl OO Syntax Tutorial</H2>
+<br>&nbsp;</td>
+</tr>
+</table>
+<img SRC="ficl_oop.jpg" VSPACE=10 height=442 width=652>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="ootutorial"></a>Ficl OO Syntax Tutorial</h2>
 
-<H3>
-Introduction</H3>
+<h3>
+Introduction</h3>
 Ficl objects associate a class with an instance (really the storage for
 one set of instance variables). This is done explicitly, in that any Ficl
 object is represented by the cell pair:&nbsp;
-<UL><B><TT>( instance-addr class-addr )</TT></B></UL>
+<ul><b><tt>( instance-addr class-addr )</tt></b></ul>
 on the stack. Whenever a named Ficl object executes, it leaves this "signature".
 All methods expect a class and instance on the stack when they execute,
 too. In many other OO languages, including C++, instances contain information
@@ -680,21 +1027,21 @@ explicit rather than implicit, Ficl can be OO about chunks of data that
 don't realize that they are objects, without sacrificing any robustness
 for native objects. Whenever&nbsp; you create an object in Ficl, you specify
 its class. After that, the object always pushes its class and the address
-of its payload when invoked by name.&nbsp;
-<P>Classes are special kinds of objects that store the methods of their
+of its payload (instance variable space) when invoked by name.&nbsp;
+<p>Classes are special kinds of objects that store the methods of their
 instances, the size of an instance's payload, and a parent class pointer.
-Classes themselves are instances of a special base class called <TT>METACLASS</TT>,
-and all classes inherit from class <TT>OBJECT</TT>. This is confusing at
+Classes themselves are instances of a special base class called <tt>METACLASS</tt>,
+and all classes inherit from class <tt>OBJECT</tt>. This is confusing at
 first, but it means that Ficl has a very simple syntax for constructing
-and using objects. Class methods include subclassing (<TT>SUB</TT>), creating
-initialized and uninitialized instances (<TT>NEW</TT> and <TT>INSTANCE</TT>),
-and creating reference instances (<TT>REF</TT>). Classes also have methods
-for disassembling their methods (<TT>SEE</TT>), identifying themselves
-(<TT>ID</TT>), and listing their pedigree (<TT>PEDIGREE</TT>). All objects
+and using objects. Class methods include subclassing (<tt>SUB</tt>), creating
+initialized and uninitialized instances (<tt>NEW</tt> and <tt>INSTANCE</tt>),
+and creating reference instances (<tt>REF</tt>). Classes also have methods
+for disassembling their methods (<tt>SEE</tt>), identifying themselves
+(<tt>ID</tt>), and listing their pedigree (<tt>PEDIGREE</tt>). All objects
 inherit methods for initializing instances and arrays of instances, for
 performing array operations, and for getting information about themselves.&nbsp;
-<H3>
-Methods and messages</H3>
+<h3>
+Methods and messages</h3>
 Methods are the chunks of code that objects execute in response to messages.
 A message is a request to an object for a behavior that the object supports.
 When it receives a message, the target object looks up a method that performs
@@ -704,89 +1051,91 @@ This separation of messages and methods allows objects to behave polymorphically
 (In Ficl, methods are words defined in the context of a class, and messages
 are the names of those words.) Ficl classes associate messages with methods
 for their instances (a fancy way of saying that each class owns a wordlist).
-Ficl provides a late-binding operator <B><TT>--></TT></B> that sends messages
+Ficl provides a late-binding operator <b><tt>--></tt></b> that sends messages
 to objects at run-time, and an early-binding operator
-<B><TT>=></TT></B>
+<b><tt>=></tt></b>
 that compiles a specific class's method. These operators are the only supported
 way to invoke methods. Regular Forth words are not visible to the method-binding
 operators,&nbsp; so there's no chance of confusing a message with a regular
-word of the same name.&nbsp;</TD>
-</TR>
-</TABLE>
+word of the same name.&nbsp;</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-Tutorial (finally!)</H3>
-Since this is a tutorial, I'm assuming you're following along by typing
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+Tutorial (finally!)</h3>
+Since this is a tutorial, I'm assuming you're following along by pasting
 the examples into ficlWin, the Win32 version of Ficl (or some other build
 that includes the OO part of softcore.c). I also assume that you're familiar
-with Forth. If not, please see one of the <A HREF="#links">references</A>,
+with Forth. If not, please see one of the <a href="#links">references</a>,
 below. Ficl's OOP words are in vocabulary OOP. To put OOP in the search
 order and make it the compilation wordlist from the default search order
-(as set by <TT>ONLY</TT>), type:&nbsp;
-<UL><B><TT>ALSO OOP DEFINITIONS</TT></B></UL>
-To start, we'll work with the two base classes <TT>OBJECT</TT> and <TT>METACLASS</TT>.
+(as set by <tt>ONLY</tt>), type:&nbsp;
+<ul><b><tt>ONLY&nbsp;&nbsp; ( reset to default search order )</tt></b>
+<br><b><tt>ALSO OOP DEFINITIONS</tt></b></ul>
+To start, we'll work with the two base classes <tt>OBJECT</tt> and <tt>METACLASS</tt>.
 Try this:&nbsp;
-<UL><B><TT>metaclass --> methods</TT></B></UL>
+<ul><b><tt>metaclass --> methods</tt></b></ul>
 The line above contains three words. The first is the name of a class,
 so it pushes its signature on the stack. Since all classes are instances
-of <TT>METACLASS</TT>, <TT>METACLASS</TT> behaves as if it is an instance
+of <tt>METACLASS</tt>, <tt>METACLASS</tt> behaves as if it is an instance
 of itself (this is the only class with this property). It pushes the same
-address twice: once for the class and once for the instance variables,
-since they are the same. The next word finds a method in the context of
-a class and executes it. In this case, the name of the method is <TT>methods</TT>.
+address twice: once for the class and once for the payload, since they
+are the same. The next word finds a method in the context of a class and
+executes it. In this case, the name of the method is <tt>methods</tt>.
 Its job is to list all the methods that a class knows. What you get when
 you execute this line is a list of all the class methods Ficl provides.&nbsp;
-<UL><B><TT>object --> sub c-foo</TT></B></UL>
-Causes base-class <TT>OBJECT</TT> to derive from itself a new class called
+<ul><b><tt>object --> sub c-foo</tt></b></ul>
+Causes base-class <tt>OBJECT</tt> to derive from itself a new class called
 c-foo. Now we'll add some instance variables and methods to the new class...&nbsp;
-<UL><B><TT>cell: m_cell1</TT></B>
-<BR><B><TT>4 chars: m_chars</TT></B>
-<BR><B><TT>: init&nbsp;&nbsp; ( inst class -- )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; locals| class inst |</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; 0 inst class --> m_cell1 !</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; inst class --> m_chars 4 0 fill</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; ." initializing an instance of c_foo at "
-inst x. cr</TT></B>
-<BR><B><TT>;</TT></B>
-<BR><B><TT>end-class</TT></B></UL>
-The first two lines add named instance variables to the class, and creates
-a method for each. <I>Untyped</I> instance variable methods (like those
-created by <TT>cell: cells: char:</TT> and <TT>chars:</TT>) just push the
+<ul><b><tt>cell: m_cell1</tt></b>
+<br><b><tt>4 chars: m_chars</tt></b>
+<br><b><tt>: init&nbsp;&nbsp; ( inst class -- )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; locals| class inst |</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; 0 inst class --> m_cell1 !</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; inst class --> m_chars 4 0 fill</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ." initializing an instance of c_foo at "
+inst x. cr</tt></b>
+<br><b><tt>;</tt></b>
+<br><b><tt>end-class</tt></b></ul>
+The first two lines add named instance variables to the class, and create
+a method for each. <i>Untyped</i> instance variable methods (like those
+created by <tt>cell: cells: char:</tt> and <tt>chars:</tt>) just push the
 address of the corresponding instance variable when invoked on an instance
 of the class. It's up to you to remember the size of the instance variable
-and manipulate it with the usual Forth words for fetching and storing.
-We've also defined a method called <TT>init</TT> that clears the instance
-variables. Notice that the method expects the addresses of the class and
-instance when it's called. It stashes those in local variables to avoid
-stack tricks, and puts them onto the stack whenever it calls a method.
-In this case, we're storing zero to the two member variables.&nbsp;
-<P>The <TT>init</TT> method is special for Ficl objects: whenever you create
-an initialized instance using <B><TT>new</TT></B> or <B><TT>new-array</TT></B>,
-Ficl calls the class's <TT>init</TT> method for you on that instance. The
-default <TT>init</TT> method supplied by class <TT>object</TT> clears the
+and manipulate it with the usual Forth words for fetching and storing (we'll
+see below how to aggregate objects, which do know their size). We've also
+defined a method called <tt>init</tt> that clears the instance variables.
+Notice that the method expects the addresses of the class and instance
+when it's called. It stashes those in local variables to avoid stack tricks,
+and puts them onto the stack whenever it calls a method. In this case,
+we're storing zero to the two member variables.&nbsp;
+<p>The <tt>init</tt> method is special for Ficl objects: whenever you create
+an initialized instance using <b><tt>new</tt></b> or <b><tt>new-array</tt></b>,
+Ficl calls the class's <tt>init</tt> method for you on that instance. The
+default <tt>init</tt> method supplied by class <tt>object</tt> clears the
 instance, so we didn't really need to override it in this case (see the
 source code in ficl/softwords/oo.fr).&nbsp;
-<BR>Now make an instance of the new class:&nbsp;
-<UL><B><TT>c-foo --> new foo-instance</TT></B></UL>
+<br>Now make an instance of the new class:&nbsp;
+<ul><b><tt>c-foo --> new foo-instance</tt></b></ul>
 And try a few things...&nbsp;
-<UL><B><TT>foo-instance --> methods</TT></B>
-<BR><B><TT>foo-instance --> pedigree</TT></B></UL>
+<ul><b><tt>foo-instance --> methods</tt></b>
+<br><b><tt>foo-instance --> pedigree</tt></b></ul>
 Or you could type this with the same effect:&nbsp;
-<UL><B><TT>foo-instance 2dup --> methods --> pedigree</TT></B></UL>
+<ul><b><tt>foo-instance 2dup --> methods --> pedigree</tt></b></ul>
 Notice that we've overridden the init method supplied by object, and added
 two more methods for the member variables. If you type WORDS, you'll see
 that these methods are not visible outside the context of the class that
 contains them. The method finder --> uses the class to look up methods.
-You can use this word in a definition, as we did in init, and it performs
-late binding, meaning that the mapping from message (method name) to method
-(the code) is deferred until run-time. To see this, you can decompile the
-init method like this:&nbsp;
-<UL><B><TT>c-foo --> see init</TT></B>
-<BR>or&nbsp;
-<BR><B><TT>foo-instance --> class --> see init</TT></B></UL>
+You can use this word in a definition, as we did in <tt>init</tt>, and
+it performs late binding, meaning that the mapping from message (method
+name) to method (the code) is deferred until run-time. To see this, you
+can decompile the init method like this:&nbsp;
+<ul><b><tt>c-foo --> see init</tt></b>
+<br>or&nbsp;
+<br><b><tt>foo-instance --> class --> see init</tt></b></ul>
 Ficl also provides early binding, but you have to ask for it. Ficl's early
 binding operator pops a class off the stack and compiles the method you've
 named, so that that method executes regardless of the class of object it's
@@ -795,1664 +1144,1761 @@ mechanism object oriented languages were created to provide, but it does
 increase run-time speed by binding the method at compile time. In many
 cases, such as the init method, you can be reasonably certain of the class
 of thing you're working on. This is also true when invoking class methods,
-since all classes are instances of <TT>metaclass</TT>. Here's an example
-from oo.fr:&nbsp;
-<UL><B><TT>: new&nbsp;&nbsp; \ ( class metaclass "name" -- )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; metaclass => instance --> init ;</TT></B>
-<BR><B><TT>metaclass --> see new</TT></B></UL>
-Decompiling the method with <TT>SEE</TT> shows the difference between the
+since all classes are instances of <tt>metaclass</tt>. Here's an example
+from the definition of <tt>metaclass</tt> in oo.fr (don't paste this into
+ficlWin - it's already there):&nbsp;
+<ul><b><tt>: new&nbsp;&nbsp; \ ( class metaclass "name" -- )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; metaclass => instance --> init ;</tt></b></ul>
+Try this...
+<ul><b><tt>metaclass --> see new</tt></b></ul>
+Decompiling the method with <tt>SEE</tt> shows the difference between the
 two strategies. The early bound method is compiled inline, while the late-binding
 operator compiles the method name and code to find and execute it in the
 context of whatever class is supplied on the stack at&nbsp; run-time.&nbsp;
-<BR>Notice that the early-binding operator requires a class at compile
-time. For this reason, classes are <TT>IMMEDIATE</TT>, meaning that they
+<br>Notice that the early-binding operator requires a class at compile
+time. For this reason, classes are <tt>IMMEDIATE</tt>, meaning that they
 push their signature at compile time or run time. I'd recommend that you
 avoid early binding until you're very comfortable with Forth, object-oriented
 programming,&nbsp; and Ficl's OOP syntax.&nbsp;
-<P>As advertised earlier, Ficl provides ways to objectify existing data
+<p>As advertised earlier, Ficl provides ways to objectify existing data
 structures without changing them. Instead, you can create a Ficl class
-that models the structure, and instantiate a <B>ref </B>from this class,
-supplying the address of the structure. After that, the ref instance behaves
-as a Ficl object, but its instance variables take on the values in the
-existing structure. Example (from ficlclass.fr):&nbsp;
-<BR>&nbsp;
-<UL><B><TT>object subclass c-wordlist \ OO model of FICL_HASH</TT></B>
-<BR><B><TT>&nbsp;cell: .parent</TT></B>
-<BR><B><TT>&nbsp;cell: .size</TT></B>
-<BR><B><TT>&nbsp;cell: .hash</TT></B>
-<P><B><TT>&nbsp;: push&nbsp; drop&nbsp; >search ;</TT></B>
-<BR><B><TT>&nbsp;: pop&nbsp;&nbsp; 2drop previous ;</TT></B>
-<BR><B><TT>&nbsp;: set-current&nbsp;&nbsp; drop set-current ;</TT></B>
-<BR><B><TT>&nbsp;: words&nbsp;&nbsp; --> push&nbsp; words previous ;</TT></B>
-<BR><B><TT>end-class</TT></B>
-<P><B><TT>: named-wid&nbsp;&nbsp; ( "name" -- )&nbsp;</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; wordlist&nbsp; postpone c-wordlist&nbsp;
-metaclass => ref ;</TT></B></UL>
-In this case, <TT>c-wordlist</TT> describes Ficl's wordlist structure;
-named-wid creates a wordlist and binds it to a ref instance of <TT>c-wordlist</TT>.
-The fancy footwork with <TT>POSTPONE</TT> and early binding is required
+that models the structure, and instantiate a <b>ref </b>from this class,
+supplying the address of the structure. After that, the <i>ref instance</i>
+behaves as a Ficl object, but its instance variables take on the values
+in the existing structure. Example (from ficlclass.fr):&nbsp;
+<br>&nbsp;
+<ul><b><tt>object subclass c-wordlist \ OO model of FICL_HASH</tt></b>
+<br><b><tt>&nbsp;cell: .parent</tt></b>
+<br><b><tt>&nbsp;cell: .size</tt></b>
+<br><b><tt>&nbsp;cell: .hash</tt></b>
+<p><b><tt>&nbsp;: push&nbsp; drop&nbsp; >search ;</tt></b>
+<br><b><tt>&nbsp;: pop&nbsp;&nbsp; 2drop previous ;</tt></b>
+<br><b><tt>&nbsp;: set-current&nbsp;&nbsp; drop set-current ;</tt></b>
+<br><b><tt>&nbsp;: words&nbsp;&nbsp; --> push&nbsp; words previous ;</tt></b>
+<br><b><tt>end-class</tt></b>
+<p><b><tt>: named-wid&nbsp;&nbsp; ( "name" -- )&nbsp;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; wordlist&nbsp; postpone c-wordlist&nbsp;
+metaclass => ref ;</tt></b></ul>
+In this case, <tt>c-wordlist</tt> describes Ficl's wordlist structure;
+named-wid creates a wordlist and binds it to a ref instance of <tt>c-wordlist</tt>.
+The fancy footwork with <tt>POSTPONE</tt> and early binding is required
 because classes are immediate. An equivalent way to define named-wid with
 late binding is:&nbsp;
-<UL><B><TT>: named-wid&nbsp;&nbsp; ( "name" -- )</TT></B>
-<BR><B><TT>&nbsp;&nbsp;&nbsp; wordlist&nbsp; postpone c-wordlist&nbsp;
---> ref ;</TT></B></UL>
+<ul><b><tt>: named-wid&nbsp;&nbsp; ( "name" -- )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; wordlist&nbsp; postpone c-wordlist&nbsp;
+--> ref ;</tt></b></ul>
 To do the same thing at run-time (and call it my-wordlist):&nbsp;
-<UL><B><TT>wordlist&nbsp; c-wordlist --> ref&nbsp; my-wordlist</TT></B></UL>
+<ul><b><tt>wordlist&nbsp; c-wordlist --> ref&nbsp; my-wordlist</tt></b></ul>
 Now you can deal with the wordlist through the ref instance:&nbsp;
-<UL><B><TT>my-wordlist --> push</TT></B>
-<BR><B><TT>my-wordlist --> set-current</TT></B>
-<BR><B><TT>order</TT></B></UL>
+<ul><b><tt>my-wordlist --> push</tt></b>
+<br><b><tt>my-wordlist --> set-current</tt></b>
+<br><b><tt>order</tt></b></ul>
 Ficl can also model linked lists and other structures that contain pointers
 to structures of the same or different types. The class constructor word
-<B><TT><A HREF="#exampleref:">ref:</A></TT></B>
-makes an aggregate reference to a particular class. See the <A HREF="#glossinstance">instance
-variable glossary</A> for an <A HREF="#exampleref:">example</A>.&nbsp;
-<P>Ficl can make arrays of instances, and aggregate arrays into class descripions.
-The <A HREF="#glossclass">class methods</A> <B><TT>array</TT></B> and <B><TT>new-array</TT></B>
+<b><tt><a href="#exampleref:">ref:</a></tt></b>
+makes an aggregate reference to a particular class. See the <a href="#glossinstance">instance
+variable glossary</a> for an <a href="#exampleref:">example</a>.&nbsp;
+<p>Ficl can make arrays of instances, and aggregate arrays into class descripions.
+The <a href="#glossclass">class methods</a> <b><tt>array</tt></b> and <b><tt>new-array</tt></b>
 create uninitialized and initialized arrays, respectively, of a class.
-In order to initialize an array, the class must define a reasonable <B><TT>init</TT></B>
-method. <B><TT>New-array</TT></B> invokes it on each member of the array
+In order to initialize an array, the class must define (or inherit) a reasonable
+<b><tt>init</tt></b>
+method. <b><tt>New-array</tt></b> invokes it on each member of the array
 in sequence from lowest to highest. Array instances and array members use
-the object methods <B><TT>index</TT></B>, <B><TT>next</TT></B>, and <B><TT>prev</TT></B>
-to navigate. Aggregate a member array of objects using <B><TT><A HREF="#arraycolon">array:</A></TT></B>.
+the object methods <b><tt>index</tt></b>, <b><tt>next</tt></b>, and <b><tt>prev</tt></b>
+to navigate. Aggregate a member array of objects using <b><tt><a href="#arraycolon">array:</a></tt></b>.
 The objects are not automatically initialized in this case - your class
-initializer has to call <B><TT>array-init</TT></B> explicitly if you want
+initializer has to call <b><tt>array-init</tt></b> explicitly if you want
 this behavior.&nbsp;
-<P>For further examples of OOP in Ficl, please see the source file ficl/softwords/ficlclass.fr.
+<p>For further examples of OOP in Ficl, please see the source file ficl/softwords/ficlclass.fr.
 This file wraps several Ficl internal data structures in objects and gives
-use examples.&nbsp;</TD>
-</TR>
-</TABLE>
+use examples.&nbsp;</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-<A NAME="oopgloss"></A>OOP Glossary</H3>
-These words provide method binding for all classes and instances. Also
-described are supporting words and execution factors. All are defined in
-softwords/oo.fr.
-<DL>
-<DT>
-<B><TT>-->&nbsp;&nbsp; ( instance class "method-name" -- xn )</TT></B></DT>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+<a NAME="oopgloss"></a>OOP Glossary</h3>
+Note: with the exception of the binding operators (the first two definitions
+here), all of the words in this section are internal factors that you don't
+need to worry about. These words provide method binding for all classes
+and instances. Also described are supporting words and execution factors.
+All are defined in softwords/oo.fr.
+<dl>
+<dt>
+<b><tt>-->&nbsp;&nbsp; ( instance class "method-name" -- xn )</tt></b></dt>
 
-<DD>
+<dd>
 Late binding: looks up and executes the given method in the context of
-the class on top of the stack.&nbsp;</DD>
+the class on top of the stack.&nbsp;</dd>
 
-<DT>
-<B><TT>=>&nbsp;&nbsp; comp: ( class meta "method-name" -- )&nbsp; exec:
-( inst class -- xn )</TT></B></DT>
+<dt>
+<b><tt>=>&nbsp;&nbsp; comp: ( class meta "method-name" -- )&nbsp; exec:
+( inst class -- xn )</tt></b></dt>
 
-<DD>
+<dd>
 Early binding: compiles code to execute the method of the class specified
-at compile time.</DD>
+at compile time.</dd>
 
-<DT>
-<B><TT>do-do-instance</TT></B></DT>
+<dt>
+<b><tt>do-do-instance</tt></b></dt>
 
-<DD>
-Implementation factor of <B><TT>metaclass --> sub</TT></B>. Compiles <B><TT>.do-instance</TT></B>
-in the context of a class; <TT>.do-instance</TT> implements the <TT>does></TT>
-part of a named instance. When executed, causes the instance to push its
-( instance class ) stack signature.</DD>
+<dd>
+When executed, causes the instance to push its ( instance class ) stack
+signature. Implementation factor of <b><tt>metaclass --> sub</tt></b>.
+Compiles <b><tt>.do-instance</tt></b> in the context of a class; <tt>.do-instance</tt>
+implements the <tt>does></tt> part of a named instance.&nbsp;</dd>
 
-<DT>
-<B><TT>exec-method&nbsp;&nbsp; ( instance class c-addr u -- xn )</TT></B></DT>
+<dt>
+<b><tt>exec-method&nbsp;&nbsp; ( instance class c-addr u -- xn )</tt></b></dt>
 
-<DD>
+<dd>
 Given the address and length of a message (method name) on the stack, finds
 the method in the context of the specified class and invokes it. Upon entry
 to the method, the instance and class are on top of the stack, as usual.
-If unable to find the method, prints an error message and aborts.</DD>
+If unable to find the method, prints an error message and aborts.</dd>
 
-<DT>
-<B><TT>find-method-xt&nbsp;&nbsp; ( class "method-name" -- class xt )</TT></B></DT>
+<dt>
+<b><tt>find-method-xt&nbsp;&nbsp; ( class "method-name" -- class xt )</tt></b></dt>
 
-<DD>
+<dd>
 Attempts to map the message to a method in the specified class. If successful,
 leaves the class and the execution token of the method on the stack. Otherwise
-prints an error message and aborts.</DD>
+prints an error message and aborts.</dd>
 
-<DT>
-<B><TT>lookup-method&nbsp;&nbsp; ( class c-addr u -- class xt )</TT></B></DT>
+<dt>
+<b><tt>lookup-method&nbsp;&nbsp; ( class c-addr u -- class xt )</tt></b></dt>
 
-<DD>
+<dd>
 Given the address and length of a message (method name) on the stack, finds
 the method in the context of the specified class. If unable to find the
-method, prints an error message and aborts.</DD>
+method, prints an error message and aborts.</dd>
 
-<DT>
-<B><TT>parse-method&nbsp;&nbsp; comp: ( "method-name" -- )&nbsp; exec:
-( -- c-addr u )</TT></B></DT>
+<dt>
+<b><tt>parse-method&nbsp;&nbsp; comp: ( "method-name" -- )&nbsp; exec:
+( -- c-addr u )</tt></b></dt>
 
-<DD>
+<dd>
 Parse "name" from the input stream and compile code to push its length
-and address when the enclosing definition runs.</DD>
-</DL>
-</TD>
-</TR>
-</TABLE>
+and address when the enclosing definition runs.</dd>
+</dl>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-<A NAME="glossinstance"></A>Instance Variable Glossary</H3>
-<B>Note</B>: these words are only visible when creating a subclass! To
-create a subclass, use the <TT>sub</TT> method on <TT>object</TT> or any
-class derived from it (<I>not</I> <TT>metaclass</TT>). Source code for
-Ficl OOP is in ficl/softwords/oo.fr.&nbsp;
-<DT>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+<a NAME="glossinstance"></a>Instance Variable Glossary</h3>
+<b>Note</b>: these words are only visible when creating a subclass! To
+create a subclass, use the <tt>sub</tt> method on <tt>object</tt> or any
+class derived from it (<i>not</i> <tt>metaclass</tt>). Source code for
+Ficl OOP is in ficl/softwords/oo.fr.
+<dt>
 Instance variable words do two things: they create methods that do an action
 appropriate for the type of instance variable they represent, and they
 reserve space in the class template for the instance variable. We'll use
-the term <I>instance variable</I> to refer both to the method that gives
+the term <i>instance variable</i> to refer both to the method that gives
 access to a particular field of an object, and to the field itself. Rather
 than give esentially the same example over and over, here's one example
-that shows several of the instance variable construction words in use:</DT>
+that shows several of the instance variable construction words in use:</dt>
 
-<UL>
-<DT>
-<TT>object subclass c-example</TT></DT>
+<ul>
+<dt>
+<tt>object subclass c-example</tt></dt>
 
-<DT>
-<TT>&nbsp;&nbsp;&nbsp; cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.cell0</TT></DT>
+<dt>
+<tt>&nbsp;&nbsp;&nbsp; cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.cell0</tt></dt>
 
-<BR><TT>&nbsp;&nbsp;&nbsp; c-4byte&nbsp;&nbsp; obj: .nCells</TT>
-<BR><TT>&nbsp; 4 c-4byte array: .quad</TT>
-<BR><TT>&nbsp;&nbsp;&nbsp; char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.length</TT>
-<BR><TT>&nbsp;79 chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-.name</TT>
-<BR><TT>end-class</TT></UL>
+<br><tt>&nbsp;&nbsp;&nbsp; c-4byte&nbsp;&nbsp; obj: .nCells</tt>
+<br><tt>&nbsp; 4 c-4byte array: .quad</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.length</tt>
+<br><tt>&nbsp;79 chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.name</tt>
+<br><tt>end-class</tt></ul>
 This class only defines instance variables, and it inherits some methods
-from <TT>object</TT>. Each untyped instance variable (.cell0, .length,
+from <tt>object</tt>. Each untyped instance variable (.cell0, .length,
 .name) pushes its address when executed. Each object instance variable
 pushes the address and class of the aggregate object. Similar to C, an
-array instance variable leaves its base address (and its class) when executed.&nbsp;
-<BR>&nbsp;
-<DT>
-<B><TT>cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset "name"
--- offset' )</TT></B></DT>
+array instance variable leaves its base address (and its class) when executed.
+The word <tt>subclass</tt> is shorthand for "<tt>--> sub</tt>"&nbsp;
+<br>&nbsp;
+<dt>
+<b><tt>cell:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset "name"
+-- offset' )</tt></b></dt>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- cell-addr )</TT></B></DT>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- cell-addr )</tt></b></dt>
 
-<DL>
-<DD>
+<dl>
+<dd>
 Create an untyped instance variable one cell wide. The instance variable
-leaves its payload's address when executed.&nbsp;</DD>
+leaves its payload's address when executed.&nbsp;</dd>
 
-<DT>
-<B><TT>cells:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset nCells "name"
--- offset' )</TT></B></DT>
+<dt>
+<b><tt>cells:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset nCells "name"
+-- offset' )</tt></b></dt>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- cell-addr )</TT></B></DT>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- cell-addr )</tt></b></dt>
 
-<DD>
-Create an untyped instance variable n cells wide.</DD>
+<dd>
+Create an untyped instance variable n cells wide.</dd>
 
-<DT>
-<B><TT>char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset "name"
--- offset' )</TT></B></DT>
+<dt>
+<b><tt>char:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset "name"
+-- offset' )</tt></b></dt>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- char-addr )</TT></B></DT>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- char-addr )</tt></b></dt>
 
-<DD>
-Create an untyped member variable one char wide</DD>
+<dd>
+Create an untyped member variable one char wide</dd>
 
-<DT>
-<B><TT>chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset nChars "name"
--- offset' )</TT></B></DT>
+<dt>
+<b><tt>chars:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset nChars "name"
+-- offset' )</tt></b></dt>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- char-addr )</TT></B></DT>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- char-addr )</tt></b></dt>
 
-<DD>
-Create an untyped member variable n chars wide.</DD>
+<dd>
+Create an untyped member variable n chars wide.</dd>
 
-<DT>
-<B><TT>obj:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset class
-meta "name" -- offset' )</TT></B></DT>
+<dt>
+<b><tt>obj:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( offset class
+meta "name" -- offset' )</tt></b></dt>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- instance class )</TT></B></DT>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- instance class )</tt></b></dt>
 
-<DT>
-Aggregate an uninitialized instance of class as a member variable of the
-class under construction.<A NAME="arraycolon"></A><B><TT>array:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-( offset n class meta "name" -- offset' )</TT></B></DT>
+<dd>
+Aggregate an uninitialized instance of <b>class</b> as a member variable
+of the class under construction.</dd>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- instance class )</TT></B></DT>
+<dt>
+<a NAME="arraycolon"></a><b><tt>array:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( offset n class meta "name" -- offset' )</tt></b></dt>
 
-<DD>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- instance class )</tt></b></dt>
+
+<dd>
 Aggregate an uninitialized array of instances of the class specified as
-a member variable of the class under construction.</DD>
+a member variable of the class under construction.</dd>
 
-<DT>
-<A NAME="exampleref:"></A><B><TT>ref:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-( offset class meta "name" -- offset' )</TT></B></DT>
+<dt>
+<a NAME="exampleref:"></a><b><tt>ref:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+( offset class meta "name" -- offset' )</tt></b></dt>
 
-<DT>
-<B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Execution:&nbsp; ( -- ref-instance ref-class )</TT></B></DT>
+<dt>
+<b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Execution:&nbsp; ( -- ref-instance ref-class )</tt></b></dt>
 
-<DD>
+<dd>
 Aggregate a reference to a class instance. There is no way to set the value
 of an aggregated ref - it's meant as a way to manipulate existing data
 structures with a Ficl OO model. For example, if your system contains a
 linked list of 4 byte quantities, you can make a class that represents
-a list element like this:&nbsp;</DD>
+a list element like this:&nbsp;</dd>
 
-<DL>
-<DD>
-<TT>object subclass c-4list</TT></DD>
+<dl>
+<dd>
+<tt>object subclass c-4list</tt></dd>
 
-<DD>
-<TT>c-4list ref: .link</TT></DD>
+<dd>
+<tt>c-4list ref: .link</tt></dd>
 
-<DD>
-<TT>c-4byte obj: .payload</TT></DD>
+<dd>
+<tt>c-4byte obj: .payload</tt></dd>
 
-<DD>
-<TT>end-class;</TT></DD>
+<dd>
+<tt>end-class;</tt></dd>
 
-<DD>
-<TT>address-of-existing-list c-4list --> ref mylist</TT></DD>
-</DL>
+<dd>
+<tt>address-of-existing-list c-4list --> ref mylist</tt></dd>
+</dl>
 
-<DD>
+<dd>
 The last line binds the existing structure to an instance of the class
 we just created. The link method pushes the link value and the class c_4list,
 so that the link looks like an object to Ficl and like a struct to C (it
-doesn;t carry any extra baggage for the object model - the Ficl methods
-alone take care of storing the class information).&nbsp;</DD>
+doesn't carry any extra baggage for the object model - the Ficl methods
+alone take care of storing the class information).&nbsp;</dd>
 
-<DD>
+<dd>
 Note: Since a ref: aggregate can only support one class, it's good for
 modeling static structures, but not appropriate for polymorphism. If you
 want polymorphism, aggregate a c_ref (see classes.fr for source) into your
-class - it has methods to set and get an object.</DD>
+class - it has methods to set and get an object.</dd>
 
-<DD>
+<dd>
 By the way, it is also possible to construct a pair of classes that contain
-aggregate pointers to each other. Here's a rough example:</DD>
+aggregate pointers to each other. Here's a rough example:</dd>
 
-<DL>
-<DD>
-<TT>object subclass c-fee</TT></DD>
+<dl>
+<dd>
+<tt>object subclass c-fee</tt></dd>
 
-<DD>
-<TT>object subclass c-fie</TT></DD>
+<dd>
+<tt>object subclass c-fie</tt></dd>
 
-<DD>
-<TT>&nbsp;&nbsp;&nbsp; c-fee ref: .fee</TT></DD>
+<dd>
+<tt>&nbsp;&nbsp;&nbsp; c-fee ref: .fee</tt></dd>
 
-<DD>
-<TT>end-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ done with
-c-fie</TT></DD>
+<dd>
+<tt>end-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ done with
+c-fie</tt></dd>
 
-<DD>
-<TT>&nbsp;&nbsp;&nbsp; c-fie ref: .fie</TT></DD>
+<dd>
+<tt>&nbsp;&nbsp;&nbsp; c-fie ref: .fie</tt></dd>
 
-<BR><TT>end-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-\ done with c-fee</TT></DL>
-</DL>
-</TD>
-</TR>
-</TABLE>
+<br><tt>end-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\ done with c-fee</tt></dl>
+</dl>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-<A NAME="glossclass"></A>Class Methods Glossary</H3>
-These words are methods of <TT>metaclass</TT>. They define the manipulations
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+<a NAME="glossclass"></a>Class Methods Glossary</h3>
+These words are methods of <tt>metaclass</tt>. They define the manipulations
 that can be performed on classes. Methods include various kinds of instantiation,
 programming tools, and access to member variables of classes. Source is
 in softwords/oo.fr.
-<DL>
-<DT>
-<B><TT>instance&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass "name" -- instance
-class )</TT></B>&nbsp;</DT>
+<dl>
+<dt>
+<b><tt>instance&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass "name" -- instance
+class )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Create an uninitialized instance of the class, giving it the name specified.
 The method leaves the instance 's signature on the stack (handy if you
-want to initialize). Example:</DD>
+want to initialize). Example:</dd>
 
-<DD>
-<TT>c_ref --> instance uninit-ref&nbsp; 2drop</TT></DD>
+<dd>
+<tt>c_ref --> instance uninit-ref&nbsp; 2drop</tt></dd>
 
-<DT>
-<B><TT>new&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
-metaclass "name" -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>new&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
+metaclass "name" -- )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Create an initialized instance of class, giving it the name specified.
-This method calls init to perform initialization.&nbsp;</DD>
+This method calls init to perform initialization.&nbsp;</dd>
 
-<DT>
-<B><TT>array&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( nObj class metaclass
-"name" -- nObjs instance class )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>array&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( nObj class metaclass
+"name" -- nObjs instance class )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Create an array of nObj instances of the specified class. Instances are
-not initialized. Example:</DD>
+not initialized. Example:</dd>
 
-<DD>
-<TT>10 c_4byte --> array&nbsp; 40-raw-bytes&nbsp; 2drop drop</TT></DD>
+<dd>
+<tt>10 c_4byte --> array&nbsp; 40-raw-bytes&nbsp; 2drop drop</tt></dd>
 
-<DT>
-<B><TT>new-array&nbsp;&nbsp;&nbsp; ( nObj class metaclass "name" -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>new-array&nbsp;&nbsp;&nbsp; ( nObj class metaclass "name" -- )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Creates an initialized array of nObj instances of the class. Same syntax
-as <TT>array</TT></DD>
+as <tt>array</tt></dd>
 
-<DT>
-<B><TT>ref&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance-addr
-class metaclass "name" -- )</TT></B>&nbsp;</DT>
+<dt>
+<a NAME="alloc"></a><b><tt>alloc&nbsp;&nbsp; ( class metaclass -- instance
+class )</tt></b></dt>
 
-<DD>
+<dd>
+Creates an anonymous instance of <b>class</b> from the heap (using a call
+to ficlMalloc() to get the memory). Leaves the payload and class addresses
+on the stack. Usage example:</dd>
+
+<dd>
+<tt>c-ref --> alloc 2constant instance-of-ref</tt></dd>
+
+<dd>
+Creates a double-cell constant that pushes the payload and class address
+of a heap instance of c-ref.</dd>
+
+<dt>
+<a NAME="allocarray"></a><b><tt>alloc-array&nbsp;&nbsp; ( nObj class metaclass
+-- instance class )</tt></b></dt>
+
+<dd>
+Same as new-array, but creates anonymous instances from the heap using
+a call to ficlMalloc(). Each instance is initialized using the class's
+<tt>init</tt>
+method</dd>
+
+<dt>
+<b><tt>ref&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance-addr
+class metaclass "name" -- )</tt></b>&nbsp;</dt>
+
+<dd>
 Make a ref instance of the class that points to the supplied instance address.
 No new instance space is allotted. Instead, the instance refers to the
 address supplied on the stack forever afterward. For wrapping existing
-structures.</DD>
-</DL>
+structures.</dd>
+</dl>
 
-<DL>
-<DT>
-<B><TT>sub&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
-metaclass -- old-wid addr[size] size )</TT></B></DT>
+<dl>
+<dt>
+<b><tt>sub&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
+metaclass -- old-wid addr[size] size )</tt></b></dt>
 
-<DD>
+<dd>
 Derive a subclass. You can add or override methods, and add instance variables.
-Alias: <TT>subclass</TT>. Examples:</DD>
+Alias: <tt>subclass</tt>. Examples:</dd>
 
-<DL>
-<DD>
-<TT>c_4byte --> sub c_special4byte</TT></DD>
+<dl>
+<dd>
+<tt>c_4byte --> sub c_special4byte</tt></dd>
 
-<DD>
-<TT>( your new methods and instance variables here )</TT></DD>
+<dd>
+<tt>( your new methods and instance variables here )</tt></dd>
 
-<DD>
-<TT>end-class</TT></DD>
+<dd>
+<tt>end-class</tt></dd>
 
-<DD>
-or</DD>
+<dd>
+or</dd>
 
-<DD>
-<TT>c_4byte subclass c_special4byte</TT></DD>
+<dd>
+<tt>c_4byte subclass c_special4byte</tt></dd>
 
-<DD>
-<TT>( your new methods and instance variables here )</TT></DD>
+<dd>
+<tt>( your new methods and instance variables here )</tt></dd>
 
-<DD>
-<TT>end-class</TT></DD>
-</DL>
+<dd>
+<tt>end-class</tt></dd>
+</dl>
 
-<DT>
-<B><TT>.size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass
--- instance-size )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>.size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass
+-- instance-size )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Returns address of the class's instance size field, in address units. This
-is a metaclass member variable.</DD>
+is a metaclass member variable.</dd>
 
-<DT>
-<B><TT>.super&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass --
-superclass )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>.super&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass --
+superclass )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Returns address of the class's superclass field. This is a metaclass member
-variable.</DD>
+variable.</dd>
 
-<DT>
-<B><TT>.wid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass
--- wid )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>.wid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass
+-- wid )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Returns the address of the class's wordlist ID field. This is a metaclass
-member variable.</DD>
+member variable.</dd>
 
-<DT>
-<B><TT>get-size</TT></B></DT>
+<dt>
+<b><tt>get-size</tt></b></dt>
 
-<DD>
+<dd>
 Returns the size of an instance of the class in address units. Imeplemented
-as</DD>
+as</dd>
 
-<DD>
-<TT>: get-size&nbsp;&nbsp; metaclass => .size @ ;</TT></DD>
+<dd>
+<tt>: get-size&nbsp;&nbsp; metaclass => .size @ ;</tt></dd>
 
-<DT>
-<B><TT>get-wid</TT></B></DT>
+<dt>
+<b><tt>get-wid</tt></b></dt>
 
-<DD>
-Returns the wordlist ID of the class. Implemented as&nbsp;</DD>
+<dd>
+Returns the wordlist ID of the class. Implemented as&nbsp;</dd>
 
-<DD>
-<TT>: get-wid&nbsp;&nbsp; metaclass => .wid @ ;</TT></DD>
+<dd>
+<tt>: get-wid&nbsp;&nbsp; metaclass => .wid @ ;</tt></dd>
 
-<DT>
-<B><TT>get-super</TT></B></DT>
+<dt>
+<b><tt>get-super</tt></b></dt>
 
-<DD>
-Returns the class's superclass. Implemented as</DD>
+<dd>
+Returns the class's superclass. Implemented as</dd>
 
-<DD>
-<TT>: get-super&nbsp;&nbsp; metaclass => .super @ ;</TT></DD>
+<dd>
+<tt>: get-super&nbsp;&nbsp; metaclass => .super @ ;</tt></dd>
 
-<DT>
-<B><TT>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (
-class metaclass -- c-addr u )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (
+class metaclass -- c-addr u )</tt></b>&nbsp;</dt>
 
-<DD>
-Returns the address and length of a string that names the class.</DD>
+<dd>
+Returns the address and length of a string that names the class.</dd>
 
-<DT>
-<B><TT>methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass -- )</tt></b>&nbsp;</dt>
 
-<DD>
-Lists methods of the class and all its superclasses</DD>
+<dd>
+Lists methods of the class and all its superclasses</dd>
 
-<DT>
-<B><TT>offset-of&nbsp;&nbsp;&nbsp; ( class metaclass "name" -- offset )</TT></B></DT>
+<dt>
+<b><tt>offset-of&nbsp;&nbsp;&nbsp; ( class metaclass "name" -- offset )</tt></b></dt>
 
-<DD>
+<dd>
 Pushes the offset from the instance base address of the named member variable.
 If the name is not that of an instance variable method, you get garbage.
-There is presently no way to detect this error. Example:</DD>
+There is presently no way to detect this error. Example:</dd>
 
-<DL>
-<DD>
-<TT>metaclass --> offset-of .wid</TT></DD>
-</DL>
+<dl>
+<dd>
+<tt>metaclass --> offset-of .wid</tt></dd>
+</dl>
 
-<DT>
-<B><TT>pedigree&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>pedigree&nbsp;&nbsp;&nbsp;&nbsp; ( class metaclass -- )</tt></b>&nbsp;</dt>
 
-<DD>
-Lists the pedigree of the class (inheritance trail)</DD>
+<dd>
+Lists the pedigree of the class (inheritance trail)</dd>
 
-<DT>
-<B><TT>see&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
-metaclass "name" -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>see&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( class
+metaclass "name" -- )</tt></b>&nbsp;</dt>
 
-<BR>Decompiles the specified method - obect version of <TT>SEE</TT>, from
-the <TT>TOOLS</TT> wordset.</DL>
-</TD>
-</TR>
-</TABLE>
+<dd>
+Decompiles the specified method - obect version of <tt>SEE</tt>, from the
+<tt>TOOLS</tt>
+wordset.</dd>
+</dl>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-<A NAME="objectgloss"></A><TT>object</TT> base-class Methods Glossary</H3>
-These are methods that are defined for all instances by the base class.
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+<a NAME="objectgloss"></a><tt>object</tt> base-class Methods Glossary</h3>
+These are methods that are defined for all instances by the base class
+<tt>object</tt>.
 The methods include default initialization, array manipulations, aliases
 of class methods, upcasting, and programming tools.
-<DL>
-<DT>
-<B><TT>init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance
-class -- )</TT>&nbsp;</B></DT>
+<dl>
+<dt>
+<b><tt>init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance
+class -- )</tt>&nbsp;</b></dt>
 
-<DD>
+<dd>
 Default initializer called automatically for all instances created with
-<TT>new</TT>
-or <TT>new-array</TT>. Zero-fills the instance. You do not normally need
-to invoke <TT>init</TT> explicitly.</DD>
+<tt>new</tt>
+or <tt>new-array</tt>. Zero-fills the instance. You do not normally need
+to invoke <tt>init</tt> explicitly.</dd>
 
-<DT>
-<B><TT>array-init&nbsp;&nbsp; ( nObj instance class -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>array-init&nbsp;&nbsp; ( nObj instance class -- )</tt></b>&nbsp;</dt>
 
-<DD>
-Applies <TT>init</TT> to an array of objects created by <TT>new-array</TT>.
-Note that <TT>array:</TT> does not cause aggregate arrays to be initialized
-automatically. You do not normally need to invoke <TT>array-init</TT> explicitly.</DD>
+<dd>
+Applies <tt>init</tt> to an array of objects created by <tt>new-array</tt>.
+Note that <tt>array:</tt> does not cause aggregate arrays to be initialized
+automatically. You do not normally need to invoke <tt>array-init</tt> explicitly.</dd>
 
-<DT>
-<B><TT>class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class
--- class metaclass )</TT></B>&nbsp;</DT>
+<dt>
+<a NAME="oofree"></a><b><tt>free&nbsp;&nbsp; ( instance class -- )</tt></b></dt>
 
-<DD>
+<dd>
+Releases memory used by an instance previously created with <tt>alloc</tt>
+or <tt>alloc-array</tt>. Note - this method is not presently protected
+against accidentally deleting something from the dictionary. If you do
+this, Bad Things are likely to happen. Be careful for the moment to apply
+free only to instances created with <tt>alloc</tt> or <tt>alloc-array</tt>.</dd>
+
+<dt>
+<b><tt>class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class
+-- class metaclass )</tt></b>&nbsp;</dt>
+
+<dd>
 Convert an object signature into that of its class. Useful for calling
-class methods that have no object aliases.</DD>
+class methods that have no object aliases.</dd>
 
-<DT>
-<B><TT>super&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class
--- instance parent-class )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>super&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class
+-- instance parent-class )</tt></b>&nbsp;</dt>
 
-<DD>
-Upcast an object to its parent class. The parent class of <TT>object</TT>
-is zero. Useful for invoking an overridden parent class method.</DD>
+<dd>
+Upcast an object to its parent class. The parent class of <tt>object</tt>
+is zero. Useful for invoking an overridden parent class method.</dd>
 
-<DT>
-<B><TT>pedigree&nbsp;&nbsp;&nbsp;&nbsp; ( instance class -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>pedigree&nbsp;&nbsp;&nbsp;&nbsp; ( instance class -- )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Display an object's pedigree - its chain of inheritance. This is an alias
-for the corresponding class method.</DD>
+for the corresponding class method.</dd>
 
-<DT>
-<B><TT>size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance
-class -- sizeof(instance) )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance
+class -- sizeof(instance) )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Returns the size, in address units, of one instance. Does not know about
-arrays! This is an alias for the class method <TT>get-size</TT></DD>
+arrays! This is an alias for the class method <tt>get-size</tt></dd>
 
-<DT>
-<B><TT>methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class -- )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>methods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance class -- )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Class method alias. Displays the list of methods of the class and all superclasses
-of the instance.</DD>
+of the instance.</dd>
 
-<DT>
-<B><TT>index&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( n instance class
--- instance[n] class )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>index&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( n instance class
+-- instance[n] class )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Convert array-of-objects base signature into signature for array element
-n. No check for bounds overflow. Index is zero-based, like C, so&nbsp;</DD>
+n. No check for bounds overflow. Index is zero-based, like C, so&nbsp;</dd>
 
-<DL>
-<DD>
-<TT>0 my-obj --> index</TT>&nbsp;</DD>
-</DL>
+<dl>
+<dd>
+<tt>0 my-obj --> index</tt>&nbsp;</dd>
+</dl>
 
-<DD>
-is equivalent to&nbsp;</DD>
+<dd>
+is equivalent to&nbsp;</dd>
 
-<DL>
-<DD>
-<TT>my-obj</TT></DD>
-</DL>
+<dl>
+<dd>
+<tt>my-obj</tt></dd>
+</dl>
 
-<DD>
-Check out the <A HREF="#minusrot">description of <TT>-ROT</TT></A> for
-help in dealing with indices on the stack.</DD>
+<dd>
+Check out the <a href="#minusrot">description of <tt>-ROT</tt></a> for
+help in dealing with indices on the stack.</dd>
 
-<DT>
-<B><TT>next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance[n]
-class -- instance[n+1] class )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance[n]
+class -- instance[n+1] class )</tt></b>&nbsp;</dt>
 
-<DD>
+<dd>
 Convert an array-object signature&nbsp; into the signature of the next
-object in the array. No check for bounds overflow.</DD>
+object in the array. No check for bounds overflow.</dd>
 
-<DT>
-<B><TT>prev&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance[n]
-class -- instance[n-1] class )</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>prev&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( instance[n]
+class -- instance[n-1] class )</tt></b>&nbsp;</dt>
 
-<BR>Convert an object signature into the signature of the previous object
-in the array. No check for bounds underflow.</DL>
-</TD>
-</TR>
-</TABLE>
+<br>Convert an object signature into the signature of the previous object
+in the array. No check for bounds underflow.</dl>
+</td>
+</tr>
+</table>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H3>
-<A NAME="stockclasses"></A>Supplied Classes (See classes.fr)</H3>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h3>
+<a NAME="stockclasses"></a>Supplied Classes (See classes.fr)</h3>
 
-<DL>
-<DT>
-<B><TT>metaclass&nbsp;</TT></B></DT>
+<dl>
+<dt>
+<b><tt>metaclass&nbsp;</tt></b></dt>
 
-<DD>
+<dd>
 Describes all classes of Ficl. Contains class methods. Should never be
 directly instantiated or subclassed. Defined in oo.fr. Methods described
-above.</DD>
+above.</dd>
 
-<DT>
-<B><TT>object</TT>&nbsp;</B></DT>
+<dt>
+<b><tt>object</tt>&nbsp;</b></dt>
 
-<DD>
+<dd>
 Mother of all Ficl objects. Defines default initialization and array indexing
-methods. Defined in oo.fr. Methods described above.</DD>
+methods. Defined in oo.fr. Methods described above.</dd>
 
-<DT>
-<B><TT>c-ref</TT>&nbsp;</B></DT>
+<dt>
+<b><tt>c-ref</tt>&nbsp;</b></dt>
 
-<DD>
+<dd>
 Holds the signature of another object. Aggregate one of these into a data
 structure or container class to get polymorphic behavior. Methods &amp;
-members:&nbsp;</DD>
+members:&nbsp;</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; ( inst class -- ref-inst ref-class )</TT></DD>
+<dd>
+<tt>get&nbsp;&nbsp; ( inst class -- ref-inst ref-class )</tt></dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( ref-inst ref-class inst class -- )</TT></DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( ref-inst ref-class inst class -- )</tt></dd>
 
-<DD>
-<TT>.instance&nbsp;&nbsp; ( inst class -- a-addr ) </TT>cell member that
-holds the instance</DD>
+<dd>
+<tt>.instance&nbsp;&nbsp; ( inst class -- a-addr ) </tt>cell member that
+holds the instance</dd>
 
-<DD>
-<TT>.class&nbsp;&nbsp; ( inst class -- a-addr ) </TT>cell member that holds
-the class</DD>
+<dd>
+<tt>.class&nbsp;&nbsp; ( inst class -- a-addr ) </tt>cell member that holds
+the class</dd>
 
-<DT>
-<B><TT>c-byte&nbsp;</TT></B></DT>
+<dt>
+<b><tt>c-byte&nbsp;</tt></b></dt>
 
-<DD>
-Primitive class derived from <TT>object</TT>, with a 1-byte payload. Set
-and get methods perform correct width fetch and store. Methods &amp; members:</DD>
+<dd>
+Primitive class derived from <tt>object</tt>, with a 1-byte payload. Set
+and get methods perform correct width fetch and store. Methods &amp; members:</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; ( inst class -- c )</TT></DD>
+<dd>
+<tt>get&nbsp;&nbsp; ( inst class -- c )</tt></dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( c inst class -- )</TT></DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( c inst class -- )</tt></dd>
 
-<DD>
-<TT>.payload&nbsp;&nbsp; ( inst class -- addr ) </TT>member holds instance's
-value</DD>
+<dd>
+<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
+value</dd>
 
-<DT>
-<B><TT>c-2byte</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>c-2byte</tt></b>&nbsp;</dt>
 
-<DD>
-Primitive class derived from <TT>object</TT>, with a 2-byte payload. Set
-and get methods perform correct width fetch and store. Methods &amp; members:</DD>
+<dd>
+Primitive class derived from <tt>object</tt>, with a 2-byte payload. Set
+and get methods perform correct width fetch and store. Methods &amp; members:</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; ( inst class -- 2byte )</TT></DD>
+<dd>
+<tt>get&nbsp;&nbsp; ( inst class -- 2byte )</tt></dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( 2byte inst class -- )</TT></DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( 2byte inst class -- )</tt></dd>
 
-<DD>
-<TT>.payload&nbsp;&nbsp; ( inst class -- addr ) </TT>member holds instance's
-value</DD>
+<dd>
+<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
+value</dd>
 
-<DT>
-<B><TT>c-4byte</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>c-4byte</tt></b>&nbsp;</dt>
 
-<DD>
-Primitive class derived from <TT>object</TT>, with a 4-byte (cell) payload.
+<dd>
+Primitive class derived from <tt>object</tt>, with a 4-byte (cell) payload.
 Set and get methods perform correct width fetch and store. Methods &amp;
-members:</DD>
+members:</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; ( inst class -- x )</TT></DD>
+<dd>
+<tt>get&nbsp;&nbsp; ( inst class -- x )</tt></dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( x inst class -- )</TT></DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( x inst class -- )</tt></dd>
 
-<DD>
-<TT>.payload&nbsp;&nbsp; ( inst class -- addr ) </TT>member holds instance's
-value</DD>
+<dd>
+<tt>.payload&nbsp;&nbsp; ( inst class -- addr ) </tt>member holds instance's
+value</dd>
 
-<DT>
-<B><TT>c-ptr</TT></B></DT>
+<dt>
+<b><tt>c-ptr</tt></b></dt>
 
-<DD>
-Base class derived from <TT>object</TT> for pointers to non-object types.
+<dd>
+Base class derived from <tt>object</tt> for pointers to non-object types.
 This class is not complete by itself: several methods depend on a derived
-class definition of <TT>@size</TT>. Methods &amp; members:</DD>
+class definition of <tt>@size</tt>. Methods &amp; members:</dd>
 
-<DD>
-<TT>.addr&nbsp;&nbsp; ( inst class -- a-addr )</TT> member variable - holds
-the pointer address</DD>
+<dd>
+<tt>.addr&nbsp;&nbsp; ( inst class -- a-addr )</tt> member variable - holds
+the pointer address</dd>
 
-<DD>
-<TT>get-ptr&nbsp;&nbsp; ( inst class -- ptr )</TT></DD>
+<dd>
+<tt>get-ptr&nbsp;&nbsp; ( inst class -- ptr )</tt></dd>
 
-<DD>
-<TT>set-ptr&nbsp;&nbsp; ( ptr inst class -- )</TT></DD>
+<dd>
+<tt>set-ptr&nbsp;&nbsp; ( ptr inst class -- )</tt></dd>
 
-<DD>
-<TT>inc-ptr&nbsp;&nbsp; ( inst class -- )</TT> Adds @size to pointer address</DD>
+<dd>
+<tt>inc-ptr&nbsp;&nbsp; ( inst class -- )</tt> Adds @size to pointer address</dd>
 
-<DD>
-<TT>dec-ptr&nbsp;&nbsp; ( inst class -- )</TT> Subtracts @size from pointer
-address</DD>
+<dd>
+<tt>dec-ptr&nbsp;&nbsp; ( inst class -- )</tt> Subtracts @size from pointer
+address</dd>
 
-<DD>
-<TT>index-ptr&nbsp;&nbsp; ( i inst class -- )</TT> Adds i*@size to pointer
-address</DD>
+<dd>
+<tt>index-ptr&nbsp;&nbsp; ( i inst class -- )</tt> Adds i*@size to pointer
+address</dd>
 
-<DT>
-<B><TT>c-bytePtr</TT></B></DT>
+<dt>
+<b><tt>c-bytePtr</tt></b></dt>
 
-<DD>
-Pointer to byte derived from c-ptr. Methods &amp; members:</DD>
+<dd>
+Pointer to byte derived from c-ptr. Methods &amp; members:</dd>
 
-<DD>
-<TT>@size&nbsp;&nbsp; ( inst class -- size )</TT> Push size of the pointed-to
-thing</DD>
+<dd>
+<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
+thing</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; (&nbsp; inst class -- c ) </TT>Fetch the pointer's
-referent byte</DD>
+<dd>
+<tt>get&nbsp;&nbsp; (&nbsp; inst class -- c ) </tt>Fetch the pointer's
+referent byte</dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( c inst class -- ) </TT>Store c at the pointer address</DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( c inst class -- ) </tt>Store c at the pointer address</dd>
 
-<DT>
-<B><TT>c-2bytePtr</TT></B></DT>
+<dt>
+<b><tt>c-2bytePtr</tt></b></dt>
 
-<DD>
-Pointer to double byte derived from c-ptr. Methods &amp; members:</DD>
+<dd>
+Pointer to double byte derived from c-ptr. Methods &amp; members:</dd>
 
-<DD>
-<TT>@size&nbsp;&nbsp; ( inst class -- size )</TT> Push size of the pointed-to
-thing</DD>
+<dd>
+<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
+thing</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </TT>Fetch the pointer's
-referent 2byte</DD>
+<dd>
+<tt>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </tt>Fetch the pointer's
+referent 2byte</dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( x inst class -- )</TT> Store 2byte x at the pointer
-address</DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( x inst class -- )</tt> Store 2byte x at the pointer
+address</dd>
 
-<DT>
-<B><TT>c-cellPtr</TT></B></DT>
+<dt>
+<b><tt>c-cellPtr</tt></b></dt>
 
-<DD>
-Pointer to cell derived from c-ptr. Methods &amp; members:</DD>
+<dd>
+Pointer to cell derived from c-ptr. Methods &amp; members:</dd>
 
-<DD>
-<TT>@size&nbsp;&nbsp; ( inst class -- size )</TT> Push size of the pointed-to
-thing</DD>
+<dd>
+<tt>@size&nbsp;&nbsp; ( inst class -- size )</tt> Push size of the pointed-to
+thing</dd>
 
-<DD>
-<TT>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </TT>Fetch the pointer's
-referent cell</DD>
+<dd>
+<tt>get&nbsp;&nbsp; (&nbsp; inst class -- x ) </tt>Fetch the pointer's
+referent cell</dd>
 
-<DD>
-<TT>set&nbsp;&nbsp; ( x inst class -- )</TT> Storex at the pointer address</DD>
+<dd>
+<tt>set&nbsp;&nbsp; ( x inst class -- )</tt> Storex at the pointer address</dd>
 
-<DT>
-<B><TT>c-string</TT></B>&nbsp;</DT>
+<dt>
+<b><tt>c-string</tt></b>&nbsp;</dt>
 
-<DD>
-Counted string (thin)</DD>
-</DL>
-</TD>
-</TR>
-</TABLE>
+<dd>
+Counted string (thin)</dd>
+</dl>
+</td>
+</tr>
+</table>
 
-<H2>
+<h2>
 
-<HR WIDTH="100%"></H2>
+<hr WIDTH="100%"></h2>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<DL>
-<H2>
-<A NAME="extras"></A>Ficl extras</H2>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<dl>
+<h2>
+<a NAME="extras"></a>Ficl extras</h2>
 
-<H3>
-Number syntax</H3>
+<h3>
+Number syntax</h3>
 You can precede a number with "0x", as in C, and it will be interpreted
-as a hex value regardless of the value of <TT>BASE</TT>. Example:&nbsp;
-<DL><TT>ok> decimal 123 . cr</TT>
-<BR><TT>123&nbsp;</TT>
-<BR><TT>ok> 0x123 . cr</TT>
-<BR><TT>291&nbsp;</TT></DL>
+as a hex value regardless of the value of <tt>BASE</tt>. Example:&nbsp;
+<dl><tt>ok> decimal 123 . cr</tt>
+<br><tt>123&nbsp;</tt>
+<br><tt>ok> 0x123 . cr</tt>
+<br><tt>291&nbsp;</tt></dl>
 
-<H3>
-Search order words</H3>
-Note: Ficl resets the search order whenever it does <TT>ABORT</TT>. If
+<h3>
+Search order words</h3>
+Note: Ficl resets the search order whenever it does <tt>ABORT</tt>. If
 you don't like this behavior, just comment out the dictResetSearchOrder()
-line in ficlExec().&nbsp;
-<BR>&nbsp;
-<DT>
-<A NAME="tosearch"></A><TT>>search&nbsp;&nbsp; ( wid -- )</TT></DT>
+lines in ficlExec().&nbsp;
+<br>&nbsp;
+<dt>
+<a NAME="tosearch"></a><tt>>search&nbsp;&nbsp; ( wid -- )</tt></dt>
 
-<DD>
-Push <TT>wid</TT> onto the search order. Many of the other search order
-words are written in terms of the <TT>SEARCH></TT> and <TT>>SEARCH</TT>
-primitives.</DD>
+<dd>
+Push <tt>wid</tt> onto the search order. Many of the other search order
+words are written in terms of the <tt>SEARCH></tt> and <tt>>SEARCH</tt>
+primitives.</dd>
 
-<DT>
-<A NAME="searchfrom"></A><TT>search>&nbsp;&nbsp; ( -- wid )</TT></DT>
+<dt>
+<a NAME="searchfrom"></a><tt>search>&nbsp;&nbsp; ( -- wid )</tt></dt>
 
-<DD>
-Pop <TT>wid</TT> off the search order</DD>
+<dd>
+Pop <tt>wid</tt> off the search order</dd>
 
-<DT>
-<A NAME="ficlsetcurrent"></A><TT>ficl-set-current&nbsp;&nbsp; ( wid --
-old-wid )</TT></DT>
+<dt>
+<a NAME="ficlsetcurrent"></a><tt>ficl-set-current&nbsp;&nbsp; ( wid --
+old-wid )</tt></dt>
 
-<DD>
-Set wid as compile wordlist, leave previous compile wordlist on stack</DD>
+<dd>
+Set wid as compile wordlist, leaving the previous compile wordlist on the
+stack</dd>
 
-<DT>
-<A NAME="ficlvocabulary"></A><TT>ficl-vocabulary&nbsp;&nbsp; ( nBins "name"
--- )</TT></DT>
+<dt>
+<a NAME="ficlvocabulary"></a><tt>ficl-vocabulary&nbsp;&nbsp; ( nBins "name"
+-- )</tt></dt>
 
-<DD>
-Creates a <TT>ficl-wordlist</TT> with the specified number of hash table
-bins, binds it to the name, and associates the semantics of <TT>vocabulary</TT>
+<dd>
+Creates a <tt>ficl-wordlist</tt> with the specified number of hash table
+bins, binds it to the name, and associates the semantics of <tt>vocabulary</tt>
 with it (replaces the top wid in the search order list with its own wid
-when executed)</DD>
+when executed)</dd>
 
-<DT>
-<A NAME="ficlwordlist"></A><TT>ficl-wordlist&nbsp;&nbsp; ( nBins -- wid
-)</TT></DT>
+<dt>
+<a NAME="ficlwordlist"></a><tt>ficl-wordlist&nbsp;&nbsp; ( nBins -- wid
+)</tt></dt>
 
-<DD>
-Creates a <FONT FACE="">wordlist</FONT> with the specified number of hash
-table bins, and leaves the address of the wordlist on the stack. A <TT>ficl-wordlist</TT>
+<dd>
+Creates a <font face="">wordlist</font> with the specified number of hash
+table bins, and leaves the address of the wordlist on the stack. A <tt>ficl-wordlist</tt>
 behaves exactly as a regular wordlist, but it may search faster depending
 on the number of bins chosen and the number of words it contains at search
-time. As implemented in ficl, a <TT>wordlist</TT> is single threaded by
-default.&nbsp;</DD>
+time. As implemented in ficl, a <tt>wordlist</tt> is single threaded by
+default.&nbsp;</dd>
 
-<DT>
-<A NAME="ficlforgetwid"></A><TT>forget-wid&nbsp;&nbsp; ( wid -- )</TT></DT>
+<dt>
+<a NAME="ficlforgetwid"></a><tt>forget-wid&nbsp;&nbsp; ( wid -- )</tt></dt>
 
-<DD>
+<dd>
 Iterates through the specified wordlist and unlinks all definitions whose
-xt addresses are greater than or equal to the value of <TT>HERE</TT>, the
-dictionary fill pointer.&nbsp;</DD>
+xt addresses are greater than or equal to the value of <tt>HERE</tt>, the
+dictionary fill pointer.&nbsp;</dd>
 
-<DT>
-<A NAME="ficlhide"></A><TT>hide&nbsp;&nbsp; ( -- current-wid-was )</TT></DT>
+<dt>
+<a NAME="ficlhide"></a><tt>hide&nbsp;&nbsp; ( -- current-wid-was )</tt></dt>
 
-<DD>
-Push the <TT>hidden</TT> wordlist onto the search order, and set it as
-the current compile wordlist (unsing <TT>ficl-set-current</TT>). Leaves
+<dd>
+Push the <tt>hidden</tt> wordlist onto the search order, and set it as
+the current compile wordlist (unsing <tt>ficl-set-current</tt>). Leaves
 the previous compile wordlist ID. I use this word to hide implementation
 factor words that have low reuse potential so that they don't clutter the
-default wordlist. To undo the effect of hide, execute&nbsp; <B><TT>previous
-set-current</TT></B></DD>
+default wordlist. To undo the effect of hide, execute&nbsp; <b><tt>previous
+set-current</tt></b></dd>
 
-<DT>
-<A NAME="ficlhidden"></A><TT>hidden&nbsp;&nbsp; ( -- wid )</TT></DT>
+<dt>
+<a NAME="ficlhidden"></a><tt>hidden&nbsp;&nbsp; ( -- wid )</tt></dt>
 
-<DD>
+<dd>
 Wordlist for storing implementation factors of ficl provided words. To
-see what's in there, try&nbsp; <B><TT>hide words previous set-current</TT></B></DD>
+see what's in there, try:&nbsp; <b><tt>hide words previous set-current</tt></b></dd>
 
-<DT>
-<TT>wid-set-super&nbsp;&nbsp; ( wid -- )</TT></DT>
+<dt>
+<tt>wid-set-super&nbsp;&nbsp; ( wid -- )</tt></dt>
 
-<DD>
+<dd>
 Ficl wordlists have a parent wordlist pointer that is not specified in
 standard Forth. Ficl initializes this pointer to NULL whenever it creates
 a wordlist, so it ordinarily has no effect. This word sets the parent pointer
 to the wordlist specified on the top of the stack. Ficl's implementation
-of <TT>SEARCH-WORDLIST</TT> will chain backward through the parent link
+of <tt>SEARCH-WORDLIST</tt> will chain backward through the parent link
 of the wordlist when searching. This simplifies Ficl's object model in
 that the search order does not need to reflect an object's class hierarchy
 when searching for a method. It is possible to implement Ficl object syntax
 in strict ANS Forth, but method finders need to manipulate the search order
-explicitly.</DD>
-</DL>
+explicitly.</dd>
+</dl>
 
-<H3>
-User variables</H3>
+<h3>
+User variables</h3>
 
-<DL>
-<DT>
-<TT>user&nbsp;&nbsp; ( -- ) name</TT></DT>
+<dl>
+<dt>
+<tt>user&nbsp;&nbsp; ( -- ) name</tt></dt>
 
-<DD>
+<dd>
 Create a user variable with the given name. User variables are virtual
 machine local. Each VM allocates a fixed amount of storage for them. You
 can change the maximum number of user variables allowed by defining FICL_USER_CELLS
-on your compiiler's command line. Default is 16 user cells.</DD>
-</DL>
+on your compiiler's command line. Default is 16 user cells.</dd>
+</dl>
 
-<H3>
-Miscellaneous</H3>
+<h3>
+Miscellaneous</h3>
 
-<DL>
-<DT>
-<TT>-roll&nbsp;&nbsp; ( xu xu-1 ... x0 u -- x0 xu-1 ... x1 )&nbsp;</TT></DT>
+<dl>
+<dt>
+<tt>-roll&nbsp;&nbsp; ( xu xu-1 ... x0 u -- x0 xu-1 ... x1 )&nbsp;</tt></dt>
 
-<DD>
+<dd>
 Rotate u+1 items on top of the stack after removing u. Rotation is in the
-opposite sense to <TT>ROLL</TT></DD>
-</DL>
+opposite sense to <tt>ROLL</tt></dd>
+</dl>
 
-<DL>
-<DT>
-<A NAME="minusrot"></A><TT>-rot&nbsp;&nbsp; ( a b c -- c a b )</TT></DT>
+<dl>
+<dt>
+<a NAME="minusrot"></a><tt>-rot&nbsp;&nbsp; ( a b c -- c a b )</tt></dt>
 
-<DD>
+<dd>
 Rotate the top three stack entries, moving the top of stack to third place.
-I like to think of this as <TT>1<SUP>1</SUP>/<SUB>2</SUB>swap</TT> because
-it's good for tucking a single cell value behind a cell-pair (like an object).&nbsp;</DD>
-</DL>
+I like to think of this as <tt>1<sup>1</sup>/<sub>2</sub>swap</tt> because
+it's good for tucking a single cell value behind a cell-pair (like an object).&nbsp;</dd>
+</dl>
 
-<DL>
-<DT>
-<TT>.env&nbsp;&nbsp; ( -- )</TT></DT>
+<dl>
+<dt>
+<tt>.env&nbsp;&nbsp; ( -- )</tt></dt>
 
-<DD>
-List all environment variables of the system</DD>
+<dd>
+List all environment variables of the system</dd>
 
-<DT>
-<TT>.hash&nbsp;&nbsp; ( -- )</TT></DT>
+<dt>
+<tt>.hash&nbsp;&nbsp; ( -- )</tt></dt>
 
-<DD>
+<dd>
 List hash table performance statistics of the wordlist that's first in
-the search order</DD>
+the search order</dd>
 
-<DT>
-<TT>.ver&nbsp;&nbsp; ( -- )</TT></DT>
+<dt>
+<tt>.ver&nbsp;&nbsp; ( -- )</tt></dt>
 
-<DD>
-Display ficl version ID</DD>
+<dd>
+Display ficl version ID</dd>
 
-<DT>
-<TT>>name&nbsp;&nbsp; ( xt -- c-addr u )</TT></DT>
+<dt>
+<tt>>name&nbsp;&nbsp; ( xt -- c-addr u )</tt></dt>
 
-<DD>
-Convert a word's execution token into the address and length of its name</DD>
+<dd>
+Convert a word's execution token into the address and length of its name</dd>
 
-<DT>
-<TT>body>&nbsp;&nbsp; ( a-addr -- xt )</TT></DT>
+<dt>
+<tt>body>&nbsp;&nbsp; ( a-addr -- xt )</tt></dt>
 
-<DD>
-Reverses the effect of <TT>CORE</TT> word <TT>>body</TT></DD>
+<dd>
+Reverses the effect of <tt>CORE</tt> word <tt>>body </tt>(converts a parameter
+field address to an execution token)</dd>
 
-<DT>
-<TT>compile-only</TT></DT>
+<dt>
+<tt>compile-only</tt></dt>
 
-<DD>
+<dd>
 Mark the most recently defined word as being executable only while in compile
-state. Many immediate words have this property.</DD>
+state. Many <tt>immediate</tt> words have this property.</dd>
 
-<DT>
-<TT>empty&nbsp;&nbsp; ( -- )</TT>&nbsp;</DT>
+<dt>
+<tt>empty&nbsp;&nbsp; ( -- )</tt>&nbsp;</dt>
 
-<DD>
-Empty the parameter stack</DD>
+<dd>
+Empty the parameter stack</dd>
 
-<DT>
-<TT>endif</TT></DT>
+<dt>
+<tt>endif</tt></dt>
 
-<DD>
-Synonym for <TT>THEN</TT></DD>
+<dd>
+Synonym for <tt>THEN</tt></dd>
 
-<DT>
-<TT>parse-word&nbsp;&nbsp; ( &lt;spaces>name -- c-addr u )</TT></DT>
+<dt>
+<tt>parse-word&nbsp;&nbsp; ( &lt;spaces>name -- c-addr u )</tt></dt>
 
-<DD>
+<dd>
 Skip leading spaces and parse name delimited by a space. c-addr is the
 address within the input buffer and u is the length of the selected string.
-If the parse area is empty, the resulting string has a zero length</DD>
+If the parse area is empty, the resulting string has a zero length. (From
+the Standard)</dd>
 
-<DT>
-<TT>w@&nbsp;&nbsp; ( addr -- x )</TT></DT>
+<dt>
+<tt>w@&nbsp;&nbsp; ( addr -- x )</tt></dt>
 
-<DD>
-Fetch a 16 bit quantity from the specified address</DD>
+<dd>
+Fetch a 16 bit quantity from the specified address</dd>
 
-<DT>
-<TT>w!&nbsp;&nbsp; ( x addr -- )</TT></DT>
+<dt>
+<tt>w!&nbsp;&nbsp; ( x addr -- )</tt></dt>
 
-<DD>
+<dd>
 Store a 16 bit quantity to the specified address (the low 16 bits of the
-given value)</DD>
+given value)</dd>
 
-<DT>
-<TT>x.&nbsp;&nbsp; ( x -- )</TT></DT>
+<dt>
+<tt>x.&nbsp;&nbsp; ( x -- )</tt></dt>
 
-<DD>
+<dd>
 Pop and display the value in hex format, regardless of the current value
-of <TT>BASE</TT></DD>
-</DL>
+of <tt>BASE</tt></dd>
+</dl>
 
-<H3>
-FiclWin Extras (defined in testmain.c)</H3>
+<h3>
+FiclWin Extras (defined in testmain.c)</h3>
 
-<DL>
-<DT>
-<TT>break&nbsp;&nbsp; ( -- )</TT></DT>
+<dl>
+<dt>
+<tt>break&nbsp;&nbsp; ( -- )</tt></dt>
 
-<DD>
-Does nothing - just a handy place to set a debugger breakpoint</DD>
+<dd>
+Does nothing - just a handy place to set a debugger breakpoint</dd>
 
-<DT>
-<TT>cd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( "directory-name&lt;newline>" --
-)</TT></DT>
+<dt>
+<tt>cd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( "directory-name&lt;newline>" --
+)</tt></dt>
 
-<DD>
-Executes the Win32 chdir() function, changing the program's logged directory.</DD>
+<dd>
+Executes the Win32 chdir() function, changing the program's logged directory.</dd>
 
-<DT>
-<A NAME="ficlload"></A><TT>load&nbsp;&nbsp;&nbsp; ( "filename&lt;newline>"
--- )</TT></DT>
+<dt>
+<a NAME="clock"></a><tt>clock&nbsp;&nbsp; ( -- now )</tt></dt>
 
-<DD>
+<dd>
+Wrapper for the ANSI C clock() function. Returns the number of clock ticks
+elapsed since process start.</dd>
+
+<dt>
+<a NAME="clockspersec"></a><tt>clocks/sec&nbsp;&nbsp; ( -- clocks_per_sec
+)</tt></dt>
+
+<dd>
+Pushes the number of ticks in a second as returned by <tt>clock</tt></dd>
+
+<dt>
+<a NAME="ficlload"></a><tt>load&nbsp;&nbsp;&nbsp; ( "filename&lt;newline>"
+-- )</tt></dt>
+
+<dd>
 Opens the Forth source file specified and loads it one line at a time,
-like <TT>INCLUDED (FILE)</TT></DD>
+like <tt>INCLUDED (FILE)</tt></dd>
 
-<DT>
-<TT>pwd&nbsp;&nbsp;&nbsp;&nbsp; ( -- )</TT></DT>
+<dt>
+<tt>pwd&nbsp;&nbsp;&nbsp;&nbsp; ( -- )</tt></dt>
 
-<DD>
-Prints the current working directory as set by <TT>cd</TT></DD>
+<dd>
+Prints the current working directory as set by <tt>cd</tt></dd>
 
-<DT>
-<TT>system&nbsp; ( "command&lt;newline>" -- )</TT></DT>
+<dt>
+<tt>system&nbsp; ( "command&lt;newline>" -- )</tt></dt>
 
-<DD>
-Issues a command to a shell; implemented with the Win32 system() call.</DD>
+<dd>
+Issues a command to a shell; implemented with the Win32 system() call.</dd>
 
-<DT>
-<TT>spewhash&nbsp;&nbsp; ( "filename&lt;newline>" -- )</TT></DT>
+<dt>
+<tt>spewhash&nbsp;&nbsp; ( "filename&lt;newline>" -- )</tt></dt>
 
-<DD>
+<dd>
 Dumps all threads of the current compilation wordlist to the specified
 text file. This was useful when I thought there might be some point in
-attempting to optimize the hash function. I no longer harbor those illusions.</DD>
+attempting to optimize the hash function. I no longer harbor those illusions.</dd>
 
-<H3>
-FiclWin Exclusives (no source provided)</H3>
+<h3>
+FiclWin Exclusives (no source provided)</h3>
 
-<DT>
-<TT>!oreg&nbsp;&nbsp; ( c -- )</TT></DT>
+<dt>
+<tt>!oreg&nbsp;&nbsp; ( c -- )</tt></dt>
 
-<DD>
-Set the value of the simulated LED register as specified (0..255)</DD>
+<dd>
+Set the value of the simulated LED register as specified (0..255)</dd>
 
-<DT>
-<TT>@ireg&nbsp;&nbsp; ( -- c )</TT></DT>
+<dt>
+<tt>@ireg&nbsp;&nbsp; ( -- c )</tt></dt>
 
-<DD>
-Gets the value of the simulated switch block (0..255)</DD>
+<dd>
+Gets the value of the simulated switch block (0..255)</dd>
 
-<DT>
-<TT>!dac&nbsp;&nbsp;&nbsp; ( c -- )</TT></DT>
+<dt>
+<tt>!dac&nbsp;&nbsp;&nbsp; ( c -- )</tt></dt>
 
-<DD>
+<dd>
 Sets the value of the bargraph control as specified. Valid values range
-from 0..255</DD>
+from 0..255</dd>
 
-<DT>
-<TT>@adc&nbsp;&nbsp;&nbsp; ( -- c )</TT></DT>
+<dt>
+<tt>@adc&nbsp;&nbsp;&nbsp; ( -- c )</tt></dt>
 
-<DD>
-Fetches the current position of the slider control. Range is 0..255</DD>
+<dd>
+Fetches the current position of the slider control. Range is 0..255</dd>
 
-<DT>
-<TT>status"&nbsp;&nbsp; ( "ccc&lt;quote>" -- )</TT></DT>
+<dt>
+<tt>status"&nbsp;&nbsp; ( "ccc&lt;quote>" -- )</tt></dt>
 
-<DD>
+<dd>
 Set the mainframe window's status line to the text specified, up to the
-first trailing quote character.</DD>
+first trailing quote character.</dd>
 
-<DT>
-<TT>msec&nbsp;&nbsp; ( u -- )</TT></DT>
+<dt>
+<a NAME="ficlms"></a><tt><a href="http://www.taygeta.com/forth/dpans10.htm#10.6.2.1905">ms</a>&nbsp;&nbsp;
+( u -- )</tt></dt>
 
-<DD>
+<dd>
 Causes the running virtual machine to sleep() for the number of milliseconds
-specified by the top-of-stack value.</DD>
-</DL>
-</TD>
-</TR>
-</TABLE>
+specified by the top-of-stack value.</dd>
+</dl>
+</td>
+</tr>
+</table>
 
-<H2>
+<h2>
 
-<HR WIDTH="100%"><A NAME="ansinfo"></A>ANS Required Information</H2>
+<hr WIDTH="100%"><a NAME="ansinfo"></a>ANS Required Information</h2>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD><B>ANS Forth System</B>
-<BR><B>Providing names from the Core Extensions word set&nbsp;</B>
-<BR><B>Providing the Locals word set&nbsp;</B>
-<BR><B>Providing the Locals Extensions word set&nbsp;</B>
-<BR><B>Providing the Programming-Tools word set</B>
-<BR><B>Providing names from the Programming-Tools Extensions word set</B>
-<BR><B>Providing the Search-Order word set</B>
-<BR><B>Providing the Search-Order Extensions word set</B>
-<H3>
-Implementation-defined Options</H3>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td><b>ANS Forth System</b>
+<br><b>Providing names from the Core Extensions word set&nbsp;</b>
+<br><b>Providing the Exception word set</b>
+<br><b>Providing names from the Exception Extensions word set</b>
+<br><b>Providing the Locals word set&nbsp;</b>
+<br><b>Providing the Locals Extensions word set&nbsp;</b>
+<br><b>Providing the Memory Allocation word set</b>
+<br><b>Providing the Programming-Tools word set</b>
+<br><b>Providing names from the Programming-Tools Extensions word set</b>
+<br><b>Providing the Search-Order word set</b>
+<br><b>Providing the Search-Order Extensions word set</b>
+<h3>
+Implementation-defined Options</h3>
 The implementation-defined items in the following list represent characteristics
 and choices left to the discretion of the implementor, provided that the
 requirements of the Standard are met. A system shall document the values
 for, or behaviors of, each item.&nbsp;
-<UL>
-<LI>
-<B>aligned address requirements (3.1.3.3 Addresses);</B>&nbsp;</LI>
+<ul>
+<li>
+<b>aligned address requirements (3.1.3.3 Addresses);</b>&nbsp;</li>
 
-<BR><FONT COLOR="#000000">System dependent. You can change the default
+<br><font color="#000000">System dependent. You can change the default
 address alignment by defining FICL_ALIGN on your compiler's command line.
 The default value is set to 2 in sysdep.h. This causes dictionary entries
-and <TT>ALIGN</TT> and <TT>ALIGNED</TT> to align on 4 byte boundaries.
-To align on <B>2<SUP><FONT FACE="">n</FONT></SUP></B> byte boundaries,
-set FICL_ALIGN to <B>n</B>.&nbsp;</FONT>
-<LI>
-<B>behavior of 6.1.1320 EMIT for non-graphic characters</B>;&nbsp;</LI>
+and <tt>ALIGN</tt> and <tt>ALIGNED</tt> to align on 4 byte boundaries.
+To align on <b>2<sup><font face="">n</font></sup></b> byte boundaries,
+set FICL_ALIGN to <b>n</b>.&nbsp;</font>
+<li>
+<b>behavior of 6.1.1320 EMIT for non-graphic characters</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Depends on target system, C runtime library,
-and your implementation of ficlTextOut().</FONT>
-<LI>
-<B>character editing of 6.1.0695 ACCEPT and 6.2.1390 EXPECT</B>;&nbsp;</LI>
+<br><font color="#000000">Depends on target system, C runtime library,
+and your implementation of ficlTextOut().</font>
+<li>
+<b>character editing of 6.1.0695 ACCEPT and 6.2.1390 EXPECT</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">None implemented in the versions supplied in
+<br><font color="#000000">None implemented in the versions supplied in
 words.c. Because ficlExec() is supplied a text buffer externally, it's
-up to your system to define how that buffer will be obtained.</FONT>
-<LI>
-<B>character set (3.1.2 Character types, 6.1.1320 EMIT, 6.1.1750 KEY)</B>;&nbsp;</LI>
+up to your system to define how that buffer will be obtained.</font>
+<li>
+<b>character set (3.1.2 Character types, 6.1.1320 EMIT, 6.1.1750 KEY)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Depends on target system and implementation of
-ficlTextOut()</FONT>
-<LI>
-<B>character-aligned address requirements (3.1.3.3 Addresses)</B>;&nbsp;</LI>
+<br><font color="#000000">Depends on target system and implementation of
+ficlTextOut()</font>
+<li>
+<b>character-aligned address requirements (3.1.3.3 Addresses)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl characters are one byte each. There are
-no alignment requirements.</FONT>
-<LI>
-<B>character-set-extensions matching characteristics (3.4.2 Finding definition
-n<FONT COLOR="#000000">ames)</FONT></B><FONT COLOR="#000000">;&nbsp;</FONT></LI>
+<br><font color="#000000">Ficl characters are one byte each. There are
+no alignment requirements.</font>
+<li>
+<b>character-set-extensions matching characteristics (3.4.2 Finding definition
+n<font color="#000000">ames)</font></b><font color="#000000">;&nbsp;</font></li>
 
-<BR><FONT COLOR="#000000">No special processing is performed on characters
+<br><font color="#000000">No special processing is performed on characters
 beyond case-folding. Therefore, extended characters will not match their
-unaccented counterparts.</FONT>
-<LI>
-<B>conditions under which control characters match a space delimiter (3.4.1.1
-Delimiters)</B>;<FONT COLOR="#FF6666">&nbsp;</FONT></LI>
+unaccented counterparts.</font>
+<li>
+<b>conditions under which control characters match a space delimiter (3.4.1.1
+Delimiters)</b>;<font color="#FF6666">&nbsp;</font></li>
 
-<BR><FONT COLOR="#000000">Ficl uses the Standard C function isspace() to
-distinguish space characters. The rest is up to your library vendor.</FONT>
-<LI>
-<B>format of the control-flow stack (3.2.3.2 Control-flow stack)</B>;&nbsp;</LI>
+<br><font color="#000000">Ficl uses the Standard C function isspace() to
+distinguish space characters. The rest is up to your library vendor.</font>
+<li>
+<b>format of the control-flow stack (3.2.3.2 Control-flow stack)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Uses the data stack</FONT>
-<LI>
-<B>conversion of digits larger than thirty-five (3.2.1.2 Digit conversion)</B>;&nbsp;</LI>
+<br><font color="#000000">Uses the data stack</font>
+<li>
+<b>conversion of digits larger than thirty-five (3.2.1.2 Digit conversion)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">The maximum supported value of <TT>BASE</TT>
+<br><font color="#000000">The maximum supported value of <tt>BASE</tt>
 is 36. Ficl will assertion fail in function ltoa of vm.c if the base is
 found to be larger than 36 or smaller than 2. There will be no effect if
-NDEBUG is defined</FONT>, however, other than possibly unexpected behavior.&nbsp;
-<LI>
-<B>display after input terminates in 6.1.0695 ACCEPT and 6.2.1390 EXPECT</B>;&nbsp;</LI>
+NDEBUG is defined</font>, however, other than possibly unexpected behavior.&nbsp;
+<li>
+<b>display after input terminates in 6.1.0695 ACCEPT and 6.2.1390 EXPECT</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Target system dependent</FONT>
-<LI>
-<B>exception abort sequence (as in 6.1.0680 ABORT")</B>;&nbsp;</LI>
+<br><font color="#000000">Target system dependent</font>
+<li>
+<b>exception abort sequence (as in 6.1.0680 ABORT")</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Does <TT>ABORT</TT></FONT>
-<LI>
-<B>input line terminator (3.2.4.1 User input device)</B>;<FONT COLOR="#FF0000">&nbsp;</FONT></LI>
+<br><font color="#000000">Does <tt>ABORT</tt></font>
+<li>
+<b>input line terminator (3.2.4.1 User input device)</b>;<font color="#FF0000">&nbsp;</font></li>
 
-<BR><FONT COLOR="#000000">Target system dependent (implementation of outer
-loop that calls ficlExec)</FONT>
-<LI>
-<B>maximum size of a counted string, in characters (3.1.3.4 Counted strings,
-6.1.2450 WORD)</B>;&nbsp;</LI>
+<br><font color="#000000">Target system dependent (implementation of outer
+loop that calls ficlExec)</font>
+<li>
+<b>maximum size of a counted string, in characters (3.1.3.4 Counted strings,
+6.1.2450 WORD)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">255</FONT>
-<LI>
-<B>maximum size of a parsed string (3.4.1 Parsing)</B>;&nbsp;</LI>
+<br><font color="#000000">255</font>
+<li>
+<b>maximum size of a parsed string (3.4.1 Parsing)</b>;&nbsp;</li>
 
-<BR>Limited by available memory and the maximum unsigned value that can
-fit in a CELL (2<SUP>32</SUP>-1).&nbsp;
-<LI>
-<B>maximum size of a definition name, in characters (3.3.1.2 Definition
-names)</B>;&nbsp;</LI>
+<br>Limited by available memory and the maximum unsigned value that can
+fit in a CELL (2<sup>32</sup>-1).&nbsp;
+<li>
+<b>maximum size of a definition name, in characters (3.3.1.2 Definition
+names)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl stores the first 31 characters of a definition
-name.</FONT>
-<LI>
-<B>maximum string length for 6.1.1345 ENVIRONMENT?, in characters</B>;&nbsp;</LI>
+<br><font color="#000000">Ficl stores the first 31 characters of a definition
+name.</font>
+<li>
+<b>maximum string length for 6.1.1345 ENVIRONMENT?, in characters</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Same as maximum definition name length</FONT>
-<LI>
-<B>method of selecting 3.2.4.1 User input device</B>;&nbsp;</LI>
+<br><font color="#000000">Same as maximum definition name length</font>
+<li>
+<b>method of selecting 3.2.4.1 User input device</b>;&nbsp;</li>
 
-<BR>None supported. This is up to the target system&nbsp;
-<LI>
-<B>method of selecting 3.2.4.2 User output device</B>;&nbsp;</LI>
+<br>None supported. This is up to the target system&nbsp;
+<li>
+<b>method of selecting 3.2.4.2 User output device</b>;&nbsp;</li>
 
-<BR>None supported. This is up to the target system&nbsp;
-<LI>
-<B>methods of dictionary compilation (3.3 The Forth dictionary)</B>;&nbsp;</LI>
+<br>None supported. This is up to the target system&nbsp;
+<li>
+<b>methods of dictionary compilation (3.3 The Forth dictionary)</b>;&nbsp;</li>
 
-<LI>
-<B>number of bits in one address unit (3.1.3.3 Addresses)</B>;&nbsp;</LI>
+<li>
+<b>number of bits in one address unit (3.1.3.3 Addresses)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Target system dependent. Ficl generally supports
+<br><font color="#000000">Target system dependent. Ficl generally supports
 processors that can address 8 bit quantities, but there is no dependency
-that I'm aware of.</FONT>
-<LI>
-<B>number representation and arithmetic (3.2.1.1 Internal number representation)</B>;&nbsp;</LI>
+that I'm aware of.</font>
+<li>
+<b>number representation and arithmetic (3.2.1.1 Internal number representation)</b>;&nbsp;</li>
 
-<BR>System dependent. Ficl represents a CELL internally as a union that
+<br>System dependent. Ficl represents a CELL internally as a union that
 can hold INT32 (a signed 32 bit scalar value), UNS32 (32 bits unsigned),
 and an untyped pointer. No specific byte ordering is assumed.&nbsp;
-<LI>
-<B>ranges for n, +n, u, d, +d, and ud (3.1.3 Single-cell types, 3.1.4 Cell-pair
-types)</B>;&nbsp;</LI>
+<li>
+<b>ranges for n, +n, u, d, +d, and ud (3.1.3 Single-cell types, 3.1.4 Cell-pair
+types)</b>;&nbsp;</li>
 
-<BR>Assuming a 32 bit implementation, range for signed single-cell values
-is -2<SUP>31</SUP>..2<SUP>31</SUP>-1. Range for unsigned single cell values
-is 0..2<SUP>32</SUP>-1. Range for signed double-cell values is -2<SUP>63</SUP>..2<SUP>63</SUP>-1.
-Range for unsigned single cell values is 0..2<SUP>64</SUP>-1.&nbsp;
-<LI>
-<B>read-only data-space regions (3.3.3 Data space)</B>;</LI>
+<br>Assuming a 32 bit implementation, range for signed single-cell values
+is -2<sup>31</sup>..2<sup>31</sup>-1. Range for unsigned single cell values
+is 0..2<sup>32</sup>-1. Range for signed double-cell values is -2<sup>63</sup>..2<sup>63</sup>-1.
+Range for unsigned single cell values is 0..2<sup>64</sup>-1.&nbsp;
+<li>
+<b>read-only data-space regions (3.3.3 Data space)</b>;</li>
 
-<BR>None&nbsp;
-<LI>
-<B>size of buffer at 6.1.2450 WORD (3.3.3.6 Other transient regions)</B>;&nbsp;</LI>
+<br>None&nbsp;
+<li>
+<b>size of buffer at 6.1.2450 WORD (3.3.3.6 Other transient regions)</b>;&nbsp;</li>
 
-<BR>Default is 255. Depends on the setting of nPAD in ficl.h.&nbsp;
-<LI>
-<B>size of one cell in address units (3.1.3 Single-cell types)</B>;&nbsp;</LI>
+<br>Default is 255. Depends on the setting of nPAD in ficl.h.&nbsp;
+<li>
+<b>size of one cell in address units (3.1.3 Single-cell types)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">System dependent, generally four.</FONT>
-<LI>
-<B>size of one character in address units (3.1.2 Character types)</B>;&nbsp;</LI>
+<br><font color="#000000">System dependent, generally four.</font>
+<li>
+<b>size of one character in address units (3.1.2 Character types)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">System dependent, generally one.</FONT>
-<LI>
-<B>size of the keyboard terminal input buffer (3.3.3.5 Input buffers)</B>;&nbsp;</LI>
+<br><font color="#000000">System dependent, generally one.</font>
+<li>
+<b>size of the keyboard terminal input buffer (3.3.3.5 Input buffers)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">This buffer is supplied by the host program.
-Ficl imposes no practical limit.</FONT>
-<LI>
-<B>size of the pictured numeric output string buffer (3.3.3.6 Other transient
-regions)</B>;&nbsp;</LI>
+<br><font color="#000000">This buffer is supplied by the host program.
+Ficl imposes no practical limit.</font>
+<li>
+<b>size of the pictured numeric output string buffer (3.3.3.6 Other transient
+regions)</b>;&nbsp;</li>
 
-<BR>Default is 255 characters. Depends on the setting of nPAD in ficl.h.&nbsp;
-<LI>
-<B>size of the scratch area whose address is returned by 6.2.2000 PAD (3.3.3.6
-Other transient regions)</B>;&nbsp;</LI>
+<br>Default is 255 characters. Depends on the setting of nPAD in ficl.h.&nbsp;
+<li>
+<b>size of the scratch area whose address is returned by 6.2.2000 PAD (3.3.3.6
+Other transient regions)</b>;&nbsp;</li>
 
-<BR>Not presently supported&nbsp;
-<LI>
-<B>system case-sensitivity characteristics (3.4.2 Finding definition names)</B>;&nbsp;</LI>
+<br>Not presently supported&nbsp;
+<li>
+<b>system case-sensitivity characteristics (3.4.2 Finding definition names)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl is not case sensitive</FONT>
-<LI>
-<B>system prompt (3.4 The Forth text interpreter, 6.1.2050 QUIT)</B>;&nbsp;</LI>
+<br><font color="#000000">Ficl is not case sensitive</font>
+<li>
+<b>system prompt (3.4 The Forth text interpreter, 6.1.2050 QUIT)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">"ok>"</FONT>
-<LI>
-<B>type of division rounding (3.2.2.1 Integer division, 6.1.0100 */, 6.1.0110
-*/MOD, 6.1.0230 /, 6.1.0240 /MOD, 6.1.1890 MOD)</B>;&nbsp;</LI>
+<br><font color="#000000">"ok>"</font>
+<li>
+<b>type of division rounding (3.2.2.1 Integer division, 6.1.0100 */, 6.1.0110
+*/MOD, 6.1.0230 /, 6.1.0240 /MOD, 6.1.1890 MOD)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Symmetric</FONT>
-<LI>
-<B>values of 6.1.2250 STATE when true</B>;&nbsp;</LI>
+<br><font color="#000000">Symmetric</font>
+<li>
+<b>values of 6.1.2250 STATE when true</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">One (no others)</FONT>
-<LI>
-<B>values returned after arithmetic overflow (3.2.2.2 Other integer operations)</B>;&nbsp;</LI>
+<br><font color="#000000">One (no others)</font>
+<li>
+<b>values returned after arithmetic overflow (3.2.2.2 Other integer operations)</b>;&nbsp;</li>
 
-<BR>System dependent. Ficl makes no special checks for overflow.&nbsp;
-<LI>
-<B>whether the current definition can be found after 6.1.1250 DOES> (6.1.0450
-:)</B>.&nbsp;</LI>
+<br>System dependent. Ficl makes no special checks for overflow.&nbsp;
+<li>
+<b>whether the current definition can be found after 6.1.1250 DOES> (6.1.0450
+:)</b>.&nbsp;</li>
 
-<BR><FONT COLOR="#000000">No. Definitions are unsmudged after ; only, and
-only then if no control structure matching problems have been detected.</FONT></UL>
+<br><font color="#000000">No. Definitions are unsmudged after ; only, and
+only then if no control structure matching problems have been detected.</font></ul>
 
-<H3>
-Ambiguous Conditions</H3>
+<h3>
+Ambiguous Conditions</h3>
 A system shall document the system action taken upon each of the general
 or specific ambiguous conditions identified in this Standard. See 3.4.4
 Possible actions on an ambiguous condition.&nbsp;
-<P>The following general ambiguous conditions could occur because of a
+<p>The following general ambiguous conditions could occur because of a
 combination of factors:&nbsp;
-<UL>
-<DL>
-<LI>
-<B>a name is neither a valid definition name nor a valid number during
-text interpretation (3.4 The Forth text interpreter)</B>;&nbsp;</LI>
+<ul>
+<dl>
+<li>
+<b>a name is neither a valid definition name nor a valid number during
+text interpretation (3.4 The Forth text interpreter)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl does <TT>ABORT</TT> and prints the name
-followed by " not found".</FONT>
-<LI>
-<B>a definition name exceeded the maximum length allowed (3.3.1.2 Definition
-names)</B>;&nbsp;</LI>
+<br><font color="#000000">Ficl does <tt>ABORT</tt> and prints the name
+followed by " not found".</font>
+<li>
+<b>a definition name exceeded the maximum length allowed (3.3.1.2 Definition
+names)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl stores the first 31 characters of the definition
+<br><font color="#000000">Ficl stores the first 31 characters of the definition
 name, and uses all characters of the name in computing its hash code. The
 actual length of the name, up to 255 characters, is stored in the definition's
-length field.</FONT>
-<LI>
-<B>addressing a region not listed in 3.3.3 Data Space</B>;&nbsp;</LI>
+length field.</font>
+<li>
+<b>addressing a region not listed in 3.3.3 Data Space</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">No problem: all addresses in ficl are absolute.
-You can reach any 32 bit address in Ficl's address space.</FONT>
-<LI>
-<B>argument type incompatible with specified input parameter, e.g., passing
-a flag to a word expecting an n (3.1 Data types)</B>;&nbsp;</LI>
+<br><font color="#000000">No problem: all addresses in ficl are absolute.
+You can reach any 32 bit address in Ficl's address space.</font>
+<li>
+<b>argument type incompatible with specified input parameter, e.g., passing
+a flag to a word expecting an n (3.1 Data types)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl makes no check for argument type compatibility.
+<br><font color="#000000">Ficl makes no check for argument type compatibility.
 Effects of a mismatch vary widely depending on the specific problem and
-operands.</FONT></DL>
+operands.</font></dl>
 
-<LI>
-<B>attempting to obtain the execution token, (e.g., with 6.1.0070 ', 6.1.1550
-FIND, etc.) of a definition with undefined interpretation semantics</B>;&nbsp;</LI>
+<li>
+<b>attempting to obtain the execution token, (e.g., with 6.1.0070 ', 6.1.1550
+FIND, etc.) of a definition with undefined interpretation semantics</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl returns a valid token, but the result of
-executing that token while interpreting may be undesirable.</FONT>
-<LI>
-<B>dividing by zero (6.1.0100 */, 6.1.0110 */MOD, 6.1.0230 /, 6.1.0240
+<br><font color="#000000">Ficl returns a valid token, but the result of
+executing that token while interpreting may be undesirable.</font>
+<li>
+<b>dividing by zero (6.1.0100 */, 6.1.0110 */MOD, 6.1.0230 /, 6.1.0240
 /MOD, 6.1.1561 FM/MOD, 6.1.1890 MOD, 6.1.2214 SM/REM, 6.1.2370 UM/MOD,
-8.6.1.1820 M*/)</B>;</LI>
+8.6.1.1820 M*/)</b>;</li>
 
-<BR><FONT COLOR="#000000">Results are target procesor dependent. Generally,
+<br><font color="#000000">Results are target procesor dependent. Generally,
 Ficl makes no check for divide-by-zero. The target processor will probably
-throw an exception.</FONT>
-<LI>
-<B>insufficient data-stack space or return-stack space (stack overflow)</B>;&nbsp;</LI>
+throw an exception.</font>
+<li>
+<b>insufficient data-stack space or return-stack space (stack overflow)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">With FICL_ROBUST (sysdep.h) set >= 2, most parameter
+<br><font color="#000000">With FICL_ROBUST (sysdep.h) set >= 2, most parameter
 stack operations are checked for underflow and overflow. Ficl does not
-check the return stack.</FONT>
-<LI>
-<B>insufficient space for loop-control parameters</B>;&nbsp;</LI>
+check the return stack.</font>
+<li>
+<b>insufficient space for loop-control parameters</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">No check - Evil results.</FONT>
-<LI>
-<B>insufficient space in the dictionary</B>;&nbsp;</LI>
+<br><font color="#000000">No check - Evil results.</font>
+<li>
+<b>insufficient space in the dictionary</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl generates an error message if the dictionary
-is too full to create a definition header. It checks <TT>ALLOT</TT> as
+<br><font color="#000000">Ficl generates an error message if the dictionary
+is too full to create a definition header. It checks <tt>ALLOT</tt> as
 well, but it is possible to make an unchecked allocation request that overflows
-the dictionary.</FONT>
-<LI>
-<B>interpreting a word with undefined interpretation semantics</B>;&nbsp;</LI>
+the dictionary.</font>
+<li>
+<b>interpreting a word with undefined interpretation semantics</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl protects all ANS Forth words with undefined
+<br><font color="#000000">Ficl protects all ANS Forth words with undefined
 interpretation semantics from being executed while in interpret state.
-It is possible to defeat this protection using ' (tick) and <TT>EXECUTE</TT>,
-though.</FONT>
-<LI>
-<B>modifying the contents of the input buffer or a string literal (3.3.3.4
-Text-literal regions, 3.3.3.5 Input buffers)</B>;&nbsp;</LI>
+It is possible to defeat this protection using ' (tick) and <tt>EXECUTE</tt>,
+though.</font>
+<li>
+<b>modifying the contents of the input buffer or a string literal (3.3.3.4
+Text-literal regions, 3.3.3.5 Input buffers)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Varies depending on the nature of the buffer.
+<br><font color="#000000">Varies depending on the nature of the buffer.
 The input buffer is supplied by ficl's host function, and may reside in
 read-only memory. If so, writing the input buffer can ganerate an exception.
-String literals are stored in the dictionary, and are writable.</FONT>
-<LI>
-<B>overflow of a pictured numeric output string</B>;</LI>
+String literals are stored in the dictionary, and are writable.</font>
+<li>
+<b>overflow of a pictured numeric output string</b>;</li>
 
-<BR>In the unlikely event you are able to construct a pictured numeric
+<br>In the unlikely event you are able to construct a pictured numeric
 string of more than 255 characters, the system will be corrupted unpredictably.
 The buffer area that holds pictured numeric output is at the end of the
 virtual machine. Whatever is mapped after the offending VM in memory will
 be trashed, along with the heap structures that contain it.&nbsp;
-<LI>
-<B>parsed string overflow</B>;</LI>
+<li>
+<b>parsed string overflow</b>;</li>
 
-<BR>Ficl does not copy parsed strings unless asked to. Ordinarily, a string
+<br>Ficl does not copy parsed strings unless asked to. Ordinarily, a string
 parsed from the input buffer during normal interpretation is left in-place,
 so there is no possibility of overflow. If you ask to parse a string into
-the dictionary, as in <TT>SLITERAL</TT>, you need to have enough room for
+the dictionary, as in <tt>SLITERAL</tt>, you need to have enough room for
 the string, otherwise bad things may happen. This is not usually a problem.&nbsp;
-<LI>
-<B>producing a result out of range, e.g., multiplication (using *) results
+<li>
+<b>producing a result out of range, e.g., multiplication (using *) results
 in a value too big to be represented by a single-cell integer (6.1.0090
 *, 6.1.0100 */, 6.1.0110 */MOD, 6.1.0570 >NUMBER, 6.1.1561 FM/MOD, 6.1.2214
-SM/REM, 6.1.2370 UM/MOD, 6.2.0970 CONVERT, 8.6.1.1820 M*/)</B>;&nbsp;</LI>
+SM/REM, 6.1.2370 UM/MOD, 6.2.0970 CONVERT, 8.6.1.1820 M*/)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Value will be truncated</FONT>
-<LI>
-<B>reading from an empty data stack or return stack (stack underflow)</B>;&nbsp;</LI>
+<br><font color="#000000">Value will be truncated</font>
+<li>
+<b>reading from an empty data stack or return stack (stack underflow)</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Most stack underflows are detected and prevented
+<br><font color="#000000">Most stack underflows are detected and prevented
 if FICL_ROBUST (sysdep.h) is set to 2 or greater. Otherwise, the stack
-pointer and size are likely to be trashed.</FONT>
-<LI>
-<B>unexpected end of input buffer, resulting in an attempt to use a zero-length
-string as a name</B>;&nbsp;</LI>
+pointer and size are likely to be trashed.</font>
+<li>
+<b>unexpected end of input buffer, resulting in an attempt to use a zero-length
+string as a name</b>;&nbsp;</li>
 
-<BR><FONT COLOR="#000000">Ficl returns for a new input buffer until a non-empty
-one is supplied.</FONT></UL>
+<br><font color="#000000">Ficl returns for a new input buffer until a non-empty
+one is supplied.</font></ul>
 The following specific ambiguous conditions are noted in the glossary entries
 of the relevant words:&nbsp;
-<UL>
-<LI>
-<B>>IN greater than size of input buffer (3.4.1 Parsing)</B></LI>
+<ul>
+<li>
+<b>>IN greater than size of input buffer (3.4.1 Parsing)</b></li>
 
-<BR>Bad Things occur - unpredictable bacause the input buffer is supplied
+<br>Bad Things occur - unpredictable bacause the input buffer is supplied
 by the host program's outer loop.&nbsp;
-<LI>
-<B>6.1.2120 RECURSE appears after 6.1.1250 DOES></B></LI>
+<li>
+<b>6.1.2120 RECURSE appears after 6.1.1250 DOES></b></li>
 
-<BR>It finds the address of the definition before <TT>DOES></TT>
-<LI>
-<B>argument input source different than current input source for 6.2.2148
-RESTORE-INPUT</B></LI>
+<br>It finds the address of the definition before <tt>DOES></tt>
+<li>
+<b>argument input source different than current input source for 6.2.2148
+RESTORE-INPUT</b></li>
 
-<BR>Not implemented&nbsp;
-<LI>
-<B>data space containing definitions is de-allocated (3.3.3.2 Contiguous
-regions)</B></LI>
+<br>Not implemented&nbsp;
+<li>
+<b>data space containing definitions is de-allocated (3.3.3.2 Contiguous
+regions)</b></li>
 
-<BR>This is OK until the cells are overwritten with something else. The
+<br>This is OK until the cells are overwritten with something else. The
 dictionary maintains a hash table, and the table must be updated in order
 to de-allocate words without corruption.&nbsp;
-<LI>
-<B>data space read/write with incorrect alignment (3.3.3.1 Address alignment)</B></LI>
+<li>
+<b>data space read/write with incorrect alignment (3.3.3.1 Address alignment)</b></li>
 
-<BR>Target processor dependent. Consequences include: none (Intel), address
+<br>Target processor dependent. Consequences include: none (Intel), address
 error exception (68K).&nbsp;
-<LI>
-<B>data-space pointer not properly aligned (6.1.0150 ,, 6.1.0860 C,)</B></LI>
+<li>
+<b>data-space pointer not properly aligned (6.1.0150 ,, 6.1.0860 C,)</b></li>
 
-<BR>See above on data space read/write alignment&nbsp;
-<LI>
-<B>less than u+2 stack items (6.2.2030 PICK, 6.2.2150 ROLL)</B></LI>
+<br>See above on data space read/write alignment&nbsp;
+<li>
+<b>less than u+2 stack items (6.2.2030 PICK, 6.2.2150 ROLL)</b></li>
 
-<BR>Ficl detects a stack underflow and reports it, executing <TT>ABORT,</TT>
+<br>Ficl detects a stack underflow and reports it, executing <tt>ABORT,</tt>
 as long as FICL_ROBUST is two or larger.&nbsp;
-<LI>
-<B>loop-control parameters not available ( 6.1.0140 +LOOP, 6.1.1680 I,
-6.1.1730 J, 6.1.1760 LEAVE, 6.1.1800 LOOP, 6.1.2380 UNLOOP)</B></LI>
+<li>
+<b>loop-control parameters not available ( 6.1.0140 +LOOP, 6.1.1680 I,
+6.1.1730 J, 6.1.1760 LEAVE, 6.1.1800 LOOP, 6.1.2380 UNLOOP)</b></li>
 
-<BR>Loop initiation words are responsible for checking the stack and guaranteeing
+<br>Loop initiation words are responsible for checking the stack and guaranteeing
 that the control parameters are pushed. Any underflows will be detected
 early if FICL_ROBUST is set to two or greater. Note however that Ficl only
 checks for return stack underflows at the end of each line of text.&nbsp;
-<LI>
-<B>most recent definition does not have a name (6.1.1710 IMMEDIATE)</B></LI>
+<li>
+<b>most recent definition does not have a name (6.1.1710 IMMEDIATE)</b></li>
 
-<BR>No problem.&nbsp;
-<LI>
-<B>name not defined by 6.2.2405 VALUE used by 6.2.2295 TO</B></LI>
+<br>No problem.&nbsp;
+<li>
+<b>name not defined by 6.2.2405 VALUE used by 6.2.2295 TO</b></li>
 
-<BR>Ficl's version of <TT>TO</TT> works correctly with <TT>VALUE</TT>s,
-<TT>CONSTANT</TT>s
-and <TT>VARIABLE</TT>s.&nbsp;
-<LI>
-<B>name not found (6.1.0070 ', 6.1.2033 POSTPONE, 6.1.2510 ['], 6.2.2530
-[COMPILE])</B></LI>
+<br>Ficl's version of <tt>TO</tt> works correctly with <tt>VALUE</tt>s,
+<tt>CONSTANT</tt>s
+and <tt>VARIABLE</tt>s.&nbsp;
+<li>
+<b>name not found (6.1.0070 ', 6.1.2033 POSTPONE, 6.1.2510 ['], 6.2.2530
+[COMPILE])</b></li>
 
-<BR>Ficl prints an error message and does <TT>ABORT</TT>
-<LI>
-<B>parameters are not of the same type (6.1.1240 DO, 6.2.0620 ?DO, 6.2.2440
-WITHIN)</B></LI>
+<br>Ficl prints an error message and does <tt>ABORT</tt>
+<li>
+<b>parameters are not of the same type (6.1.1240 DO, 6.2.0620 ?DO, 6.2.2440
+WITHIN)</b></li>
 
-<BR>No check. Results vary depending on the specific problem.&nbsp;
-<LI>
-<B>6.1.2033 POSTPONE or 6.2.2530 [COMPILE] applied to 6.2.2295 TO</B></LI>
+<br>No check. Results vary depending on the specific problem.&nbsp;
+<li>
+<b>6.1.2033 POSTPONE or 6.2.2530 [COMPILE] applied to 6.2.2295 TO</b></li>
 
-<BR>The word is postponed correctly.&nbsp;
-<LI>
-<B>string longer than a counted string returned by 6.1.2450 WORD</B></LI>
+<br>The word is postponed correctly.&nbsp;
+<li>
+<b>string longer than a counted string returned by 6.1.2450 WORD</b></li>
 
-<BR>Ficl stores the first FICL_STRING_MAX-1 chars in the destination buffer.
+<br>Ficl stores the first FICL_STRING_MAX-1 chars in the destination buffer.
 (The extra character is the trailing space required by the standard. Yuck.)&nbsp;
-<LI>
-<B>u greater than or equal to the number of bits in a cell (6.1.1805 LSHIFT,
-6.1.2162 RSHIFT)</B></LI>
+<li>
+<b>u greater than or equal to the number of bits in a cell (6.1.1805 LSHIFT,
+6.1.2162 RSHIFT)</b></li>
 
-<BR>Depends on target process or and C runtime library implementations
+<br>Depends on target process or and C runtime library implementations
 of the &lt;&lt; and >> operators on unsigned values. For I386, the processor
 appears to shift modulo the number of bits in a cell.&nbsp;
-<LI>
-<B>word not defined via 6.1.1000 CREATE (6.1.0550 >BODY, 6.1.1250 DOES>)</B></LI>
+<li>
+<b>word not defined via 6.1.1000 CREATE (6.1.0550 >BODY, 6.1.1250 DOES>)</b></li>
 
-<BR><B>words improperly used outside 6.1.0490 &lt;# and 6.1.0040 #> (6.1.0030
-#, 6.1.0050 #S, 6.1.1670 HOLD, 6.1.2210 SIGN)</B>
-<BR>Don't. <TT>CREATE</TT> reserves a field in words it builds for <TT>DOES></TT>
-to fill in. If you use <TT>DOES></TT> on a word not made by <TT>CREATE</TT>,
+<br><b>words improperly used outside 6.1.0490 &lt;# and 6.1.0040 #> (6.1.0030
+#, 6.1.0050 #S, 6.1.1670 HOLD, 6.1.2210 SIGN)</b>
+<br>Don't. <tt>CREATE</tt> reserves a field in words it builds for <tt>DOES></tt>to
+fill in. If you use <tt>DOES></tt> on a word not made by <tt>CREATE</tt>,
 it will overwrite the first cell of its parameter area. That's probably
 not what you want. Likewise, pictured numeric words assume that there is
 a string under construction in the VM's scratch buffer. If that's not the
-case, results may be unpleasant.</UL>
+case, results may be unpleasant.</ul>
 
-<H3>
-Locals Implementation-defined options</H3>
+<h3>
+Locals Implementation-defined options</h3>
 
-<UL>
-<LI>
-<B>maximum number of locals in a definition (13.3.3 Processing locals,
-13.6.2.1795 LOCALS|)</B></LI>
+<ul>
+<li>
+<b>maximum number of locals in a definition (13.3.3 Processing locals,
+13.6.2.1795 LOCALS|)</b></li>
 
-<BR>Default is 16. Change by redefining FICL_MAX_LOCALS, defined in sysdep.h</UL>
+<br>Default is 16. Change by redefining FICL_MAX_LOCALS, defined in sysdep.h</ul>
 
-<H3>
-Locals Ambiguous conditions</H3>
+<h3>
+Locals Ambiguous conditions</h3>
 
-<UL>
-<LI>
-<B>executing a named local while in interpretation state (13.6.1.0086 (LOCAL))</B></LI>
+<ul>
+<li>
+<b>executing a named local while in interpretation state (13.6.1.0086 (LOCAL))</b></li>
 
-<BR>Locals can be found in interpretation state while in the context of
+<br>Locals can be found in interpretation state while in the context of
 a definition under construction. Under these circumstances, locals behave
 correctly. Locals are not visible at all outside the scope of a definition.&nbsp;
-<LI>
-<B>name not defined by VALUE or LOCAL (13.6.1.2295 TO)</B></LI>
+<li>
+<b>name not defined by VALUE or LOCAL (13.6.1.2295 TO)</b></li>
 
-<BR>See the CORE ambiguous conditions, above (no change)</UL>
+<br>See the CORE ambiguous conditions, above (no change)</ul>
 
-<H3>
-Programming Tools Implementation-defined options</H3>
+<h3>
+Programming Tools Implementation-defined options</h3>
 
-<UL>
-<LI>
-<B>source and format of display by 15.6.1.2194 SEE</B></LI>
+<ul>
+<li>
+<b>source and format of display by 15.6.1.2194 SEE</b></li>
 
-<BR>SEE de-compiles definitions from the dictionary. Because Ficl words
+<br>SEE de-compiles definitions from the dictionary. Because Ficl words
 are threaded by their header addresses, it is very straightforward to print
 the name and other characteristics of words in a definition. Primitives
 are so noted. Colon definitions are decompiled, but branch target labels
 are not reconstructed. Literals and string literals are so noted, and their
-contents displayed.</UL>
+contents displayed.</ul>
 
-<H3>
-Search Order Implementation-defined options</H3>
+<h3>
+Search Order Implementation-defined options</h3>
 
-<UL>
-<LI>
-<B>maximum number of word lists in the search order (16.3.3 Finding definition
-names, 16.6.1.2197 SET-ORDER)</B>&nbsp;</LI>
+<ul>
+<li>
+<b>maximum number of word lists in the search order (16.3.3 Finding definition
+names, 16.6.1.2197 SET-ORDER)</b>&nbsp;</li>
 
-<BR>Defaults to 16. Can be changed by redefining FICL_DEFAULT_VOCS, declared
+<br>Defaults to 16. Can be changed by redefining FICL_DEFAULT_VOCS, declared
 in sysdep.h
-<LI>
-<B>minimum search order (16.6.1.2197 SET-ORDER, 16.6.2.1965 ONLY)</B>&nbsp;</LI>
+<li>
+<b>minimum search order (16.6.1.2197 SET-ORDER, 16.6.2.1965 ONLY)</b>&nbsp;</li>
 
-<BR>Equivalent to <TT>FORTH-WORDLIST 1 SET-ORDER</TT></UL>
+<br>Equivalent to <tt>FORTH-WORDLIST 1 SET-ORDER</tt></ul>
 
-<H3>
-Search Order Ambiguous conditions</H3>
+<h3>
+Search Order Ambiguous conditions</h3>
 
-<UL>
-<LI>
-<B>changing the compilation word list (16.3.3 Finding definition names)</B></LI>
+<ul>
+<li>
+<b>changing the compilation word list (16.3.3 Finding definition names)</b></li>
 
-<BR>Ficl stores a link to the current definition independently of the compile
+<br>Ficl stores a link to the current definition independently of the compile
 wordlist while it is being defined, and links it into the compile wordlist
 only after the definition completes successfully. Changing the compile
-wordlist mid-definition will cause the definition to link into the <I>new</I>
+wordlist mid-definition will cause the definition to link into the <i>new</i>
 compile wordlist.&nbsp;
-<LI>
-<B>search order empty (16.6.2.2037 PREVIOUS)</B></LI>
+<li>
+<b>search order empty (16.6.2.2037 PREVIOUS)</b></li>
 
-<BR>Ficl prints an error message if the search order underflows, and resets
+<br>Ficl prints an error message if the search order underflows, and resets
 the order to its default state.&nbsp;
-<LI>
-<B>too many word lists in search order (16.6.2.0715 ALSO)</B></LI>
+<li>
+<b>too many word lists in search order (16.6.2.0715 ALSO)</b></li>
 
-<BR>Ficl prints an error message if the search order overflows, and resets
-the order to its default state.</UL>
-&nbsp;</TD>
-</TR>
-</TABLE>
+<br>Ficl prints an error message if the search order overflows, and resets
+the order to its default state.</ul>
+&nbsp;</td>
+</tr>
+</table>
 
-<H2>
+<h2>
 
-<HR WIDTH="100%"><A NAME="links"></A>For more information</H2>
+<hr WIDTH="100%"><a NAME="links"></a>For more information</h2>
 
-<UL>
-<LI>
-<A HREF="http://www.taygeta.com/forthcomp.html">Web home of ficl</A></LI>
+<ul>
+<li>
+<a href="http://www.taygeta.com/ficl.html">Web home of ficl</a></li>
 
-<LI>
-<A HREF="http://www.taygeta.com/forthlit.html">Forth literature</A></LI>
+<li>
+<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl203/ficl203.zip">Download
+ficl 2.03</a></b></li>
 
-<UL>
-<LI>
-<A HREF="http://www.softsynth.com/pforth/pf_tut.htm">Phil Burk's Forth
-Tutorial</A></LI>
+<li>
+<a href="ficlddj.pdf">Manuscript of Ficl article for January 1999 Dr. Dobb's
+Journal</a></li>
 
-<LI>
-<A HREF="http://www.taygeta.com/forth/dpans.html">Draft Proposed American
-National Standard for Forth</A></LI>
-</UL>
+<li>
+<a href="jwsforml.pdf">1998 FORML Conference paper</a></li>
 
-<LI>
-<A HREF="http://www.forth.org">Forth Interest Group</A></LI>
+<li>
+<a href="http://www.taygeta.com/forthlit.html">Forth literature</a></li>
 
-<LI>
-<A HREF="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl202/ficl202.zip">Download
-ficl 2.02</A></LI>
-</UL>
+<ul>
+<li>
+<a href="http://www.softsynth.com/pforth/pf_tut.htm">Phil Burk's Forth
+Tutorial</a></li>
 
-<H2>
+<li>
+<a href="http://www.taygeta.com/forth/dpans.html">Draft Proposed American
+National Standard for Forth</a></li>
+</ul>
 
-<HR WIDTH="100%"></H2>
+<li>
+<a href="http://www.forth.org">Forth Interest Group</a></li>
+</ul>
 
-<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<TR>
-<TD>
-<H2>
-<A NAME="lawyerbait"></A>DISCLAIMER OF WARRANTY and LICENSE</H2>
-<I>Ficl is freeware. Use it in any way that you like, with the understanding
-that the code is not supported.</I>
-<P>Any third party may reproduce, distribute, or modify the ficl software
+<h2>
+<a NAME="includesficl"></a>Some software that uses ficl</h2>
+
+<ul>
+<li>
+<a href="http://www.freebsd.org/">FreeBSD</a> boot loader</li>
+
+<li>
+<a href="http://www.pagesz.net/~sessoms/debuffer/">Palm Pilot Debuffer</a>
+(Eric Sessoms)</li>
+
+<li>
+<a href="http://www.swcp.com/~jchavez/osmond.html">Mac PC Board Layout
+tool</a> (J Chavez)</li>
+
+<li>
+<a href="http://www.netcomsystems.com">NetCom Systems</a> ML7710 (Martin
+Usher)</li>
+</ul>
+
+<h2>
+
+<hr WIDTH="100%"></h2>
+
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="lawyerbait"></a>DISCLAIMER OF WARRANTY and LICENSE</h2>
+<i>Ficl is freeware. Use it in any way that you like, with the understanding
+that the code is not supported.</i>
+<p>Any third party may reproduce, distribute, or modify the ficl software
 code or any derivative works thereof without any compensation or license,
 provided that the original author information and this disclaimer text
 are retained in the source code files. The ficl software code is provided
 on an "as is" basis without warranty of any kind, including, without limitation,
 the implied warranties of merchantability and fitness for a particular
 purpose and their equivalents under the laws of any jurisdiction.&nbsp;
-<P>I am interested in hearing from anyone who uses ficl. If you have a
+<p>I am interested in hearing from anyone who uses ficl. If you have a
 problem, a success story, a defect, an enhancement request, or if you would
-like to contribute to the ficl release (yay!), please send me email at
-the address above.&nbsp;</TD>
-</TR>
-</TABLE>
+like to contribute to the ficl release (yay!), please <a href="mailto:john_sadler@alum.mit.edu">send
+me email</a>.&nbsp;</td>
+</tr>
+</table>
 
-</BODY>
-</HTML>
+</body>
+</html>

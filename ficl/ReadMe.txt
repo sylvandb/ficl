@@ -1,3 +1,82 @@
+Edit paste works more sensibly if there's already text on the 
+line being appended to...
+
+rel 2.03 (April 1999)
+
+ficlwin:
+- File Menu: recent file list and Open now load files.
+- Text ouput function is now faster through use of string 
+  caching. Cache flushes at the end of each line and each
+  time ficlExec returns.
+- Edit/paste now behaves more reasonably for text. File/open
+  loads the specified file.
+- Registry entries specify dictionary and stack sizes. See
+  HKEY_CURRENT_USER/Software/CodeLab/ficlwin/Settings
+
+testmain:
+- Added CLOCK ( -- u) , wrapper for the ANSI C clock() function.
+  Returns the number of clock ticks elapsed since process start.
+- MSEC renamed to MS (in line with the ANS)
+- Added CLOCKS/SEC ( -- u) , wrapper for ANSI C CLOCKS_PER_SEC
+  constant
+- Changed gets() in testmain to fgets() to appease the security gods.
+
+
+Data structures are now 64 bit friendly.
+
+oo.fr: Added alloc and alloc-array methods of METACLASS to
+allocate objects and arrays of objects from the heap. Free method
+of OBJECT frees the storage. (requires MEMORY wordset)
+
+Added CORE EXT word WITHIN
+Added DOUBLE word DNEGATE
+
+Added ficlSetStackSize to specify param and return stack sizes. See ficl.h
+
+Added ficlExecXT in ficl.c/h - executes a FICL_WORD given its address.
+
+Added Michael Gauland's ficlLongMul and ficlLongDiv and support 
+routines to math64.c and .h. These routines are coded in C, and are
+compiled only if PORTABLE_LONGMULDIV == 1 (default is 0).
+
+Added definition of ficlRealloc to sysdep.c (needed for memory
+allocation wordset). If your target OS supports realloc(),
+you'll probably want to redefine ficlRealloc in those terms.
+The default version does ficlFree followed by ficlMalloc.
+
+[Thanks to Daniel Sobral of FreeBSD for suggesting or implementing 
+the next six changes!]
+- Added CATCH and THROW (EXCEPTION word set) 
+- Added MEMORY allocation word set. Requires ficlRealloc
+- EVALUATE respects count parameter, and also passes exceptional
+  return conditions back out to the calling instance of ficlExec.
+- VM_QUIT clears locals dictionary in ficlExec()
+- ficlExec pushes ip and executes interpret at the right times so that
+  nested calls to ficlExec behave the way you'd expect them to.
+- Control word match check upgraded. Control structure mismatches
+  are now errors, not warnings, since the check accepts all 
+  syntactally legal constructs.
+
+Added vmInnerLoop to vm.h. This function/macro factors the inner 
+interpreter out of ficlExec so it can be used in other places. 
+Function/macro behavior is conditioned on INLINE_INNER_LOOP
+in sysdep.h. Default: 1 unless _DEBUG is set. In part, this is because
+VC++ 5 goes apoplectic when trying to compile it as a function. See 
+comments in vm.c
+
+Bug fix in isNumber(): used to treat chars between 'Z' and 'a'
+as valid in base 10... (harmless, but weird) (Ficl Finger of Fate
+award to Phil Martel for this one ;-)  )
+
+softcore.pl now removes comments, spaces at the start and
+  end of lines. As a result:
+  sizeof (softWords) == 7663 bytes (used to be 20000)
+  and consumes 11384 bytes of dictionary when compiled
+  (so it's cheaper to store as text than code, for the 
+  memory-conscious)
+
+Deleted 3Com license paste-o in this file (oops)
+
 rel 2.02 -- 17 October 1998
 
 Changed ficlExec so that the search order really does get reset
@@ -165,132 +244,6 @@ Resource.h
     This is the standard header file, which defines new resource IDs.
     Microsoft Developer Studio reads and updates this file.
 
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" to indicate parts of the source code you
-should add to or customize.
-
-If your application uses MFC in a shared DLL, and your application is 
-in a language other than the operating system's current language, you
-will need to copy the corresponding localized resources MFC40XXX.DLL
-from the Microsoft Visual C++ CD-ROM onto the system or system32 directory,
-and rename it to be MFCLOC.DLL.  ("XXX" stands for the language abbreviation.
-For example, MFC40DEU.DLL contains resources translated to German.)  If you
-don't do this, some of the UI elements of your application will remain in the
-language of the operating system.
 
 /////////////////////////////////////////////////////////////////////////////
-
-YOU SHOULD CAREFULLY READ THE FOLLOWING TERMS AND CONDITIONS BEFORE USING THIS PRODUCT.
-IT CONTAINS SOFTWARE, THE USE OF WHICH IS LICENSED BY PALM COMPUTING, INC., A SUBSIDIARY 
-OF 3COM CORPORATION (COLLECTIVELY, "3COM"), TO ITS CUSTOMERS FOR THEIR USE ONLY AS SET 
-FORTH BELOW.  IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT,  
-DO NOT USE THE SOFTWARE.  USING ANY PART OF THE SOFTWARE INDICATES THAT YOU ACCEPT THESE 
-TERMS.
-
-LICENSE:  3Com grants you a nonexclusive license to use the accompanying software program(s)
-(the "Software") subject to the terms and restrictions set forth in this License Agreement.  
-You are not permitted to lease or rent (except under separate mutually agreeable terms set 
-forth in writing), distribute or sublicense the Software or to use the Software in a 
-time-sharing arrangement or in any other unauthorized manner.  Further, no license is granted 
-to you in the human readable code of the Software (source code).  Except as provided below, 
-this License Agreement does not grant you any rights to patents, copyrights, trade secrets, 
-trademarks, or any other rights in respect to the Software.
-
-The Software is licensed to be used on any personal computer and/or any 3Com product, provided 
-that the Software is used only in connection with 3Com products.  With respect to the Desktop 
-Software, you may reproduce and provide one (1) copy of such Software for each personal computer 
-or 3Com product on which such Software is used as permitted hereunder.  With respect to the 
-Device Software, you may use such Software only on one (1) 3Com product.  Otherwise, the Software 
-and supporting documentation may be copied only as essential for backup or archive purposes in 
-support of your use of the Software as permitted hereunder.  You must reproduce and include all 
-copyright notices and any other proprietary rights notices appearing on the Software on any 
-copies that you make.  
-
-NO Assignment; No Reverse Engineering:  You may transfer the Software and this License 
-Agreement to another party if the other party agrees in writing to accept the terms and 
-conditions of this License Agreement.  If you transfer the Software, you must at the same 
-time either transfer all copies of the Software as well as  the supporting documentation 
-to the same party or destroy any such materials not transferred.  Except as set forth 
-above, you may not transfer or assign the Software or your rights under this License Agreement.  
-
-Modification, reverse engineering, reverse compiling, or disassembly of the Software is 
-expressly prohibited.  However, if you are a European Community ("EC") resident, information 
-necessary to achieve interoperability of the Software with other programs within the meaning 
-of the EC Directive on the Legal Protection of Computer Programs is available to you from 
-3Com upon written request.
-
-EXPORT RESTRICTIONS:  You agree that you will not export or re-export the Software or 
-accompanying documentation (or any copies thereof) or any products utilizing the Software 
-or such documentation in violation of any applicable laws or regulations of the United States 
-or the country in which you obtained them.
-
-Trade Secrets; Title:  You acknowledge and agree that the structure, sequence and organization 
-of the Software are the valuable trade secrets of 3Com and its suppliers.  You agree to hold 
-such trade secrets in confidence.  You further acknowledge and agree that ownership of, and 
-title to, the Software and all subsequent copies thereof regardless of the form or media are 
-held by 3Com and its suppliers.
-
-UNITED STATES Government Legend:  
-
-The Software is commercial in nature and developed solely at private expense.  The Software 
-is delivered as "Commercial Computer Software" as defined in DFARS 252.227-7014 (June 1995) 
-or as a commercial item as defined in FAR 2.101(a) and as such is provided with only such 
-rights as are provided in this License Agreement, which is 3Com's standard commercial license 
-for the Software.  Technical data is provided with limited rights only as provided in 
-DFAR 252.227-7015 (Nov. 1995) or FAR 52.227-14 (June 1987), whichever is applicable.
-
-TERM AND TERMINATION:  This License Agreement is effective until terminated.  You may 
-terminate it at any time by destroying the Software and documentation together with 
-all copies and merged portions in any form.  It will also terminate immediately if 
-you fail to comply with any term or condition of this License Agreement.  Upon such 
-termination you agree to destroy the Software and documentation, together with all copies 
-and merged portions in any form.
-
-GOVERNING LAW:  This License Agreement shall be governed by the laws of the State of 
-California as such laws are applied to agreements entered into and to be performed 
-entirely within California between California residents and by the laws of the United 
-States.  You agree that the United Nations Convention on Contracts for the International 
-Sale of Goods (1980) is hereby excluded in its entirety from application to this License Agreement.
-
-NO WARRANTY:  THE SOFTWARE AND ALL RELATED DOCUMENTATION ARE PROVIDED ON AN "AS IS" BASIS 
-AND ALL RISK IS WITH YOU.  BECAUSE THE SOFTWARE AND DOCUMENTATION ARE PROVIDED TO YOU FREE 
-OF CHARGE, 3COM MAKES NO WARRANTIES, TERMS, OR CONDITIONS, EXPRESS, IMPLIED OR STATUTORY, 
-AS TO ANY MATTER WHATSOEVER.  IN PARTICULAR, ANY AND ALL WARRANTIES, TERMS OR CONDITIONS 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT OF THIRD PARTIES 
-RIGHTS ARE EXPRESSLY EXCLUDED.  FURTHER, 3COM MAKES NO REPRESENTATIONS, WARRANTIES, TERMS 
-OR CONDITIONS THAT THE SOFTWARE AND DOCUMENTATION PROVIDED ARE FREE OF ERRORS OR VIRUSES 
-OR THAT THE SOFTWARE AND DOCUMENTATION ARE SUITABLE FOR YOUR INTENDED USE.   
-
-LIMITATION OF LIABILITY:  IN NO EVENT SHALL 3COM OR ITS SUPPLIERS BE LIABLE TO YOU OR ANY 
-OTHER PARTY FOR ANY INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES, LOSS OF DATA OR DATA 
-BEING RENDERED INACCURATE, LOSS OF PROFITS OR REVENUE, OR INTERRUPTION OF BUSINESS IN 
-ANY WAY ARISING OUT OF OR RELATED TO THE USE OR INABILITY TO USE THE SOFTWARE AND/OR 
-DOCUMENTATION, REGARDLESS OF THE FORM OF ACTION, WHETHER IN CONTRACT, TORT 
-(INCLUDING NEGLIGENCE), STRICT PRODUCT LIABILITY OR OTHERWISE, EVEN IF ANY REPRESENTATIVE 
-OF 3COM OR ITS SUPPLIERS HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.  NOTHING IN 
-THIS AGREEMENT SHALL HAVE THE EFFECT OF LIMITING OR EXCLUDING 3COM'S LIABILITY FOR DEATH 
-OR PERSONAL INJURY CAUSED BY ITS OWN  NEGLIGENCE.  THIS DISCLAIMER OF LIABILITY FOR DAMAGES 
-WILL NOT BE AFFECTED BY ANY FAILURE OF THE SOLE AND EXCLUSIVE REMEDIES HEREUNDER.
-
-DISCLAIMER:   Some countries, states, or provinces do not allow the exclusion or 
-limitation of implied warranties or the limitation of incidental or consequential 
-damages for certain products supplied to consumers or the limitation of liability 
-for personal injury, so the above limitations and exclusions may be limited in their 
-application to you.  When the implied warranties are not allowed to be excluded in 
-their entirety, they will be limited to the duration of the applicable written 
-warranty.  This warranty gives you specific legal rights which may vary depending 
-on local law.
-
-SEVERABILITY:  In the event any provision of this License Agreement is found to be 
-invalid, illegal or unenforceable, the validity, legality and enforceability of any 
-of the remaining provisions shall not in any way be affected or impaired and a valid, 
-legal and enforceable provision of similar intent and economic impact shall be 
-substituted therefor.
-
-ENTIRE AGREEMENT:  This License Agreement sets forth the entire understanding and 
-agreement between you and 3Com, supersedes all prior agreements, whether written or 
-oral, with respect to the Software, and may be amended only in a writing signed by 
-both parties.  
 

@@ -13,15 +13,16 @@
 #include <stdio.h>
 
 #include "ficl.h"
- 
+
 /*
 *******************  P C / W I N 3 2   P O R T   B E G I N S   H E R E ***********************
 */
 #if defined (_M_IX86)
 
-UNS64 ficlLongMul(UNS32 x, UNS32 y)
+#if PORTABLE_LONGMULDIV == 0
+DPUNS ficlLongMul(FICL_UNS x, FICL_UNS y)
 {
-    UNS64 q;
+    DPUNS q;
 
     __asm
     {
@@ -35,7 +36,7 @@ UNS64 ficlLongMul(UNS32 x, UNS32 y)
     return q;
 }
 
-UNSQR ficlLongDiv(UNS64 q, UNS32 y)
+UNSQR ficlLongDiv(DPUNS q, FICL_UNS y)
 {
     UNSQR result;
 
@@ -50,6 +51,8 @@ UNSQR ficlLongDiv(UNS64 q, UNS32 y)
 
     return result;
 }
+
+#endif
 
 #if !defined (_WINDOWS)
 
@@ -72,9 +75,19 @@ void *ficlMalloc (size_t size)
     return malloc(size);
 }
 
+
 void  ficlFree   (void *p)
 {
     free(p);
+}
+
+
+void *ficlRealloc(void *p, size_t size)
+{
+    if (p)
+        free(p);
+
+    return malloc(size);
 }
 
 /*
@@ -102,9 +115,10 @@ int ficlLockDictionary(short fLock)
 */
 #elif defined (MOTO_CPU32)
 
-UNS64 ficlLongMul(UNS32 x, UNS32 y)
+#if PORTABLE_LONGMULDIV == 0
+DPUNS ficlLongMul(FICL_UNS x, FICL_UNS y)
 {
-    UNS64 q;
+    DPUNS q;
     IGNORE(q);    /* suppress goofy compiler warnings */
     IGNORE(x);
     IGNORE(y);
@@ -119,7 +133,7 @@ UNS64 ficlLongMul(UNS32 x, UNS32 y)
     return q;
 }
 
-UNSQR ficlLongDiv(UNS64 q, UNS32 y)
+UNSQR ficlLongDiv(DPUNS q, FICL_UNS y)
 {
     UNSQR result;
     IGNORE(result); /* suppress goofy compiler warnings */
@@ -137,6 +151,8 @@ UNSQR ficlLongDiv(UNS64 q, UNS32 y)
     return result;
 }
 
+#endif
+
 void  ficlTextOut(FICL_VM *pVM, char *msg, int fNewline)
 {
    return;
@@ -149,6 +165,17 @@ void *ficlMalloc (size_t size)
 void  ficlFree   (void *p)
 {
 }
+
+
+void *ficlRealloc(void *p, size_t size)
+{
+    if (p)
+        free(p);
+
+    return malloc(size);
+}
+
+
 
 /*
 ** Stub function for dictionary access control - does nothing
@@ -178,9 +205,10 @@ int ficlLockDictionary(short fLock)
 
 #ifdef linux
 
-UNS64 ficlLongMul(UNS32 x, UNS32 y)
+#if PORTABLE_LONGMULDIV == 0
+DPUNS ficlLongMul(FICL_UNS x, FICL_UNS y)
 {
-    UNS64 q;
+    DPUNS q;
     __u64 qx;
 
     qx = (__u64)x * (__u64) y;
@@ -191,7 +219,7 @@ UNS64 ficlLongMul(UNS32 x, UNS32 y)
     return q;
 }
 
-UNSQR ficlLongDiv(UNS64 q, UNS32 y)
+UNSQR ficlLongDiv(DPUNS q, FICL_UNS y)
 {
     UNSQR result;
     __u64 qx, qh;
@@ -204,6 +232,8 @@ UNSQR ficlLongDiv(UNS64 q, UNS32 y)
 
     return result;
 }
+
+#endif
 
 void  ficlTextOut(FICL_VM *pVM, char *msg, int fNewline)
 {
@@ -226,6 +256,15 @@ void  ficlFree   (void *p)
 {
     free(p);
 }
+
+void *ficlRealloc(void *p, size_t size)
+{
+    if (p)
+        free(p);
+
+    return malloc(size);
+}
+
 
 /*
 ** Stub function for dictionary access control - does nothing

@@ -11,21 +11,21 @@ object subclass c-word
     c-2byte    obj: .hashcode
     c-byte     obj: .flags
     c-byte     obj: .nName
-    c-4byte    obj: .pName
-    c-4byte    obj: .pCode
+    c-bytePtr  obj: .pName
+    c-cellPtr  obj: .pCode
     c-4byte    obj: .param0
 
     \ Push word's name...
     : get-name   ( inst class -- c-addr u )
         2dup
-        --> .pName --> get  -rot
+        --> .pName --> get-ptr  -rot
         --> .nName --> get
     ;
 
     : next   ( inst class -- link-inst class )
         --> .link ;
         
-    : info
+    : ?
         ." ficl word: " 
         2dup --> get-name type cr
         ." hash = "
@@ -39,16 +39,16 @@ end-class
 \ ** C - W O R D L I S T
 \ Example of use:
 \ get-current c-wordlist --> ref current
-\ current --> info
-\ current --> .hash --> info
-\ current --> .hash --> next --> info
+\ current --> ?
+\ current --> .hash --> ?
+\ current --> .hash --> next --> ?
 
 object subclass c-wordlist
 	c-wordlist ref: .parent
 	c-4byte    obj: .size
 	c-word     ref: .hash
 
-    : info
+    : ?
         2drop ." ficl wordlist " cr ;
 	: push  drop  >search ;
 	: pop   2drop previous ;
@@ -67,7 +67,7 @@ object subclass c-ficlstack
     c-4byte    obj: .stackBase
 
     : init   2drop ;
-    : info   2drop
+    : ?      2drop
         ." ficl stack " cr ;
     : top
         --> .sp --> .addr --> prev --> get ;
@@ -78,6 +78,10 @@ end-class
 \ counted string, size set at creation time (if by NEW)
 \ Can also be ref instantiated to wrap an existing string
 \ No check for bounds overrun...
+\ Creation example:
+\   80 c-string --> new str80
+\   s" arf arf!!" str80 --> set
+\   str80 --> type  cr
 \
 object subclass c-string
     c-byte obj: .count
@@ -96,5 +100,11 @@ object subclass c-string
         dup
         inst class --> .count --> set
         inst class --> .text  swap move  ;
+
+    : get   ( inst class -- c-addr u )
+        2dup 
+        --> .text   -rot 
+        --> .count --> get 
+    ;
 
 end-class

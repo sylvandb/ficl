@@ -8,7 +8,7 @@ CC=gcc
 LIB = ar cr
 RANLIB = ranlib
 
-MAJOR = 1
+MAJOR = 2
 MINOR = 0.3
 
 lib: libficl.so.$(MAJOR).$(MINOR)

@@ -193,7 +193,6 @@ FICL_WORD *dictAppendWord2(FICL_DICT *pDict,
                            UNS8 flags)
 {
     FICL_COUNT len  = (FICL_COUNT)SI_COUNT(si);
-    char *name      = SI_PTR(si);
     char *pName;
     FICL_WORD *pFW;
 
@@ -228,7 +227,7 @@ FICL_WORD *dictAppendWord2(FICL_DICT *pDict,
                         d i c t A p p e n d U N S 3 2
 ** Append the specified UNS32 to the dictionary
 **************************************************************************/
-void dictAppendUNS32(FICL_DICT *pDict, UNS32 u)
+void dictAppendUNS(FICL_DICT *pDict, UNS32 u)
 {
     *pDict->here++ = LVALUEtoCELL(u);
     return;

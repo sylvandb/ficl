@@ -153,6 +153,17 @@
 
 /*
 ** Revision History:
+** 
+** 15 Apr 1999 (sadler) Merged FreeBSD changes for exception wordset and
+** counted strings in ficlExec. 
+** 12 Jan 1999 (sobral) Corrected EVALUATE behavior. Now TIB has an
+** "end" field, and all words respect this. ficlExec is passed a "size"
+** of TIB, as well as vmPushTib. This size is used to calculate the "end"
+** of the string, ie, base+size. If the size is not known, pass -1.
+**
+** 10 Jan 1999 (sobral) EXCEPTION word set has been added, and existing
+** words has been modified to conform to EXCEPTION EXT word set. 
+**
 ** 27 Aug 1998 (sadler) testing and corrections for LOCALS, LOCALS EXT,
 **  SEARCH / SEARCH EXT, TOOLS / TOOLS EXT. 
 **  Added .X to display in hex, PARSE and PARSE-WORD to supplement WORD,
@@ -206,8 +217,10 @@ struct ficl_dict;
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "2.02"
+#define FICL_VER    "2.03"
+#if !defined (FICL_PROMPT)
 #define FICL_PROMPT "ok> "
+#endif
 
 /*
 ** ANS Forth requires false to be zero, and true to be the ones
@@ -221,13 +234,13 @@ struct ficl_dict;
 
 /*
 ** A CELL is the main storage type. It must be large enough
-** to contain a pointer or a scalar. Let's be picky and make
-** a 32 bit cell explicitly...
+** to contain a pointer or a scalar. In order to accommodate 
+** 32 bit and 64 bit processors, use abstract types for i and u.
 */
 typedef union _cell
 {
-	INT32 i;
-    UNS32 u;
+	FICL_INT i;
+    FICL_UNS u;
 	void *p;
 } CELL;
 
@@ -290,10 +303,19 @@ typedef struct
 ** the block of text it's working on and an index to the next
 ** unconsumed character in the string. Traditionally, this is
 ** done by a Text Input Buffer, so I've called this struct TIB.
+**
+** Since this structure also holds the size of the input buffer,
+** and since evaluate requires that, let's put the size here.
+** The size is stored as an end-pointer because that is what the
+** null-terminated string aware functions find most easy to deal
+** with.
+** Notice, though, that nobody really uses this except evaluate,
+** so it might just be moved to FICL_VM instead. (sobral)
 */
 typedef struct
 {
     INT32 index;
+    char *end;
     char *cp;
 } TIB;
 
@@ -309,7 +331,7 @@ typedef struct
 */
 typedef struct _ficlStack
 {
-    UNS32 nCells;       /* size of the stack */
+    FICL_UNS nCells;    /* size of the stack */
     CELL *pFrame;       /* link reg for stack frame */
     CELL *sp;           /* stack pointer */
     CELL base[1];       /* Bottom of the stack */
@@ -328,12 +350,12 @@ void        stackLink  (FICL_STACK *pStack, int nCells);
 void        stackPick  (FICL_STACK *pStack, int n);
 CELL        stackPop   (FICL_STACK *pStack);
 void       *stackPopPtr   (FICL_STACK *pStack);
-UNS32       stackPopUNS32 (FICL_STACK *pStack);
-INT32       stackPopINT32 (FICL_STACK *pStack);
+FICL_UNS    stackPopUNS(FICL_STACK *pStack);
+FICL_INT    stackPopINT(FICL_STACK *pStack);
 void        stackPush  (FICL_STACK *pStack, CELL c);
 void        stackPushPtr  (FICL_STACK *pStack, void *ptr);
-void        stackPushUNS32(FICL_STACK *pStack, UNS32 u);
-void        stackPushINT32(FICL_STACK *pStack, INT32 i);
+void        stackPushUNS(FICL_STACK *pStack, FICL_UNS u);
+void        stackPushINT(FICL_STACK *pStack, FICL_INT i);
 void        stackReset (FICL_STACK *pStack);
 void        stackRoll  (FICL_STACK *pStack, int n);
 void        stackSetTop(FICL_STACK *pStack, CELL c);
@@ -426,6 +448,12 @@ typedef struct vm
 */
 typedef void (*FICL_CODE)(FICL_VM *pVm);
 
+#if 0
+#define VM_ASSERT(pVM) assert((*(pVM->ip - 1)) == pVM->runningWord)
+#else
+#define VM_ASSERT(pVM) 
+#endif
+
 /* 
 ** Ficl models memory as a contiguous space divided into
 ** words in a linked list called the dictionary.
@@ -468,11 +496,14 @@ int wordIsCompileOnly(FICL_WORD *pFW);
 /*
 ** Exit codes for vmThrow
 */
-#define VM_OUTOFTEXT    1   /* hungry - normal exit */
-#define VM_RESTART      2   /* word needs more text to suxcceed - re-run it */
-#define VM_USEREXIT     3   /* user wants to quit */
-#define VM_ERREXIT      4   /* interp found an error */
-#define VM_QUIT         5   /* like errexit, but leave pStack & base alone */
+#define VM_INNEREXIT -256   /* tell ficlExecXT to exit inner loop */
+#define VM_OUTOFTEXT -257   /* hungry - normal exit */
+#define VM_RESTART   -258   /* word needs more text to succeed - re-run it */
+#define VM_USEREXIT  -259   /* user wants to quit */
+#define VM_ERREXIT   -260   /* interp found an error */
+#define VM_ABORT       -1   /* like errexit -- abort */
+#define VM_ABORTQ      -2   /* like errexit -- abort" */
+#define VM_QUIT       -56   /* like errexit, but leave pStack & base alone */
 
 
 void        vmBranchRelative(FICL_VM *pVM, int offset);
@@ -493,6 +524,28 @@ void        vmTextOut(FICL_VM *pVM, char *text, int fNewline);
 void        vmThrow  (FICL_VM *pVM, int except);
 void        vmThrowErr(FICL_VM *pVM, char *fmt, ...);
 
+#define vmGetRunningWord(pVM) ((pVM)->runningWord)
+
+
+/*
+** The inner interpreter - coded as a macro (see note for 
+** INLINE_INNER_LOOP in sysdep.h for complaints about VC++ 5
+*/
+#define M_INNER_LOOP(pVM) \
+    for (;;) \
+    {  \
+        FICL_WORD *tempFW = *(pVM)->ip++; \
+        (pVM)->runningWord = tempFW; \
+        tempFW->code(pVM); \
+    }
+
+
+#if INLINE_INNER_LOOP != 0
+#define     vmInnerLoop(pVM) M_INNER_LOOP(pVM)
+#else
+void        vmInnerLoop(FICL_VM *pVM);
+#endif
+
 /*
 ** vmCheckStack needs a vm pointer because it might have to say
 ** something if it finds a problem. Parms popCells and pushCells
@@ -511,9 +564,11 @@ void        vmCheckStack(FICL_VM *pVM, int popCells, int pushCells);
 ** PopTib restores the TIB state given a saved TIB from PushTib
 ** GetInBuf returns a pointer to the next unused char of the TIB
 */
-void        vmPushTib(FICL_VM *pVM, char *text, TIB *pSaveTib);
+void        vmPushTib(FICL_VM *pVM, char *text, INT32 nChars, TIB *pSaveTib);
 void        vmPopTib(FICL_VM *pVM, TIB *pTib);
 #define     vmGetInBuf(pVM) ((pVM)->tib.cp + (pVM)->tib.index)
+#define     vmGetInBufLen(pVM) ((pVM)->tib.end - (pVM)->tib.cp)
+#define     vmGetInBufEnd(pVM) ((pVM)->tib.end)
 #define     vmSetTibIndex(pVM, i) (pVM)->tib.index = i
 #define     vmUpdateTib(pVM, str) (pVM)->tib.index = (str) - (pVM)->tib.cp
 
@@ -529,11 +584,13 @@ void        vmPopTib(FICL_VM *pVM, TIB *pTib);
 #pragma warning(disable: 4273)
 #endif
 
-char       *ltoa( INT32 value, char *string, int radix );
-char       *ultoa(UNS32 value, char *string, int radix );
+int        isPowerOfTwo(FICL_UNS u);
+
+char       *ltoa( FICL_INT value, char *string, int radix );
+char       *ultoa(FICL_UNS value, char *string, int radix );
 char        digit_to_char(int value);
 char       *strrev( char *string );
-char       *skipSpace(char *cp);
+char       *skipSpace(char *cp, char *end);
 char       *caseFold(char *cp);
 int         strincmp(char *cp1, char *cp2, FICL_COUNT count);
 
@@ -548,7 +605,7 @@ int         strincmp(char *cp1, char *cp2, FICL_COUNT count);
 ** A WORDLIST (see the search order word set in DPANS) is
 ** just a pointer to a FICL_HASH in this implementation.
 */
-#if !defined HASHSIZE /* Default size of hash table. For best */
+#if !defined HASHSIZE /* Default size of hash table. For most uniform */
 #define HASHSIZE 127  /*   performance, use a prime number!   */
 #endif
 
@@ -625,7 +682,7 @@ FICL_WORD  *dictAppendWord2(FICL_DICT *pDict,
                            STRINGINFO si, 
                            FICL_CODE pCode, 
                            UNS8 flags);
-void        dictAppendUNS32(FICL_DICT *pDict, UNS32 u);
+void        dictAppendUNS(FICL_DICT *pDict, FICL_UNS u);
 int         dictCellsAvail(FICL_DICT *pDict);
 int         dictCellsUsed (FICL_DICT *pDict);
 void        dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int nCells);
@@ -675,7 +732,8 @@ void       ficlTermSystem(void);
 ** f i c l E x e c
 ** Evaluates a block of input text in the context of the
 ** specified interpreter. Emits any requested output to the
-** interpreter's output function
+** interpreter's output function. If the input string is NULL
+** terminated, you can pass -1 as nChars rather than count it.
 ** Execution returns when the text block has been executed,
 ** or an error occurs.
 ** Returns one of the VM_XXXX codes defined in ficl.h:
@@ -687,10 +745,14 @@ void       ficlTermSystem(void);
 **      to shut down the interpreter. This would be a good
 **      time to delete the vm, etc -- or you can ignore this
 **      signal.
+** VM_ABORT and VM_ABORTQ are generated by 'abort' and 'abort"'
+**      commands.
 ** Preconditions: successful execution of ficlInitSystem,
 **      Successful creation and init of the VM by ficlNewVM (or equiv)
 */
-int        ficlExec(FICL_VM *pVM, char *pText);
+int        ficlExec (FICL_VM *pVM, char *pText);
+int        ficlExecC(FICL_VM *pVM, char *pText, INT32 nChars);
+int        ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord);
 
 /*
 ** Create a new VM from the heap, and link it into the system VM list.
@@ -699,6 +761,12 @@ int        ficlExec(FICL_VM *pVM, char *pText);
 ** Precondition: successful execution of ficlInitSystem
 */
 FICL_VM   *ficlNewVM(void);
+
+/*
+** Set the stack sizes (return and parameter) to be used for all
+** subsequently created VMs. Returns actual stack size to be used.
+*/
+int ficlSetStackSize(int nStackCells);
 
 /*
 ** Returns the address of the most recently defined word in the system

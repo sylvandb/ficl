@@ -168,15 +168,28 @@ int ficlBuild(char *name, FICL_CODE code, char flags)
 **************************************************************************/
 int ficlExec(FICL_VM *pVM, char *pText)
 {
+    return ficlExecC(pVM, pText, -1);
+}
+
+int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
+{
+    static FICL_WORD *pInterp = NULL;
+
     int        except;
-    FICL_WORD *tempFW;
     jmp_buf    vmState;
     jmp_buf   *oldState;
     TIB        saveTib;
 
+    if (!pInterp)
+        pInterp = ficlLookup("interpret");
+    
+    assert(pInterp);
     assert(pVM);
 
-    vmPushTib(pVM, pText, &saveTib);
+    if (size < 0)
+        size = strlen(pText);
+
+    vmPushTib(pVM, pText, size, &saveTib);
 
     /*
     ** Save and restore VM's jmp_buf to enable nested calls to ficlExec 
@@ -193,22 +206,12 @@ int ficlExec(FICL_VM *pVM, char *pText)
             pVM->fRestart = 0;
             pVM->runningWord->code(pVM);
         }
-
-        /*
-        ** the mysterious inner interpreter...
-        ** vmThrow gets you out of this loop with a longjmp()
-        */
-        for (;;)
-        {
-            tempFW = *pVM->ip++;
-            /*
-            ** inline code for
-            ** vmExecute(pVM, tempFW);
-            */
-            pVM->runningWord = tempFW;
-            tempFW->code(pVM);
+        else
+        {   /* set VM up to interpret text */
+            vmPushIP(pVM, &pInterp);
         }
 
+        vmInnerLoop(pVM);
         break;
 
     case VM_RESTART:
@@ -217,20 +220,29 @@ int ficlExec(FICL_VM *pVM, char *pText)
         break;
 
     case VM_OUTOFTEXT:
+        vmPopIP(pVM);
         if ((pVM->state != COMPILE) && (pVM->sourceID.i == 0))
             ficlTextOut(pVM, FICL_PROMPT, 0);
         break;
 
     case VM_USEREXIT:
+    case VM_INNEREXIT:
         break;
 
     case VM_QUIT:
         if (pVM->state == COMPILE)
+        {
             dictAbortDefinition(dp);
+#if FICL_WANT_LOCALS
+            dictEmpty(localp, localp->pForthWords->size);
+#endif
+        }
         vmQuit(pVM);
         break;
 
     case VM_ERREXIT:
+    case VM_ABORT:
+    case VM_ABORTQ:
     default:    /* user defined exit code?? */
         if (pVM->state == COMPILE)
         {
@@ -246,6 +258,79 @@ int ficlExec(FICL_VM *pVM, char *pText)
 
     pVM->pState    = oldState;
     vmPopTib(pVM, &saveTib);
+    return (except);
+}
+
+
+/**************************************************************************
+                        f i c l E x e c X T
+** Given a pointer to a FICL_WORD, push an inner interpreter and
+** execute the word to completion. This is in contrast with vmExecute,
+** which does not guarantee that the word will have completed when
+** the function returns (ie in the case of colon definitions, which
+** need an inner interpreter to finish)
+**
+** Returns one of the VM_XXXX exception codes listed in ficl.h. Normal
+** exit condition is VM_INNEREXIT, ficl's private signal to exit the
+** inner loop under normal circumstances. If another code is thrown to
+** exit the loop, this function will re-throw it if it's nested under
+** itself or ficlExec.
+**
+** NOTE: this function is intended so that C code can execute ficlWords
+** given their address in the dictionary (xt).
+**************************************************************************/
+int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
+{
+    static FICL_WORD *pQuit = NULL;
+    int        except;
+    jmp_buf    vmState;
+    jmp_buf   *oldState;
+
+    if (!pQuit)
+        pQuit = ficlLookup("exit-inner");
+
+    assert(pVM);
+    assert(pQuit);
+    
+    /*
+    ** Save and restore VM's jmp_buf to enable nested calls
+    */
+    oldState = pVM->pState;
+    pVM->pState = &vmState; /* This has to come before the setjmp! */
+    except = setjmp(vmState);
+
+    if (except)
+        vmPopIP(pVM);
+    else
+        vmPushIP(pVM, &pQuit);
+
+    switch (except)
+    {
+    case 0:
+        vmExecute(pVM, pWord);
+        vmInnerLoop(pVM);
+        break;
+
+    case VM_INNEREXIT:
+        break;
+
+    case VM_RESTART:
+    case VM_OUTOFTEXT:
+    case VM_USEREXIT:
+    case VM_QUIT:
+    case VM_ERREXIT:
+    case VM_ABORT:
+    case VM_ABORTQ:
+    default:    /* user defined exit code?? */
+        if (oldState)
+        {
+            pVM->pState = oldState;
+            vmThrow(pVM, except);
+        }
+        break;
+   }
+
+    pVM->pState    = oldState;
     return (except);
 }
 
@@ -289,7 +374,7 @@ FICL_DICT *ficlGetEnv(void)
 ** Create an environment variable with a one-CELL payload. ficlSetEnvD
 ** makes one with a two-CELL payload.
 **************************************************************************/
-void ficlSetEnv(char *name, UNS32 value)
+void ficlSetEnv(char *name, FICL_UNS value)
 {
     STRINGINFO si;
     FICL_WORD *pFW;
@@ -310,7 +395,7 @@ void ficlSetEnv(char *name, UNS32 value)
     return;
 }
 
-void ficlSetEnvD(char *name, UNS32 hi, UNS32 lo)
+void ficlSetEnvD(char *name, FICL_UNS hi, FICL_UNS lo)
 {
     FICL_WORD *pFW;
     STRINGINFO si;
@@ -344,6 +429,23 @@ FICL_DICT *ficlGetLoc(void)
     return localp;
 }
 #endif
+
+
+
+/**************************************************************************
+                        f i c l S e t S t a c k S i z e
+** Set the stack sizes (return and parameter) to be used for all
+** subsequently created VMs. Returns actual stack size to be used.
+**************************************************************************/
+int ficlSetStackSize(int nStackCells)
+{
+    if (nStackCells >= FICL_DEFAULT_STACK)
+        defaultStack = nStackCells;
+    else
+        defaultStack = FICL_DEFAULT_STACK;
+
+    return defaultStack;
+}
 
 
 /**************************************************************************

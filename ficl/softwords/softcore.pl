@@ -29,46 +29,57 @@ $commenting = 0;
 
 while (<>) {
     s"\n$"";            # remove EOL
-    s"\t"    "g;        # replace each tab with 4 spaces
     s/\"/\\\"/g;        # escape quotes
 
-    next if /^\s*\\\s*$/;# toss empty comments
-    next if /^\s*$/;    # toss empty lines
+    #
+    # ignore empty lines and lines containing
+    # only empty comments
+    #
+    next if /^\s*\\\s*$/;
+    next if /^\s*$/;
 
-    if (/^\\\s\*\*/)  {	# emit / ** lines as C comments
+    #
+    # emit lines beginnning with "\ **" as C comments
+    #
+    if (/^\\\s\*\*/)  {	
         s"^\\ "";
         if ($commenting == 0) {
-	    print "/*\n";
-	}
+            print "/*\n";
+        }
         $commenting = 1;
         print "$_\n";
         next;
     }
 
     if ($commenting == 1) {
-	print "*/\n";
+        print "*/\n";
     }
 
     $commenting = 0;
 
-    if (/^\\\s#/)  {	# pass commented preprocessor directives
+    #
+	# pass commented preprocessor directives
+    # == lines starting with "\ #"
+    # (supports single line directives only)
+    #
+    if (/^\\\s#/)  {
         s"^\\ "";
         print "$_\n";
         next;
     }
 
-    next if /^\s*\\ /; # toss all other comments
-    s"\\\s+.*$"" ;     # lop off trailing \ comments
-    s"\s+$" ";         # remove trailing space
-    #
-    # emit all other lines as quoted string fragments
-    #
-    $out = "    \"" . $_ . " \\n\"";
-    print "$out\n";
-}
+    next if /^\s*\\ /;  # toss all other \ comment lines
+    s"\\\s+.*$"" ;      # lop off trailing \ comments
+    s"\s+\(\s.*?\)""g;  # delete ( ) comments
+    s"^\s+"";           # remove leading spaces
+    s"\s+$"";           # remove trailing spaces
 
-if ($commenting == 1) {
-    print "*/\n";
+    #
+    # emit whatever's left as quoted string fragments
+    #
+#    $out = "    \"" . $_ . " \\n\"";
+     $out = "    \"" . $_ . " \"";
+    print "$out\n";
 }
 
 print <<EOF
@@ -77,7 +88,8 @@ print <<EOF
 
 void ficlCompileSoftCore(FICL_VM *pVM)
 {
-    int ret = ficlExec(pVM, softWords);
+    int ret = sizeof (softWords);
+    ret = ficlExec(pVM, softWords);
     if (ret == VM_ERREXIT)
         assert(FALSE);
     return;

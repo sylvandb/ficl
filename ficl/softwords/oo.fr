@@ -295,6 +295,24 @@ previous
 	--> array-init
 ;
 
+\ Create an anonymous initialized instance from the heap
+: alloc   \ ( class metaclass -- instance class )
+    locals| meta class |
+    class meta metaclass => get-size allocate   ( -- addr fail-flag )
+    abort" allocate failed "                    ( -- addr )
+    class
+;
+
+\ Create an anonymous array of initialized instances from the heap
+: alloc-array   \ ( n class metaclass -- instance class )
+    locals| meta class nobj |
+    class meta metaclass => get-size 
+    nobj * allocate                 ( -- addr fail-flag )
+    abort" allocate failed "        ( -- addr )
+    nobj over class --> array-init
+    class 
+;
+
 \ create a proxy object with initialized payload address given
 : ref   ( instance-addr class metaclass "name" -- )
     drop create , ,
@@ -410,6 +428,14 @@ do-do-instance
 		&init execute
 		&next execute  drop to inst
 	loop
+;
+
+\ free storage allocated to a heap instance by alloc or alloc-array
+\ NOTE: not protected against errors like FREEing something that's
+\ really in the dictionary.
+: free   \ ( instance class -- )
+	drop free 
+	abort" free failed "
 ;
 
 \ Instance aliases for common class methods
