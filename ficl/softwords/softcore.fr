@@ -168,6 +168,8 @@ set-current   \ stop hiding words
    ." Compile: " get-current list-wid cr  
 ; 
 
+: debug  ' debug-xt ;
+
 previous   \ lose hidden words from search order
 
 \ ** E N D   S O F T C O R E . F R

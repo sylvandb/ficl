@@ -1172,7 +1172,7 @@ static void interpret(FICL_VM *pVM)
     assert(pVM);
     si = vmGetWord0(pVM);
 
-    vmBranchRelative(pVM, -1);
+    /* vmBranchRelative(pVM, -1); */
 
     /*
     ** Get next word...if out of text, we're done.

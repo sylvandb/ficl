@@ -842,7 +842,7 @@ void       ficlTick(FICL_VM *pVM);
 /* 
 ** The following supports SEE and the debugger.
 */
-enum  
+typedef enum  
 {
 	BRANCH,
 	COLON, 
@@ -859,9 +859,7 @@ enum
 	STRINGLIT,
 	USER, 
     VARIABLE, 
-} wordkinds;
-
-typedef enum wordkinds WORDKIND;
+} WORDKIND;
 
 WORDKIND   ficlWordClassify(FICL_WORD *pFW);
 

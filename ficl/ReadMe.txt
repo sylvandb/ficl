@@ -1,19 +1,8 @@
 Coming up:
 Web server scripting extension (GoAhead port)
 
-method: defining word for public methods
-
-ficlwin Debugger pane - step, stack trace, breakpoint
-Design:
-0. Debug pane or window - step-into step-over go
-1. DEBUG <word> --- lookup word, decompile it into debug pane
-2. At each STEP, stack pane displays stack state
-3. GO runs until breakpoint or leaves debug mode if no breaks
-4. BREAK stops debug vm at next step
-Requires a debug VM that checks for breaks, step mode, etc.
-How to get stack parameters to execution vm, or get input text to debug vm?
-
-rel 2.05 -- June 2000
+rel 2.05 -- August 2000
+- Step debugger 
 - *** HTML documentation extensively revised ***
 - Incorporated Alpha (64 bit) patches from the freeBSD team.
 - Split SEARCH and SEARCH EXT words from words.c to search.c

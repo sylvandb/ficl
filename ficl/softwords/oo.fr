@@ -569,6 +569,9 @@ instance-vars >search
 	inst swap -
 	class ;
 
+: debug   ( 2this --  ?? )
+    find-method-xt debug-xt ;
+
 previous set-current
 \ E N D   O B J E C T
 

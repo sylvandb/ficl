@@ -209,17 +209,21 @@ int ficlExec(FICL_VM *pVM, char *pText)
 
 int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
 {
-    static FICL_WORD *pInterp = NULL;
+    static FICL_WORD *pInterp[3] = {NULL, NULL, NULL};
 
     int        except;
     jmp_buf    vmState;
     jmp_buf   *oldState;
     TIB        saveTib;
 
-    if (!pInterp)
-        pInterp = ficlLookup("interpret");
+    if (!pInterp[0])
+    {
+        pInterp[0] = ficlLookup("interpret");
+        pInterp[1] = ficlLookup("(branch)");
+        pInterp[2] = (FICL_WORD *)(void *)(-2);
+    }
     
-    assert(pInterp);
+    assert(pInterp[0]);
     assert(pVM);
 
     if (size < 0)
@@ -244,7 +248,7 @@ int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
         }
         else
         {   /* set VM up to interpret text */
-            vmPushIP(pVM, &pInterp);
+            vmPushIP(pVM, &pInterp[0]);
         }
 
         vmInnerLoop(pVM);
@@ -322,6 +326,7 @@ int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
     int        except;
     jmp_buf    vmState;
     jmp_buf   *oldState;
+    FICL_WORD *oldRunningWord;
 
     if (!pQuit)
         pQuit = ficlLookup("exit-inner");
@@ -329,6 +334,11 @@ int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
     assert(pVM);
     assert(pQuit);
     
+    /* 
+    ** Save the runningword so that RESTART behaves correctly
+    ** over nested calls.
+    */
+    oldRunningWord = pVM->runningWord;
     /*
     ** Save and restore VM's jmp_buf to enable nested calls
     */
@@ -369,6 +379,7 @@ int ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord)
     }
 
     pVM->pState    = oldState;
+    pVM->runningWord = oldRunningWord;
     return (except);
 }
 

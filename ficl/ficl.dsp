@@ -120,6 +120,10 @@ SOURCE=.\testmain.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\tools.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\vm.c
 # End Source File
 # Begin Source File

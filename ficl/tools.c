@@ -34,7 +34,7 @@
 ** nBREAKPOINTS sizes the breakpoint array. One breakpoint (bp 0) is reserved
 ** for the STEP command. The rest are user programmable. 
 */
-#define nBREAKPOINTS 10
+#define nBREAKPOINTS 32
 #endif
 
 /*
@@ -55,6 +55,7 @@ typedef struct breakpoint
 
 static BREAKPOINT bpStep = {NULL, NULL};
 static FICL_WORD *pStep = NULL;
+static FICL_WORD *pOnStep = NULL;
 
 #if 0
 /**************************************************************************
@@ -77,16 +78,15 @@ static void initTools(FICL_VM *pVM)
 #endif
 
 
-/**************************************************************************
-                        s e e 
-** TOOLS ( "<spaces>name" -- )
-** Display a human-readable representation of the named word's definition.
-** The source of the representation (object-code decompilation, source
-** block, etc.) and the particular form of the display is implementation
-** defined. 
-** NOTE: these funcs come late in the file because they reference all
-** of the word-builder funcs without declaring them again. Call me lazy.
-**************************************************************************/
+static void vmSetBreak(FICL_VM *pVM, BREAKPOINT *pBP)
+{
+    assert(pStep);
+    pBP->address = pVM->ip;
+    pBP->origXT = *pVM->ip;
+    *pVM->ip = pStep;
+}
+
+
 /*
 ** isAFiclWord
 ** Vet a candidate pointer carefully to make sure
@@ -108,6 +108,24 @@ static int isAFiclWord(FICL_WORD *pFW)
     return ((pFW->nName > 0) && (pFW->name[pFW->nName] == '\0'));
 }
 
+
+static int isPrimitive(FICL_WORD *pFW)
+{
+    WORDKIND wk = ficlWordClassify(pFW);
+    return ((wk != COLON) && (wk != DOES));
+}
+
+
+/**************************************************************************
+                        s e e 
+** TOOLS ( "<spaces>name" -- )
+** Display a human-readable representation of the named word's definition.
+** The source of the representation (object-code decompilation, source
+** block, etc.) and the particular form of the display is implementation
+** defined. 
+** NOTE: these funcs come late in the file because they reference all
+** of the word-builder funcs without declaring them again. Call me lazy.
+**************************************************************************/
 /*
 ** seeColon (for proctologists only)
 ** Walks a colon definition, decompiling
@@ -273,19 +291,21 @@ static void see(FICL_VM *pVM)
 
 
 /**************************************************************************
-                        f i c l D e b u g
+                        f i c l D e b u g X T
 ** debug  ( xt -- )
 ** Given an xt of a colon definition or a word defined by DOES>, set the
 ** VM up to debug the word: push IP, set the xt as the next thing to execute,
 ** set a breakpoint at its first instruction, and run to the breakpoint.
 ** Note: the semantics of this word are equivalent to "step in"
 **************************************************************************/
-void ficlDebug(FICL_VM *pVM)
+void ficlDebugXT(FICL_VM *pVM)
 {
     FICL_WORD *xt = stackPopPtr(pVM->pStack);
     WORDKIND wk = ficlWordClassify(xt);
 
     assert(pStep);
+
+    pOnStep = ficlLookup("on-step");
 
     stackPushPtr(pVM->pStack, xt);
     seeXT(pVM);
@@ -311,6 +331,12 @@ void ficlDebug(FICL_VM *pVM)
 }
 
 
+/**************************************************************************
+                        s t e p I n
+** FICL 
+** Execute the next instruction, stepping into it if it's a colon definition 
+** or a does> word. This is the easy kind of step.
+**************************************************************************/
 void stepIn(FICL_VM *pVM)
 {
     assert(pStep);
@@ -324,9 +350,7 @@ void stepIn(FICL_VM *pVM)
     /*
     ** Now set a breakpoint at the next instruction
     */
-    bpStep.address = pVM->ip;
-    bpStep.origXT = *pVM->ip;
-    *pVM->ip = pStep;
+    vmSetBreak(pVM, &bpStep);
     
     return;
 }
@@ -335,28 +359,39 @@ void stepIn(FICL_VM *pVM)
 /**************************************************************************
                         s t e p O v e r
 ** FICL 
-** Execute the next instruction atomically.
+** Execute the next instruction atomically. This requires some insight into 
+** the memory layout of compiled code. Set a breakpoint at the next instruction
+** in this word, and run until we hit it
 **************************************************************************/
 void stepOver(FICL_VM *pVM)
 {
+    FICL_WORD *pFW;
+	WORDKIND kind;
     assert(pStep);
-    /*
-    ** Do one step of the inner loop
-    */
-    { 
-        M_VM_STEP(pVM) 
+
+    pFW = *pVM->ip;
+	kind = ficlWordClassify(pFW);
+
+	switch (kind)
+	{
+	case COLON: 
+	case DOES:
+        /*
+        ** assume that the next cell holds an instruction 
+        ** set a breakpoint there and return to the inner interp
+        */
+        bpStep.address = pVM->ip + 1;
+        bpStep.origXT =  pVM->ip[1];
+        pVM->ip[1] = pStep;
+		break;
+
+	default:
+        stepIn(pVM);
+        break;
     }
 
-    /*
-    ** Now set a breakpoint at the next instruction
-    */
-    bpStep.address = pVM->ip;
-    bpStep.origXT = *pVM->ip;
-    *pVM->ip = pStep;
-    
     return;
 }
-
 
 
 /**************************************************************************
@@ -367,11 +402,13 @@ void stepOver(FICL_VM *pVM)
 ** of the current breakpoint.
 ** Clear the breakpoint
 ** Get a command from the console. 
-** in (step in) - execute the current instruction and set a new breakpoint 
+** i (step in) - execute the current instruction and set a new breakpoint 
 **    at the IP
-** ov (step over) - execute the current instruction to completion and set
+** o (step over) - execute the current instruction to completion and set
 **    a new breakpoint at the IP
-** go - execute the current instruction and exit
+** g (go) - execute the current instruction and exit
+** q (quit) - abort current word
+** b (toggle breakpoint)
 **************************************************************************/
 void stepBreak(FICL_VM *pVM)
 {
@@ -383,31 +420,63 @@ void stepBreak(FICL_VM *pVM)
 
         assert(bpStep.address != NULL);
         /*
-        ** restore the original instruction at the breakpoint, and restore the IP
+        ** Clear the breakpoint that caused me to run
+        ** Restore the original instruction at the breakpoint, 
+        ** and restore the IP
         */
+        assert(bpStep.address);
+        assert(bpStep.origXT);
+
         pVM->ip = (IPTYPE)bpStep.address;
-        *pVM->ip = pFW = bpStep.origXT;
+        *pVM->ip = bpStep.origXT;
 
         /*
-        ** Print the name of the next instruction and get a debug command
+        ** If there's an onStep, do it
         */
-        sprintf(pVM->pad, "%.*s", pFW->nName, pFW->name);
+        if (pOnStep)
+            ficlExecXT(pVM, pOnStep);
+
+        /*
+        ** Print the name of the next instruction
+        */
+        pFW = bpStep.origXT;
+        sprintf(pVM->pad, "next: %.*s", pFW->nName, pFW->name);
+        if (isPrimitive(pFW))
+        {
+            strcat(pVM->pad, " primitive");
+        }
+
         vmTextOut(pVM, pVM->pad, 1);
+    }
+    else
+    {
+        pVM->fRestart = 0;
     }
 
     si = vmGetWord(pVM);
 
-    if      (!strincmp(si.cp, "in", (unsigned char)si.count))
+    if      (!strincmp(si.cp, "i", (unsigned char)si.count))
     {
         stepIn(pVM);
     }
-    else if (!strincmp(si.cp, "go", (unsigned char)si.count))
+    else if (!strincmp(si.cp, "g", (unsigned char)si.count))
     {
         return;
     }
-    else if (!strincmp(si.cp, "ov", (unsigned char)si.count))
+    else if (!strincmp(si.cp, "o", (unsigned char)si.count))
     {
         stepOver(pVM);
+    }
+    else if (!strincmp(si.cp, "q", (unsigned char)si.count))
+    {
+        vmThrow(pVM, VM_ABORT);
+    }
+    else if (!strincmp(si.cp, "?", (unsigned char)si.count))
+    {
+        vmTextOut(pVM, "i -- step In", 1);
+        vmTextOut(pVM, "o -- step Over", 1);
+        vmTextOut(pVM, "g -- Go (execute to completion)", 1);
+        vmTextOut(pVM, "q -- Quit (stop debugging and abort)", 1);
     }
     else
     {
@@ -425,7 +494,6 @@ void stepBreak(FICL_VM *pVM)
 ** Signal the system to shut down - this causes ficlExec to return
 ** VM_USEREXIT. The rest is up to you.
 **************************************************************************/
-
 static void bye(FICL_VM *pVM)
 {
     vmThrow(pVM, VM_USEREXIT);
@@ -438,7 +506,6 @@ static void bye(FICL_VM *pVM)
 ** TOOLS 
 ** Display the parameter stack (code for ".s")
 **************************************************************************/
-
 static void displayStack(FICL_VM *pVM)
 {
     int d = stackDepth(pVM->pStack);
@@ -461,17 +528,30 @@ static void displayStack(FICL_VM *pVM)
 }
 
 
+static void displayRStack(FICL_VM *pVM)
+{
+    int d = stackDepth(pVM->rStack);
+    int i;
+    CELL *pCell;
+
+    vmTextOut(pVM, "Return Stack: ", 0);
+    if (d == 0)
+        vmTextOut(pVM, "Empty ", 0);
+    else
+    {
+        pCell = pVM->rStack->base;
+        for (i = 0; i < d; i++)
+        {
+            vmTextOut(pVM, ultoa((*pCell++).i, pVM->pad, 16), 0);
+            vmTextOut(pVM, " ", 0);
+        }
+    }
+}
+
+
 /**************************************************************************
-                        f o r g e t
-** TOOLS EXT  ( "<spaces>name" -- )
-** Skip leading space delimiters. Parse name delimited by a space.
-** Find name, then delete name from the dictionary along with all
-** words added to the dictionary after name. An ambiguous
-** condition exists if name cannot be found. 
+                        f o r g e t - w i d
 ** 
-** If the Search-Order word set is present, FORGET searches the
-** compilation word list. An ambiguous condition exists if the
-** compilation word list is deleted. 
 **************************************************************************/
 static void forgetWid(FICL_VM *pVM)
 {
@@ -485,6 +565,18 @@ static void forgetWid(FICL_VM *pVM)
 }
 
 
+/**************************************************************************
+                        f o r g e t
+** TOOLS EXT  ( "<spaces>name" -- )
+** Skip leading space delimiters. Parse name delimited by a space.
+** Find name, then delete name from the dictionary along with all
+** words added to the dictionary after name. An ambiguous
+** condition exists if name cannot be found. 
+** 
+** If the Search-Order word set is present, FORGET searches the
+** compilation word list. An ambiguous condition exists if the
+** compilation word list is deleted. 
+**************************************************************************/
 static void forget(FICL_VM *pVM)
 {
     void *where;
@@ -618,11 +710,13 @@ void ficlCompileTools(FICL_DICT *dp)
     ** Ficl extras
     */
     dictAppendWord(dp, ".env",      listEnv,        FW_DEFAULT);
-    dictAppendWord(dp, "debug",     ficlDebug,      FW_DEFAULT);
+    dictAppendWord(dp, "debug-xt",  ficlDebugXT,    FW_DEFAULT);
 	pStep = 
     dictAppendWord(dp, "step-break",stepBreak,      FW_DEFAULT);
     dictAppendWord(dp, "forget-wid",forgetWid,      FW_DEFAULT);
     dictAppendWord(dp, "see-xt",    seeXT,          FW_DEFAULT);
+    dictAppendWord(dp, ".r",        displayRStack,  FW_DEFAULT);
+
     return;
 }
 
