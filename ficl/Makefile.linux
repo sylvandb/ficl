@@ -10,7 +10,7 @@ LIB = ar cr
 RANLIB = ranlib
 
 MAJOR = 3
-MINOR = 0.0
+MINOR = 0.1
 
 ficl: testmain.o ficl.h sysdep.h libficl.a
 	$(CC) testmain.o -o ficl -L. -lficl -lm
@@ -49,4 +49,4 @@ testmain: testmain.o ficl.h sysdep.h libficl.so.$(MAJOR).$(MINOR)
 #       generic cleanup code
 #
 clean:
-	rm -f *.o *.a testmain libficl.so*
+	rm -f *.o *.a libficl.*
