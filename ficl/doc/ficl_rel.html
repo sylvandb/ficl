@@ -1,0 +1,429 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="john sadler">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
+   <title>Ficl Release Notes</title>
+</head>
+<body>
+
+<h1>
+<b>Ficl Release Notes</b></h1>
+
+<table BORDER=0 CELLSPACING=3 WIDTH="600" >
+<tr>
+<td><b>Forth Inspired Command Language&nbsp;</b></td>
+
+<td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
+</tr>
+
+<tr>
+<td><b>Author: John Sadler (<a href="mailto:john_sadler@alum.mit.edu">john_sadler@alum.mit.edu</a>)</b></td>
+</tr>
+
+<tr>
+<td><b>Created: 19 July 1997&nbsp;</b></td>
+</tr>
+
+<tr>
+<td><b></b></td>
+</tr>
+</table>
+
+<br>&nbsp;
+<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="whatsnew"></a>What's new in version 2.04</h2>
+
+<h3>
+ficlwin</h3>
+
+<ul>
+<li>
+Catches exceptions thrown by VM in ficlThread (0 @ for example) rather
+than passing them off to the OS.&nbsp;</li>
+</ul>
+
+<h3>
+ficl bugs vanquished</h3>
+
+<ul>
+<li>
+Fixed leading delimiter bugs in s" ." .( and ( (reported by Reuben Thomas)</li>
+
+<li>
+Makefile tabs restored (thanks to Michael Somos)</li>
+
+<li>
+ABORT" now throws -2 per the DPANS (thanks to Daniel Sobral for sharp eyes
+again)&nbsp;</li>
+
+<li>
+ficlExec does not print the prompt string unless (source-id == 0)</li>
+
+<li>
+Various fixes contributed by the FreeBSD team.</li>
+</ul>
+
+<h3>
+ficl enhancements</h3>
+
+<ul>
+<li>
+Words.c: modified ficlCatch to use vmExecute and vmInnerLoop (request of
+Daniel Sobral) Added vmPop and vmPush functions (by request of Lars Krueger
+) in vm.c These are shortcuts to the param stack. (Use LVALUEtoCELL to
+get things into CELL form)&nbsp;</li>
+
+<li>
+Added function vmGetStringEx with a flag to specify whether or not to skip
+lead delimiters</li>
+
+<li>
+Added non-std word: number?</li>
+
+<li>
+Added CORE EXT word AGAIN (by request of Reuben Thomas)&nbsp;</li>
+
+<li>
+Added double cell local (2local) support</li>
+
+<li>
+Augmented Johns Hopkins local syntax so that locals whose names begin with
+char 2 are treated as 2locals (OK - it's goofy, but handy for OOP)</li>
+
+<li>
+C-string class revised and enhanced - now dynamically sized</li>
+
+<li>
+C-hashstring class derived from c-string computes hashcode too.</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+What's new in version 2.03</h2>
+This is the first version of Ficl that includes contributed code. Thanks
+especially to Daniel Sobral, Michael Gauland for contributions and bug
+finding.&nbsp;
+<p>New words&nbsp;
+<ul>
+<li>
+<tt><a href="#clock">clock</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<tt><a href="#clockspersec">clocks/sec</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans8.htm#8.6.1.1230">dnegate</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(DOUBLE)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans10.htm#10.6.2.1905">ms</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FACILITY EXT - replaces MSEC <i>ficlWin only</i>)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans9.htm#9.6.1.2275">throw</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(EXCEPTION)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans9.htm#9.6.1.0875">catch</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(EXCEPTION)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.0707">allocate</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(MEMORY)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.1605">free</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(MEMORY)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.2145">resize</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(MEMORY)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.2440">within</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(CORE EXT)</tt></li>
+
+<li>
+<tt><a href="#alloc">alloc</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+
+<li>
+<tt><a href="#allocarray">alloc-array</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+
+<li>
+<tt><a href="#oofree">free</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(class method)</tt></li>
+</ul>
+Bugs Fixed&nbsp;
+<ul>
+<li>
+Bug fix in isNumber(): used to treat chars between 'Z' and 'a' as valid
+in base 10... (harmless, but weird)</li>
+
+<li>
+ficlExec pushes the <i>ip</i> and <tt>interpret</tt>s at the right times
+so that nested calls to ficlExec behave the way you'd expect them to.</li>
+
+<li>
+<tt>evaluate</tt> respects count parameter, and also passes exceptional
+return conditions back out to the calling instance of ficlExec.</li>
+
+<li>
+VM_QUIT now clears the locals dictionary in ficlExec.</li>
+</ul>
+Ficlwin Enhancements&nbsp;
+<ul>
+<li>
+File Menu: recent file list and Open now load files.</li>
+
+<li>
+Text ouput function is now faster through use of string caching. Cache
+flushes at the end of each line and each time ficlExec returns.</li>
+
+<li>
+Edit/paste now behaves more reasonably for text. File/open loads the specified
+file.</li>
+
+<li>
+Registry entries specify dictionary and stack sizes, default window placement,
+and whether or not to create a splitter for multiple VMs. See HKEY_CURRENT_USER/Software/CodeLab/ficlwin/Settings</li>
+</ul>
+Ficl Enhancements&nbsp;
+<ul>
+<li>
+This version includes changes to make it <b>64 bit friendly</b>. This unfortunately
+meant that I had to tweak some core data types and structures. I've tried
+to make this transparent to 32 bit code, but a couple of things got renamed.
+INT64 is now DPINT. UNS64 is now DPUNS. FICL_INT and FICL_UNS are synonyms
+for INT32 and UNS32 in 32 bit versions, but a are obsolescent. Please use
+the new data types instead. Typed stack operations on INT32 and UNS32 have
+been renamed because they operate on CELL scalar types, which are 64 bits
+wide on 64 bit systems. Added BITS_PER_CELL, which has legal values of
+32 or 64. Default is 32.</li>
+
+<li>
+ficl.c: Added ficlExecXT() - executes an xt completely before returning,
+passing back any exception codes generated in the process. Normal exit
+code is VM_INNEREXIT.</li>
+
+<li>
+ficl.c: Added ficlExecC() to operate on counted strings as opposed to zero
+terminated ones.</li>
+
+<li>
+ficlExec pushes ip and executes interpret at the right times so that nested
+calls to ficlExec behave the way you'd expect them to.</li>
+
+<li>
+ficlSetStackSize() allows specification of stack size at run-time (affects
+subsequent invocations of ficlNewVM()).</li>
+
+<li>
+vm.c: vmThrow() checks for (pVM->pState != NULL) before longjmping it.
+vmCreate nulls this pointer initially.&nbsp;</li>
+
+<li>
+EXCEPTION wordset contributed by Daniel Sobral of FreeBSD</li>
+
+<li>
+MEMORY-ALLOC wordset contributed by Daniel Sobral, too. Added class methods
+<tt>alloc</tt>
+and <tt>alloc-array</tt> in softwords/oo.fr to allocate objects from the
+heap.</li>
+
+<li>
+Control structure match check upgraded (thanks to Daniel Sobral for this
+suggestion). Control structure mismatches are now errors, not warnings,
+since the check accepts all syntactally legal constructs.</li>
+
+<li>
+Added vmInnerLoop() to vm.h. This function/macro factors the inner&nbsp;
+interpreter out of ficlExec so it can be used in other places. Function/macro
+behavior is conditioned on INLINE_INNER_LOOP in sysdep.h. Default: 1 unless
+_DEBUG is set. In part, this is because VC++ 5 goes apoplectic when trying
+to compile it as a function. See&nbsp;</li>
+
+<br>comments in vm.c&nbsp;
+<li>
+EVALUATE respects the count parameter, and also passes exceptional return
+conditions back out to the calling instance of ficlExec.</li>
+
+<li>
+VM_QUIT clears locals dictionary in ficlExec()</li>
+
+<li>
+Added Michael Gauland's ficlLongMul and ficlLongDiv and support routines
+to math64.c and .h. These routines are coded in C, and are compiled only
+if PORTABLE_LONGMULDIV == 1 (default is 0).</li>
+
+<li>
+Added definition of ficlRealloc to sysdep.c (needed for memory allocation
+wordset). If your target OS supports realloc(), you'll probably want to
+redefine ficlRealloc in those terms. The default version does ficlFree
+followed by ficlMalloc.</li>
+
+<li>
+testmain.c: Changed gets() in testmain to fgets() to appease the security
+gods.</li>
+
+<li>
+testmain: <tt>msec</tt> renamed to <tt><a href="#ficlms">ms</a></tt> in
+line with the ANS</li>
+
+<li>
+softcore.pl now removes comments &amp; spaces at the start and end of lines.
+As a result: sizeof (softWords) == 7663 bytes (used to be 20000)&nbsp;
+and consumes 11384 bytes of dictionary when compiled</li>
+
+<li>
+Deleted license paste-o in readme.txt (oops).</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+What's new in version 2.02</h2>
+New words&nbsp;
+<ul>
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.1850">marker</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(CORE EXT)</tt></li>
+
+<li>
+<tt><a href="http://www.taygeta.com/forth/dpans15.htm#15.6.2.1580">forget</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(TOOLS EXT)</tt></li>
+
+<li>
+<tt><a href="#ficlforgetwid">forget-wid</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlwordlist">ficl-wordlist</a>&nbsp;&nbsp;&nbsp;&nbsp; (FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlvocabulary">ficl-vocabulary</a>&nbsp;&nbsp; (FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlhide">hide</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<tt><a href="#ficlhidden">hidden</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(FICL)</tt></li>
+
+<li>
+<a href="#jhlocal">Johns Hopkins local variable syntax</a> (as best I can
+determine)</li>
+</ul>
+Bugs Fixed&nbsp;
+<ul>
+<li>
+<tt>forget</tt> now adjusts the dictionary pointer to remove the name of
+the word being forgotten (name chars come before the word header in ficl's
+dictionary)</li>
+
+<li>
+<tt>:noname</tt> used to push the colon control marker and its execution
+token in the wrong order</li>
+
+<li>
+<tt>source-id</tt> now behaves correctly when loading a file.</li>
+
+<li>
+<tt>refill</tt> returns zero at EOF (Win32 load). Win32 <tt><a href="#ficlload">load</a></tt>
+command continues to be misnamed. Really ought to be called <tt>included</tt>,
+but does not exactly conform to that spec either (because <tt>included</tt>
+expects a string signature on the stack, while Ficl's <tt><a href="#ficlload">load</a></tt>
+expects a filename upon invocation). The "real" <tt>LOAD</tt> is a <tt>BLOCK</tt>
+word.</li>
+</ul>
+Enhancements (IMHO)&nbsp;
+<ul>
+<li>
+dictUnsmudge no longer links anonymous definitions into the dictionary</li>
+
+<li>
+<tt>oop</tt> is no longer the default compile wordlist at startup, nor
+is it in the search order. Execute <b><tt>also oop definitions</tt></b>
+to use Ficl OOP.</li>
+
+<li>
+Revised oo.fr extensively to make more use of early binding</li>
+
+<li>
+Added <tt>meta</tt> - a constant that pushes the address of metaclass.
+See oo.fr for examples of use.</li>
+
+<li>
+Added classes: <tt>c-ptr&nbsp; c-bytePtr&nbsp; c-2bytePtr&nbsp; c-cellPtr
+</tt>These
+classes model pointers to non-object data, but each knows the size of its
+referent.</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+What's new in version 2.01</h2>
+
+<ul>
+<li>
+Bug fix: <tt>(local)</tt> used to leave a value on the stack between the
+first and last locals declared. This value is now stored in a static.</li>
+
+<li>
+Added new local syntax with parameter re-ordering. <a href="#newlocal">See
+description below</a>. (No longer compiled in version 2.02, in favor of
+the Johns Hopkins syntax)</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+What's new in version 2.0</h2>
+
+<ul>
+<li>
+New ANS Forth words: <tt>TOOLS</tt> and part of <tt>TOOLS EXT, SEARCH</tt>
+and <tt>SEARCH EXT, LOCALS</tt> and <tt>LOCALS EXT</tt> word sets, additional
+words from <tt>CORE EXT, DOUBLE</tt>, and <tt>STRING</tt>. (See the function
+ficlCompileCore in words.c for an alphabetical list by word set).</li>
+
+<li>
+Simple <tt>USER</tt> variable support - a user variable is a virtual machine
+instance variable. User variables behave as <tt>VARIABLE</tt>s in all other
+respects.</li>
+
+<li>
+Object oriented syntax extensions (see below)</li>
+
+<li>
+Optional stack underflow and overflow checking in many CORE words (enabled
+when FICL_ROBUST >= 2)</li>
+
+<li>
+Various bug fixes</li>
+</ul>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

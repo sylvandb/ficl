@@ -1,0 +1,164 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="john sadler">
+   <meta name="Description" content="the coolest embedded scripting language ever">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
+   <title>ficl Local Variables</title>
+</head>
+<body>
+
+<h1>
+<b>Local Variables in Ficl</b></h1>
+
+<table BORDER=0 CELLSPACING=3 WIDTH="600" >
+<tr>
+<td><b>Forth Inspired Command Language&nbsp;</b></td>
+
+<td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
+</tr>
+
+<tr>
+<td><b>Author: John Sadler (<a href="mailto:john_sadler@alum.mit.edu">john_sadler@alum.mit.edu</a>)</b></td>
+</tr>
+
+<tr>
+<td><b>Created: 19 July 1997&nbsp;</b></td>
+</tr>
+
+<tr>
+<td><b>Revision 2.04: 20 May 2000</b></td>
+</tr>
+</table>
+
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="locals"></a>Local Variables</h2>
+Locally scoped variables came late to Forth. Purists seem to feel that
+experienced Forth programmers can write supportable code using only anonymous
+stack variables and good factoring, but they complain that novices use
+global variables too much. Local variables cost little in terms of code
+size and execution speed, and are very convenient for OO programming, where
+stack effects are more complex. I use them a lot.&nbsp;
+<br>&nbsp;
+<h3>
+Johns-Hopkins local variables</h3>
+ANS Forth does not specify a complete and satisfying local variable facility.
+Instead it defines a foundation upon which to build one. Ficl comes with
+an adaptation of the Johns-Hopkins local variable syntax developed by John
+Hayes et al. This is my preferred form, and i've extended it to make OOP
+a bit simpler. Local variables can only be declared inside a definition,
+and are only visible in that definition. Here's the syntax of a JH local
+variable declaration:
+<blockquote><tt><b>{ </b>&lt;initialized-locals><b> | </b>&lt;cleared-locals><b>
+-- </b>&lt;ignored><b> }</b></tt></blockquote>
+The declaration is designed to look like a stack comment, but it uses curly
+braces instead of parens. The &lt;initialized-locals> names get their initial
+values from the stack when the word executes. The &lt;cleared-locals> names
+are (you guessed it) set to zero when the word executes, and any characters
+between -- and } are treated as a comment. The | and -- sections are optional,
+but they must appear in the order shown if they appear at all. Another
+feature: ordinarily, locals represent one cell. Local variable names prefixed
+with the character '2' in the declaration are double-cell locals. They
+behave the same as single cell locals in all other respects. I use 2locals
+quite a bit in Ficl's OO classes, because objects in Ficl are require two
+cells on the stack. Following are some examples to illustrate usage (they
+are not intended to be good code otherwise). Try these out in FiclWin to
+get a feeling for how they work...
+<blockquote><b><tt>: local-demo&nbsp; { a b | c -- }</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ." a = " a . cr</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ." b = " b . cr</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ." c = " c . cr ;</tt></b>
+<br><b><tt>1 2 local-demo&nbsp;</tt></b><b><tt></tt></b>
+<p><b><tt>: my2dup&nbsp; { 2x }&nbsp;&nbsp; x x ;</tt></b>
+<br><b><tt>1 2 my2dup .s&nbsp;&nbsp;</tt></b>
+<br><b><tt>.( you should see 1 2 1 2 on the stack ) cr empty</tt></b><b><tt></tt></b>
+<p><b><tt>: my2swap&nbsp;&nbsp; { 2x 2y -- y x }&nbsp;&nbsp; y x ;&nbsp;
+( note use of 2locals )</tt></b>
+<br><b><tt>1 2 3 4 my2swap .s</tt></b>
+<br><b><tt>.( you should see 3 4 1 2 on the stack ) cr empty</tt></b><b><tt></tt></b>
+<p><b><tt>: totally-lame-swap&nbsp; { x y | temp -- y x }</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; y to temp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; x to y</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; temp to x</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; x y ;</tt></b></blockquote>
+The last definition introduces the use of <tt>TO</tt> applied to local
+variables. <tt>TO</tt> knows whether it's operating on a <tt>LOCAL</tt>,
+a <tt>2LOCAL</tt>, or a <tt>VALUE</tt>, and does the right thing accordingly.&nbsp;
+<p>There are other syntaxes in use for local variables. You get the same
+compiled code regardless of which style of local declaration you choose,
+but the Johns-Hopkins syntax is more readable, more flexible, and supports
+<tt>2LOCAL</tt>s - if you agree, then skip ahead.&nbsp;
+<br>Ficl includes support for <tt>LOCALS</tt> and <tt>LOCALS EXT</tt> words
+(all three of them!). I've implemented both of the local variable syntaxes
+suggested in DPANS Appendix A.13. Examples: (By the way, Ficl implements
+<tt>-ROT</tt>
+as <tt>: -rot&nbsp;&nbsp; 2 -roll ;</tt> )
+<blockquote><b><tt>\ Using LOCALS| from LOCALS EXT</tt></b>
+<br><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
+<br><b><tt>&nbsp;&nbsp; locals| c b a |</tt></b>
+<br><b><tt>&nbsp; c a b&nbsp;</tt></b>
+<br><b><tt>;</tt></b></blockquote>
+
+<ul><b><tt>\ Using LOCAL END-LOCAL</tt></b>
+<br><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; local c</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; local b</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; local a</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; end-locals</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; c a b</tt></b>
+<br><b><tt>;</tt></b></ul>
+
+<h3>
+Build Controls</h3>
+Local variable support is optional because it adds a small amount of overhead
+to the outer interpreter. You can disable it by setting FICL_WANT_LOCALS
+to 0 in sysdep.h. Beware: much of the OOP code described below uses local
+variables, so if you disable locals, you're going to lose other capabilities
+too. Local variables can make Forth code quite a bit easier to read, so
+I'd encourage you to experiment with them.&nbsp;
+<br>The default maximum number of local variables is 16. It's controlled
+by FICL_MAX_LOCALS in sysdep.h.&nbsp;
+<p><a NAME="jhlocal"></a>Ficl 2.02 includes by default an implementation
+of the Johns Hopkins local syntax (as best I can determine it from examples
+on the web). This syntax lets you declare local variables that look very
+much like a stack comment. Variables in the declaration appear in the "correct"
+order for a stack comment. Everything after the -- is treated as a comment.
+In addition, you can insert a | before the -- to declare one or more zero-initialized
+locals. Example:&nbsp;
+<blockquote><b><tt>:tuck0&nbsp;&nbsp; { a b c | d -- 0 a b c }</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; d a b c ;</tt></b></blockquote>
+The | and -- delimiters can appear at most once, and must appear in the
+order shown in the example to work correctly. The local declaration ends
+at the first occurrence of }. The declaration must all be on one line as
+presently implemented.&nbsp;
+<p><a NAME="newlocal"></a>Ficl 2.01 added yet another local syntax that
+models a stack comment. This one is not compiled in the release, but you
+can add it by editing softwords/softcore.bat to include the file ficllocal.fr.
+In this case, parameters are re-ordered so that the rightmost initialized
+param comes from the top of the stack. The syntax is:&nbsp;
+<blockquote><b><tt>{{ &lt;initialized params> -- &lt;cleared params> }}</tt></b></blockquote>
+You can omit either the initialized or the cleared parameters. Parameters
+after the double dash are set to zero initially. Those to the left are
+initialized from the stack at execution time. Examples (lame ones, admittedly):&nbsp;
+<br>&nbsp;
+<blockquote>
+<pre><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )
+&nbsp;&nbsp;&nbsp; {{ a b c }}</tt></b>&nbsp;
+&nbsp;&nbsp;&nbsp; <b><tt>c a b&nbsp;</tt></b>&nbsp;
+<b><tt>;</tt></b>&nbsp;
+
+<b><tt>: tuck0&nbsp; ( a b c -- 0 a b c )</tt></b>&nbsp;
+<b><tt>&nbsp;&nbsp;&nbsp; {{ a b c -- d }}</tt></b>&nbsp;
+<b><tt>&nbsp;&nbsp;&nbsp; d a b c&nbsp;</tt></b>&nbsp;
+<b><tt>;&nbsp;</tt></b></pre>
+</blockquote>
+</td>
+</tr>
+</table>
+
+</body>
+</html>
