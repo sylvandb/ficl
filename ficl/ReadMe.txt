@@ -1,9 +1,4 @@
-to do:
-fix dorky key handling in ficlwin
-debugger out command
-debugger breakpoints
-
-rel -- May 2001 (feast or famine around here)
+rel 2.06 -- May 2001 (feast or famine around here)
 
 - Debugger changes:
   New debugger command "x" to execute the rest of the command line as ficl
@@ -20,6 +15,9 @@ rel -- May 2001 (feast or famine around here)
 - Win32 console version now handles exceptions more gracefully rather than crashing - uses win32
   structured exception handling.
 - Fixed BASE bug from 2.05 (was returning the value rather than the address) 
+- Fixed ALLOT bug - feeds address units to dictCheck, which expects Cells. Changed dictCheck
+  to expect AU. 
+- Float stack display word renamed to f.s from .f to be consistent with r.s and .s
 
 
 rel 2.05 -- April 2001

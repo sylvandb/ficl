@@ -751,7 +751,7 @@ FICL_WORD  *dictAppendWord2(FICL_DICT *pDict,
 void        dictAppendUNS(FICL_DICT *pDict, FICL_UNS u);
 int         dictCellsAvail(FICL_DICT *pDict);
 int         dictCellsUsed (FICL_DICT *pDict);
-void        dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int nCells);
+void        dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int n);
 FICL_DICT  *dictCreate(unsigned nCELLS);
 FICL_DICT  *dictCreateHashed(unsigned nCells, unsigned nHash);
 FICL_HASH  *dictCreateWordlist(FICL_DICT *dp, int nBuckets);

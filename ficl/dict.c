@@ -291,16 +291,19 @@ int dictCellsUsed(FICL_DICT *pDict)
 /**************************************************************************
                         d i c t C h e c k
 ** Checks the dictionary for corruption and throws appropriate
-** errors
+** errors.
+** Input: +n number of ADDRESS UNITS (not Cells) proposed to allot
+**        -n number of ADDRESS UNITS proposed to de-allot
+**         0 just do a consistency check
 **************************************************************************/
-void dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int nCells)
+void dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int n)
 {
-    if ((nCells >= 0) && (dictCellsAvail(pDict) < nCells))
+    if ((n >= 0) && (dictCellsAvail(pDict) * (int)sizeof(CELL) < n))
     {
         vmThrowErr(pVM, "Error: dictionary full");
     }
 
-    if ((nCells <= 0) && (dictCellsUsed(pDict) < -nCells))
+    if ((n <= 0) && (dictCellsUsed(pDict) * (int)sizeof(CELL) < -n))
     {
         vmThrowErr(pVM, "Error: dictionary underflow");
     }
