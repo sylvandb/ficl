@@ -55,23 +55,27 @@ user current-class
 \ parse-method compiles the method name so that it pushes
 \ the string base address and count at run-time.
 \
+
+hide
+
 : parse-method  \ name  run: ( -- c-addr u )
     parse-word
 	postpone sliteral
 ; compile-only
 
-: lookup-method  ( class c-addr u -- class xt )
-	2dup
-	local u 
-	local c-addr 
-	end-locals
-	2 pick cell+ @		( -- class c-addr u wid )
-	search-wordlist 	( -- class 0 | xt 1 | xt -1 )
+: lookup-method  { class 2name -- class xt }
+	name class cell+ @  ( c-addr u wid )
+	search-wordlist     ( 0 | xt 1 | xt -1 )
 	0= if
-		c-addr u type ."  not found in " 
-        body> >name type
+		name type ."  not found in " 
+        class body> >name type
         cr abort 
-	endif
+	endif 
+    class swap
+;
+
+: catch-method  ( instance class c-addr u -- <method-signature> exc-flag )
+    lookup-method catch
 ;
 
 : exec-method  ( instance class c-addr u -- <method-signature> )
@@ -82,6 +86,7 @@ user current-class
 	parse-word lookup-method
 ;
 
+set-current  ( stop hiding definitions )
 
 \ Method lookup operator takes a class-addr and instance-addr
 \ and executes the method from the class's wordlist if
@@ -95,6 +100,19 @@ user current-class
     endif
 ; immediate
 
+\ Method lookup with CATCH in case of exceptions
+: c->   ( instance class -- ?? exc-flag )
+    state @ 0= if
+		find-method-xt catch  
+    else  
+		parse-method  postpone catch-method
+    endif
+; immediate
+
+\ METHOD  makes global words that do method invocations by late binding
+\ in case you prefer this style (no --> in your code)
+: method   create does> body> >name lookup-method execute ;
+
 
 \ \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \ ** E A R L Y   B I N D I N G
@@ -106,8 +124,25 @@ user current-class
 \ Usage
 \   my-class get-wid  ( -- wid-of-my-class )
 \
+1 ficl-named-wordlist instance-vars
+instance-vars dup >search ficl-set-current
+
 : =>   \ c:( class meta -- ) run: ( -- ??? ) invokes compiled method
 	drop find-method-xt compile, drop
+; immediate compile-only
+
+: my=>   \ c:( -- ) run: ( -- ??? ) late bind compiled method of current-class
+    current-class @ dup postpone =>
+; immediate compile-only
+
+: my=[   \ same as my=> , but binds a chain of methods
+    current-class @  
+    begin 
+        parse-word 2dup 
+        s" ]" compare while  ( class c-addr u )
+        lookup-method  nip  dup             ( xt xt )
+        compile,  >body cell+ @             ( class' )
+    repeat 2drop drop 
 ; immediate compile-only
 
 
@@ -125,9 +160,6 @@ user current-class
 \ prior state. Note that these words are hidden in their own
 \ wordlist to prevent accidental use outside a SUB END-CLASS pair.
 \
-1 ficl-named-wordlist instance-vars
-instance-vars @ constant instance-vars
-instance-vars dup >search ficl-set-current
 : do-instance-var
     does>   ( instance class addr[offset] -- addr[field] )
 		nip @ +
@@ -269,8 +301,6 @@ create .wid    ( class metaclass -- wid ) \ return wid of class
 create  .size  ( class metaclass -- size ) \ return class's payload size 
     2 cells , do-instance-var 
 
-previous
-
 : get-size    metaclass => .size  @ ;
 : get-wid     metaclass => .wid   @ ;
 : get-super   metaclass => .super @ ;
@@ -325,6 +355,21 @@ previous
     class 
 ;
 
+\ Create an anonymous initialized instance from the dictionary
+: allot   { 2this -- 2instance }
+    here   ( instance-address )
+    this my=> get-size  allot
+    this drop 2dup --> init
+;
+
+\ Create an anonymous array of initialized instances from the dictionary
+: allot-array   { nobj 2this -- 2instance }
+    here   ( instance-address )
+    this my=> get-size  nobj * allot
+    this drop 2dup     ( 2instance 2instance )
+    nobj -rot --> array-init
+;
+
 \ create a proxy object with initialized payload address given
 : ref   ( instance-addr class metaclass "name" -- )
     drop create , ,
@@ -356,6 +401,7 @@ previous
 \ and sets the compilation wordlist to be the private wordlist of the
 \ new class. The class's wordlist is deliberately NOT in the search order -
 \ to prevent methods from getting used with wrong data.
+\ Postcondition: leaves the address of the new class in current-class
 : sub   ( class metaclass "name" -- old-wid addr[size] size )
     wordlist
 	locals| wid meta parent |
@@ -409,7 +455,7 @@ previous
 : see  ( class meta -- )   
     metaclass => get-wid >search see previous ;
 
-set-current	
+previous set-current	
 \ E N D   M E T A C L A S S
 
 \ META is a nickname for the address of METACLASS...
@@ -439,6 +485,7 @@ object drop cell+ @ brand-wordlist
 
 object drop current-class ! 
 do-do-instance
+instance-vars >search
 
 \ O B J E C T   M E T H O D S
 \ Convert instance cell-pair to class cell-pair
@@ -522,8 +569,8 @@ do-do-instance
 	inst swap -
 	class ;
 
-set-current
+previous set-current
 \ E N D   O B J E C T
 
 
-previous definitions
+only definitions

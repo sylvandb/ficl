@@ -4,7 +4,7 @@
 ** ANS Forth CORE word-set written in C
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 19 July 1997
-** $Header$
+** $Id$
 *******************************************************************/
 
 #include <stdlib.h>
@@ -675,13 +675,14 @@ static void displayStack(FICL_VM *pVM)
     vmCheckStack(pVM, 0, 0);
 
     if (d == 0)
-        vmTextOut(pVM, "(Stack Empty)", 1);
+        vmTextOut(pVM, "(Stack Empty) ", 0);
     else
     {
-        pCell = pVM->pStack->sp;
+        pCell = pVM->pStack->base;
         for (i = 0; i < d; i++)
         {
-            vmTextOut(pVM, ltoa((*--pCell).i, pVM->pad, pVM->base), 1);
+            vmTextOut(pVM, ltoa((*pCell++).i, pVM->pad, pVM->base), 0);
+            vmTextOut(pVM, " ", 0);
         }
     }
 }
@@ -1911,6 +1912,16 @@ static void variable(FICL_VM *pVM)
 }
 
 
+static void twoVariable(FICL_VM *pVM)
+{
+    FICL_DICT *dp = ficlGetDict();
+    STRINGINFO si = vmGetWord(pVM);
+
+    dictAppendWord2(dp, si, variableParen, FW_DEFAULT);
+    dictAllotCells(dp, 2);
+    return;
+}
+
 
 /**************************************************************************
                         b a s e   &   f r i e n d s
@@ -1949,7 +1960,7 @@ static void allot(FICL_VM *pVM)
     FICL_DICT *dp = ficlGetDict();
     FICL_INT i = stackPopINT(pVM->pStack);
 #if FICL_ROBUST
-    dictCheck(dp, pVM, i);
+    dictCheck(dp, pVM, (i+sizeof(CELL)-1)/sizeof(CELL));
 #endif
     dictAllot(dp, i);
     return;
@@ -3886,6 +3897,24 @@ static void compareString(FICL_VM *pVM)
 
 
 /**************************************************************************
+                        s o u r c e - i d
+** CORE EXT, FILE   ( -- 0 | -1 | fileid )
+**    Identifies the input source as follows:
+**
+** SOURCE-ID       Input source
+** ---------       ------------
+** fileid          Text file fileid
+** -1              String (via EVALUATE)
+** 0               User input device
+**************************************************************************/
+static void sourceid(FICL_VM *pVM)
+{
+    stackPushINT(pVM->pStack, pVM->sourceID.i);
+    return;
+}
+
+
+/**************************************************************************
                         r e f i l l
 ** CORE EXT   ( -- flag )
 ** Attempt to fill the input buffer from the input source, returning a true
@@ -3901,9 +3930,10 @@ static void compareString(FICL_VM *pVM)
 static void refill(FICL_VM *pVM)
 {
     FICL_INT ret = (pVM->sourceID.i == -1) ? FICL_FALSE : FICL_TRUE;
+    if (ret && (pVM->fRestart == 0))
+        vmThrow(pVM, VM_RESTART);
+
     stackPushINT(pVM->pStack, ret);
-    if (ret)
-        vmThrow(pVM, VM_OUTOFTEXT);
     return;
 }
 
@@ -4326,6 +4356,7 @@ void ficlCompileCore(FICL_DICT *dp)
     dictAppendWord(dp, "pick",      pick,           FW_DEFAULT);
     dictAppendWord(dp, "roll",      roll,           FW_DEFAULT);
     dictAppendWord(dp, "refill",    refill,         FW_DEFAULT);
+    dictAppendWord(dp, "source-id", sourceid,	    FW_DEFAULT);
     dictAppendWord(dp, "to",        toValue,        FW_IMMEDIATE);
     dictAppendWord(dp, "value",     constant,       FW_DEFAULT);
     dictAppendWord(dp, "\\",        commentLine,    FW_IMMEDIATE);
@@ -4354,6 +4385,7 @@ void ficlCompileCore(FICL_DICT *dp)
     */
     dictAppendWord(dp, "2constant", twoConstant,    FW_IMMEDIATE);
     dictAppendWord(dp, "2literal",  twoLiteralIm,   FW_IMMEDIATE);
+    dictAppendWord(dp, "2variable", twoVariable,    FW_IMMEDIATE);
     dictAppendWord(dp, "dnegate",   dnegate,        FW_DEFAULT);
 
 

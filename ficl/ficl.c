@@ -3,7 +3,7 @@
 ** Forth Inspired Command Language - external interface
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 19 July 1997
-** $Header$
+** $Id$
 *******************************************************************/
 /*
 ** This is an ANS Forth interpreter written in C.
@@ -239,8 +239,8 @@ int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
     case 0:
         if (pVM->fRestart)
         {
-            pVM->fRestart = 0;
             pVM->runningWord->code(pVM);
+            pVM->fRestart = 0;
         }
         else
         {   /* set VM up to interpret text */

@@ -5,13 +5,12 @@
    <meta name="Author" content="john sadler">
    <meta name="Description" content="the coolest embedded scripting language ever">
    <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
-   <title>ficl release notes</title>
+   <title>Ficl Documentation</title>
 </head>
 <body>
-
-<center>
+<link REL="SHORTCUT ICON" href="ficl.ico">
 <h1>
-<b>ficl 2.04 release notes</b></h1></center>
+<b>Ficl Documentation</b></h1>
 
 <table BORDER=0 CELLSPACING=3 WIDTH="600" >
 <tr>
@@ -29,7 +28,7 @@
 </tr>
 
 <tr>
-<td><b>Revision 2.04: 20 May 2000</b></td>
+<td><b>Revision 2.05: June 2000</b></td>
 </tr>
 </table>
 
@@ -38,10 +37,23 @@ Contents</h2>
 
 <ul>
 <li>
-<a href="#whatsnew">Release notes</a></li>
+<a href="ficl_rel.html">Release notes</a></li>
 
 <li>
 <a href="#whatis">What is ficl?</a></li>
+
+<li>
+<a href="#download"><b>Download</b> the latest version</a></li>
+
+<li>
+<a href="#links">More information on Ficl</a></li>
+
+<li>
+<font color="#000000"><a href="#includesficl">Some software that incorporates
+Ficl</a></font></li>
+
+<li>
+<a href="#lawyerbait">Disclaimer &amp; License</a></li>
 
 <li>
 <a href="#features">Ficl features</a></li>
@@ -56,7 +68,7 @@ Contents</h2>
 <a href="#manifest">Distribution source files</a></li>
 
 <li>
-<a href="#locals">Local variables</a></li>
+<a href="ficl_loc.html">Local variables</a></li>
 
 <li>
 <a href="ficl_oop.html">Object Oriented Programming in ficl</a></li>
@@ -66,425 +78,20 @@ Contents</h2>
 
 <li>
 <a href="#ansinfo">ANS required information</a></li>
-
-<li>
-<a href="#links">Forth and Ficl references, <b><font color="#000000">download</font></b></a></li>
-
-<li>
-<font color="#000000"><a href="#includesficl">Some software that includes
-ficl</a></font></li>
-
-<li>
-<a href="#lawyerbait">Disclaimer &amp; License</a></li>
 </ul>
 
 <br>&nbsp;
-<table BORDER=0 CELLPADDING=3 COLS=1 WIDTH="600" >
-<tr>
-<td>
-<h2>
-<a NAME="whatsnew"></a>What's new in version 2.04</h2>
-
-<h3>
-ficlwin</h3>
-
-<ul>
-<li>
-Catches exceptions thrown by VM in ficlThread (0 @ for example) rather
-than passing them off to the OS.&nbsp;</li>
-</ul>
-
-<h3>
-ficl bugs vanquished</h3>
-
-<ul>
-<li>
-Fixed leading delimiter bugs in s" ." .( and ( (reported by Reuben Thomas)</li>
-
-<li>
-Makefile tabs restored (thanks to Michael Somos)</li>
-
-<li>
-ABORT" now throws -2 per the DPANS (thanks to Daniel Sobral for sharp eyes
-again)&nbsp;</li>
-
-<li>
-ficlExec does not print the prompt string unless (source-id == 0)</li>
-
-<li>
-Various fixes contributed by the FreeBSD team.</li>
-</ul>
-
-<h3>
-ficl enhancements</h3>
-
-<ul>
-<li>
-Words.c: modified ficlCatch to use vmExecute and vmInnerLoop (request of
-Daniel Sobral) Added vmPop and vmPush functions (by request of Lars Krueger
-) in vm.c These are shortcuts to the param stack. (Use LVALUEtoCELL to
-get things into CELL form)&nbsp;</li>
-
-<li>
-Added function vmGetStringEx with a flag to specify whether or not to skip
-lead delimiters</li>
-
-<li>
-Added non-std word: number?</li>
-
-<li>
-Added CORE EXT word AGAIN (by request of Reuben Thomas)&nbsp;</li>
-
-<li>
-Added double cell local (2local) support</li>
-
-<li>
-Augmented Johns Hopkins local syntax so that locals whose names begin with
-char 2 are treated as 2locals (OK - it's goofy, but handy for OOP)</li>
-
-<li>
-C-string class revised and enhanced - now dynamically sized</li>
-
-<li>
-C-hashstring class derived from c-string computes hashcode too.</li>
-</ul>
-</td>
-</tr>
-
-<tr>
-<td>
-<h2>
-What's new in version 2.03</h2>
-This is the first version of Ficl that includes contributed code. Thanks
-especially to Daniel Sobral, Michael Gauland for contributions and bug
-finding.&nbsp;
-<p>New words&nbsp;
-<ul>
-<li>
-<tt><a href="#clock">clock</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</tt></li>
-
-<li>
-<tt><a href="#clockspersec">clocks/sec</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans8.htm#8.6.1.1230">dnegate</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(DOUBLE)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans10.htm#10.6.2.1905">ms</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FACILITY EXT - replaces MSEC <i>ficlWin only</i>)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans9.htm#9.6.1.2275">throw</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(EXCEPTION)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans9.htm#9.6.1.0875">catch</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(EXCEPTION)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.0707">allocate</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(MEMORY)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.1605">free</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(MEMORY)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans14.htm#14.6.1.2145">resize</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(MEMORY)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.2440">within</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(CORE EXT)</tt></li>
-
-<li>
-<tt><a href="#alloc">alloc</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(class method)</tt></li>
-
-<li>
-<tt><a href="#allocarray">alloc-array</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(class method)</tt></li>
-
-<li>
-<tt><a href="#oofree">free</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(class method)</tt></li>
-</ul>
-Bugs Fixed&nbsp;
-<ul>
-<li>
-Bug fix in isNumber(): used to treat chars between 'Z' and 'a' as valid
-in base 10... (harmless, but weird)</li>
-
-<li>
-ficlExec pushes the <i>ip</i> and <tt>interpret</tt>s at the right times
-so that nested calls to ficlExec behave the way you'd expect them to.</li>
-
-<li>
-<tt>evaluate</tt> respects count parameter, and also passes exceptional
-return conditions back out to the calling instance of ficlExec.</li>
-
-<li>
-VM_QUIT now clears the locals dictionary in ficlExec.</li>
-</ul>
-Ficlwin Enhancements&nbsp;
-<ul>
-<li>
-File Menu: recent file list and Open now load files.</li>
-
-<li>
-Text ouput function is now faster through use of string caching. Cache
-flushes at the end of each line and each time ficlExec returns.</li>
-
-<li>
-Edit/paste now behaves more reasonably for text. File/open loads the specified
-file.</li>
-
-<li>
-Registry entries specify dictionary and stack sizes, default window placement,
-and whether or not to create a splitter for multiple VMs. See HKEY_CURRENT_USER/Software/CodeLab/ficlwin/Settings</li>
-</ul>
-Ficl Enhancements&nbsp;
-<ul>
-<li>
-This version includes changes to make it <b>64 bit friendly</b>. This unfortunately
-meant that I had to tweak some core data types and structures. I've tried
-to make this transparent to 32 bit code, but a couple of things got renamed.
-INT64 is now DPINT. UNS64 is now DPUNS. FICL_INT and FICL_UNS are synonyms
-for INT32 and UNS32 in 32 bit versions, but a are obsolescent. Please use
-the new data types instead. Typed stack operations on INT32 and UNS32 have
-been renamed because they operate on CELL scalar types, which are 64 bits
-wide on 64 bit systems. Added BITS_PER_CELL, which has legal values of
-32 or 64. Default is 32.</li>
-
-<li>
-ficl.c: Added ficlExecXT() - executes an xt completely before returning,
-passing back any exception codes generated in the process. Normal exit
-code is VM_INNEREXIT.</li>
-
-<li>
-ficl.c: Added ficlExecC() to operate on counted strings as opposed to zero
-terminated ones.</li>
-
-<li>
-ficlExec pushes ip and executes interpret at the right times so that nested
-calls to ficlExec behave the way you'd expect them to.</li>
-
-<li>
-ficlSetStackSize() allows specification of stack size at run-time (affects
-subsequent invocations of ficlNewVM()).</li>
-
-<li>
-vm.c: vmThrow() checks for (pVM->pState != NULL) before longjmping it.
-vmCreate nulls this pointer initially.&nbsp;</li>
-
-<li>
-EXCEPTION wordset contributed by Daniel Sobral of FreeBSD</li>
-
-<li>
-MEMORY-ALLOC wordset contributed by Daniel Sobral, too. Added class methods
-<tt>alloc</tt> and <tt>alloc-array</tt> in softwords/oo.fr to allocate
-objects from the heap.</li>
-
-<li>
-Control structure match check upgraded (thanks to Daniel Sobral for this
-suggestion). Control structure mismatches are now errors, not warnings,
-since the check accepts all syntactally legal constructs.</li>
-
-<li>
-Added vmInnerLoop() to vm.h. This function/macro factors the inner&nbsp;
-interpreter out of ficlExec so it can be used in other places. Function/macro
-behavior is conditioned on INLINE_INNER_LOOP in sysdep.h. Default: 1 unless
-_DEBUG is set. In part, this is because VC++ 5 goes apoplectic when trying
-to compile it as a function. See&nbsp;</li>
-
-<li>
-</li>
-
-<br>comments in vm.c&nbsp;
-<li>
-EVALUATE respects the count parameter, and also passes exceptional return
-conditions back out to the calling instance of ficlExec.</li>
-
-<li>
-VM_QUIT clears locals dictionary in ficlExec()</li>
-
-<li>
-Added Michael Gauland's ficlLongMul and ficlLongDiv and support routines
-to math64.c and .h. These routines are coded in C, and are compiled only
-if PORTABLE_LONGMULDIV == 1 (default is 0).</li>
-
-<li>
-Added definition of ficlRealloc to sysdep.c (needed for memory allocation
-wordset). If your target OS supports realloc(), you'll probably want to
-redefine ficlRealloc in those terms. The default version does ficlFree
-followed by ficlMalloc.</li>
-
-<li>
-testmain.c: Changed gets() in testmain to fgets() to appease the security
-gods.</li>
-
-<li>
-testmain: <tt>msec</tt> renamed to <tt><a href="#ficlms">ms</a></tt> in
-line with the ANS</li>
-
-<li>
-softcore.pl now removes comments &amp; spaces at the start and end of lines.
-As a result: sizeof (softWords) == 7663 bytes (used to be 20000)&nbsp;
-and consumes 11384 bytes of dictionary when compiled</li>
-
-<li>
-Deleted license paste-o in readme.txt (oops).</li>
-</ul>
-</td>
-</tr>
-
-<tr>
-<td>
-<h2>
-What's new in version 2.02</h2>
-New words&nbsp;
-<ul>
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.1850">marker</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(CORE EXT)</tt></li>
-
-<li>
-<tt><a href="http://www.taygeta.com/forth/dpans15.htm#15.6.2.1580">forget</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(TOOLS EXT)</tt></li>
-
-<li>
-<tt><a href="#ficlforgetwid">forget-wid</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</tt></li>
-
-<li>
-<tt><a href="#ficlwordlist">ficl-wordlist</a>&nbsp;&nbsp;&nbsp;&nbsp; (FICL)</tt></li>
-
-<li>
-<tt><a href="#ficlvocabulary">ficl-vocabulary</a>&nbsp;&nbsp; (FICL)</tt></li>
-
-<li>
-<tt><a href="#ficlhide">hide</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</tt></li>
-
-<li>
-<tt><a href="#ficlhidden">hidden</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(FICL)</tt></li>
-
-<li>
-<a href="#jhlocal">Johns Hopkins local variable syntax</a> (as best I can
-determine)</li>
-</ul>
-Bugs Fixed&nbsp;
-<ul>
-<li>
-<tt>forget</tt> now adjusts the dictionary pointer to remove the name of
-the word being forgotten (name chars come before the word header in ficl's
-dictionary)</li>
-
-<li>
-<tt>:noname</tt> used to push the colon control marker and its execution
-token in the wrong order</li>
-
-<li>
-<tt>source-id</tt> now behaves correctly when loading a file.</li>
-
-<li>
-<tt>refill</tt> returns zero at EOF (Win32 load). Win32 <tt><a href="#ficlload">load</a></tt>
-command continues to be misnamed. Really ought to be called <tt>included</tt>,
-but does not exactly conform to that spec either (because <tt>included</tt>
-expects a string signature on the stack, while Ficl's <tt><a href="#ficlload">load</a></tt>
-expects a filename upon invocation). The "real" <tt>LOAD</tt> is a <tt>BLOCK</tt>
-word.</li>
-</ul>
-Enhancements (IMHO)&nbsp;
-<ul>
-<li>
-dictUnsmudge no longer links anonymous definitions into the dictionary</li>
-
-<li>
-<tt>oop</tt> is no longer the default compile wordlist at startup, nor
-is it in the search order. Execute <b><tt>also oop definitions</tt></b>
-to use Ficl OOP.</li>
-
-<li>
-Revised oo.fr extensively to make more use of early binding</li>
-
-<li>
-Added <tt>meta</tt> - a constant that pushes the address of metaclass.
-See oo.fr for examples of use.</li>
-
-<li>
-Added classes: <tt>c-ptr&nbsp; c-bytePtr&nbsp; c-2bytePtr&nbsp; c-cellPtr
-</tt>These classes model pointers to non-object data, but each knows the
-size of its referent.</li>
-</ul>
-</td>
-</tr>
-
-<tr>
-<td>
-<h2>
-What's new in version 2.01</h2>
-
-<ul>
-<li>
-Bug fix: <tt>(local)</tt> used to leave a value on the stack between the
-first and last locals declared. This value is now stored in a static.</li>
-
-<li>
-Added new local syntax with parameter re-ordering. <a href="#newlocal">See
-description below</a>. (No longer compiled in version 2.02, in favor of
-the Johns Hopkins syntax)</li>
-</ul>
-</td>
-</tr>
-
-<tr>
-<td>
-<h2>
-What's new in version 2.0</h2>
-
-<ul>
-<li>
-New ANS Forth words: <tt>TOOLS</tt> and part of <tt>TOOLS EXT, SEARCH</tt>
-and <tt>SEARCH EXT, LOCALS</tt> and <tt>LOCALS EXT</tt> word sets, additional
-words from <tt>CORE EXT, DOUBLE</tt>, and <tt>STRING</tt>. (See the function
-ficlCompileCore in words.c for an alphabetical list by word set).</li>
-
-<li>
-Simple <tt>USER</tt> variable support - a user variable is a virtual machine
-instance variable. User variables behave as <tt>VARIABLE</tt>s in all other
-respects.</li>
-
-<li>
-Object oriented syntax extensions (see below)</li>
-
-<li>
-Optional stack underflow and overflow checking in many CORE words (enabled
-when FICL_ROBUST >= 2)</li>
-
-<li>
-Various bug fixes</li>
-</ul>
-</td>
-</tr>
-</table>
-
-<hr>
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
 <tr>
 <td>
 <h1>
 <a NAME="whatis"></a>What is ficl?</h1>
-<font size=+1>Ficl (Forth inspired command language) is an ANS Forth interpreter
-written in C. Unlike traditional Forths, this interpreter is designed to
-be embedded into other systems as a command/macro/development prototype
-language. Ficl provides object extensions that can be used to wrap methods
-and structures of the host system without altering them. See below for
-examples of <a href="#includesficl">software that includes ficl</a>.</font></td>
+<font size=+1>Ficl (Forth inspired command language) a complete programming
+language interpreter based on ANS Forth and written in Standard C. Ficl
+is designed to be embedded into other systems as a command/macro/development
+prototype language. Ficl provides object extensions that can be used to
+wrap methods and structures of the host system without altering them. See
+below for examples of <a href="#includesficl">software that includes ficl</a>.</font></td>
 </tr>
 
 <tr>
@@ -496,8 +103,8 @@ you to do incremental development in a way that combines the best features
 of threaded languages (rapid development, quick code/test/debug cycle,
 reasonably fast) with the best features of C (everyone knows it, easier
 to support large blocks of code, efficient, type checking). In addition,
-Ficl provides a simple object model that can act as an object oriented
-adapter for code written in C (or asm, Forth, C++...).&nbsp;</td>
+Ficl provides a simple and powerful object model that can act as an object
+oriented adapter for code written in C (or asm, Forth, C++...).&nbsp;</td>
 </tr>
 
 <tr>
@@ -530,7 +137,109 @@ Provide object oriented extensions</li>
 </tr>
 </table>
 
-<br>&nbsp;
+<p>
+<hr>
+<h2>
+<a NAME="download"></a>Download</h2>
+
+<ul>
+<li>
+<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl205/ficl205.zip">Download
+ficl 2.05</a></b></li>
+
+<li>
+<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl205/ficlwin.zip">Download
+ficlWin</a> (not for resale. please contact me for resale license arrangements)</b></li>
+</ul>
+
+<h2>
+<a NAME="links"></a>More information on Ficl and Forth</h2>
+
+<ul>
+<li>
+<a href="http://www.taygeta.com/ficl.html">Web home of Ficl</a></li>
+
+<li>
+<a href="ficlddj.pdf">Manuscript of Ficl article for January 1999 Dr. Dobb's
+Journal</a></li>
+
+<li>
+<a href="jwsforml.pdf">1998 FORML Conference paper - OO Programming in
+Ficl</a></li>
+
+<li>
+<a href="http://www.taygeta.com/forthlit.html">Forth literature index on
+Taygeta</a></li>
+
+<ul>
+<li>
+<a href="http://www.taygeta.com/forth_intro/stackflo.html">An Introduction
+to Forth using Stack Flow</a></li>
+
+<li>
+<a href="http://www.softsynth.com/pforth/pf_tut.htm">Phil Burk's Forth
+Tutorial</a></li>
+
+<li>
+<a href="http://www.taygeta.com/forth/dpans.html">Draft Proposed American
+National Standard for Forth</a></li>
+</ul>
+
+<li>
+<a href="http://www.forth.org">Forth Interest Group</a></li>
+</ul>
+
+<h2>
+<a NAME="includesficl"></a>Some software that uses ficl</h2>
+
+<ul>
+<li>
+<a href="http://www.freebsd.org/">FreeBSD</a> boot loader</li>
+
+<li>
+<a href="http://www.pagesz.net/~sessoms/debuffer/">Palm Pilot Debuffer</a>
+(Eric Sessoms)</li>
+
+<li>
+<a href="http://www.swcp.com/~jchavez/osmond.html">Mac PC Board Layout
+tool</a> (J Chavez)</li>
+
+<li>
+<a href="http://www.netcomsystems.com">NetCom Systems</a> ML7710 (Martin
+Usher)</li>
+</ul>
+
+<hr>
+<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<tr>
+<td>
+<h2>
+<a NAME="lawyerbait"></a>DISCLAIMER OF WARRANTY and LICENSE</h2>
+<i>Ficl is freeware. Use it in any way that you like, with the understanding
+that the code is not supported.</i>
+<p>Any third party may reproduce, distribute, or modify the ficl software
+code or any derivative works thereof without any compensation or license,
+provided that the original author information and this disclaimer text
+are retained in the source code files. The ficl software code is provided
+on an "as is" basis without warranty of any kind, including, without limitation,
+the implied warranties of merchantability and fitness for a particular
+purpose and their equivalents under the laws of any jurisdiction.&nbsp;
+<p>The FiclWin distribution, a derivative work of the ficl source code,
+is hereby licensed for unrestricted non-commercial use under the ficl license
+provided the user notifies the author (John Sadler) in writing or by electronic
+mail or their intended use of the FiclWin sources. You may freely redistribute
+the FiclWin distribution provided it contains this notice and adheres to
+all other provisions of this license.&nbsp;
+<p>Reselling the FiclWin source code, executable, or works derived from
+the FiclWin source code is prohibited under this license. Please contact
+me directly in order to discuss license terms for commercial use and distribution.
+<p>I am interested in hearing from anyone who uses ficl. If you have a
+problem, a success story, a defect, an enhancement request, or if you would
+like to contribute to the ficl release, please <a href="mailto:john_sadler@alum.mit.edu">send
+me email</a>.&nbsp;</td>
+</tr>
+</table>
+
 <br>&nbsp;
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
 <tr>
@@ -565,13 +274,14 @@ function called ficlLockDictionary() can control exclusive dictionary access.
 This function is stubbed out by default (See FICL_MULTITHREAD in sysdep.h).
 As long as there is only one "session" that can compile words into the
 dictionary, you do not need exclusive dictionary access for multithreading.
-<font color="#000099"><b>Note</b>: while the code is re-entrant, there
-are still restrictions on how you can use it safely in a multithreaded
-system. Specifically, the VM itself maintains state, so you generally need
-a VM per thread in a multithreaded system. If interrupt service routines
-make calls into Ficl code that alters VM state, then these generally need
-their own VM as well. Alternatively, you could provide a mutual exclusion
-mechanism to serialize access to a VM from multiple threads.</font></li>
+<font color="#000099"><b>Note</b>:
+while the code is re-entrant, there are still restrictions on how you can
+use it safely in a multithreaded system. Specifically, the VM itself maintains
+state, so you generally need a VM per thread in a multithreaded system.
+If interrupt service routines make calls into Ficl code that alters VM
+state, then these generally need their own VM as well. Alternatively, you
+could provide a mutual exclusion mechanism to serialize access to a VM
+from multiple threads.</font></li>
 
 <li>
 Simple incorporation into existing systems: the sample implementation requires
@@ -608,12 +318,14 @@ To install ficl on your target system, you need an ANSI C compiler and
 its runtime library. Inspect the system dependent macros and functions
 in <tt>sysdep.h</tt> and <tt>sysdep.c</tt> and edit them to suit your system.
 For example, <tt>INT16</tt> is a <tt>short</tt> on some compilers and an
-<tt>int</tt> on others. Check the default <tt>CELL</tt> alignment controlled
-by <tt>FICL_ALIGN</tt>. If necessary, add new definitions of <tt>ficlMalloc,
-ficlFree, ficlLockDictionary</tt>, and <tt>ficlTextOut</tt> to work with
-your operating system. Finally, use <tt>testmain.c</tt> as a guide to installing
-the ficl system and one or more virtual machines into your code. You do
-not need to include <tt>testmain.c</tt> in your build.&nbsp;
+<tt>int</tt>
+on others. Check the default <tt>CELL</tt> alignment controlled by <tt>FICL_ALIGN</tt>.
+If necessary, add new definitions of <tt>ficlMalloc, ficlFree, ficlRealloc,
+ficlLockDictionary</tt>, and <tt>ficlTextOut</tt> to work with your operating
+system. Finally, use
+<tt>testmain.c</tt> as a guide to installing the ficl
+system and one or more virtual machines into your code. You do not need
+to include <tt>testmain.c</tt> in your build.&nbsp;
 <p>Feel free to stub out the double precision math functions (which are
 presently implemented as inline assembly because it's so easy on many 32
 bit processors) with kludge code that only goes to 32 bit precision. In
@@ -628,6 +340,16 @@ below the "build controls" section until you're confident of your port.
 Beware of declaring too small a dictionary, for example. You need about
 3200 cells for a full system, about 2000 if you strip out most of the "soft"
 words.&nbsp;
+<h3>
+Soft Words</h3>
+Many words from all the supported wordsets are written in Forth, and stored
+as a big string that Ficl compiles when it starts. The sources for all
+of these words are in directory ficl/softwords. There is a .bat file (softcore.bat)
+and a PERL 5 script (softcore.pl) that convert Forth files into the file
+softcore.c, so softcore.c is really dependent on the Forth sources. This
+is not reflected in the Visual C++ project database. For the time being,
+it's a manual step. You can edit softcore.bat to change the list of files
+that contribute to softcore.c.&nbsp;
 <h3>
 To-Do List (target system dependent words)</h3>
 
@@ -649,8 +371,12 @@ Kludged <tt>CORE</tt> word: <tt>ACCEPT</tt></li>
 <td>
 <h2>
 <a NAME="api"></a>Application Programming Interface</h2>
-<i>See the comments in ficl.c and ficl.h for additional information, and
-the example in file testmain.c.</i>
+The following is a partial listing of functions that interface your system
+or program to ficl. For a complete listing, see ficl.h (heavily commented).
+For examples, see testmain.c and the ficlwin sources (<a href="#download">below</a>).
+<i>See
+the comments in ficl.c and ficl.h for additional information, and the example
+in file testmain.c.</i>
 <dl>
 <dt>
 <b>void ficlInitSystem(int nDictCells)</b></dt>
@@ -706,6 +432,15 @@ is nested under another ficlExec family function, or return the exception
 code directly if not. This function is useful if you need to execute the
 same word repeatedly - you save the dictionary search and outer interpreter
 overhead.</dd>
+
+<dt>
+<b>void ficlFreeVM(FICL_VM *pVM)</b></dt>
+
+<dd>
+Removes the VM in question from the system VM list and deletes the&nbsp;
+memory allocated to it. This is an optional call, since ficlTermSystem
+will do this cleanup for you. This function is handy if you're going to
+do a lot of dynamic creation of VMs.</dd>
 
 <dt>
 <b>FICL_VM *ficlNewVM(void)</b></dt>
@@ -845,6 +580,13 @@ declared in sysdep.h and implemented in sysdep.c)</td>
 </tr>
 
 <tr>
+<td><b>search.c</b></td>
+
+<td>Contains C implementations of several of the SEARCH and SEARCH EXT
+words</td>
+</tr>
+
+<tr>
 <td><b>softcore.c</b></td>
 
 <td>Contains all of the "soft" words - those written in Forth and compiled
@@ -869,112 +611,7 @@ This is where you'll find source code for the object oriented extensions.</td>
 </tr>
 </table>
 
-<hr>
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<tr>
-<td>
-<h2>
-<a NAME="locals"></a>Local Variables</h2>
-Locally scoped variables came late to Forth. Purists seem to feel that
-experienced Forth programmers can write supportable code using only anonymous
-stack variables and good factoring, but they complain that novices use
-global variables too much. Local variables cost little in terms of code
-size and execution speed, and are very convenient for OO programming, where
-stack effects are more complex.
-<p>Ficl includes support for <tt>LOCALS</tt> and <tt>LOCALS EXT</tt> words
-(all three of them!). I've implemented both of the local variable syntaxes
-suggested in DPANS Appendix A.13. Examples: (By the way, Ficl implements
-<tt>-ROT</tt> as <tt>: -rot&nbsp;&nbsp; 2 -roll ;</tt> )&nbsp;
-<blockquote><b><tt>\ Using LOCALS| from LOCALS EXT</tt></b>&nbsp;
-<br><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
-<br><b><tt>&nbsp;&nbsp; locals| c b a |</tt></b>
-<br><b><tt>&nbsp; c a b&nbsp;</tt></b>
-<br><b><tt>;</tt></b></blockquote>
-
-<ul><b><tt>\ Using LOCAL END-LOCAL</tt></b>
-<br><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; local c</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; local b</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; local a</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; end-locals</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; c a b</tt></b>
-<br><b><tt>;</tt></b></ul>
-Local variable support is optional because it adds a small amount of overhead
-to the outer interpreter. You can disable it by setting FICL_WANT_LOCALS
-to 0 in sysdep.h. Beware: much of the OOP code described below uses local
-variables, so if you disable locals, you're going to lose other capabilities
-too. Local variables can make Forth code quite a bit easier to read, so
-I'd encourage you to experiment with them.&nbsp;
-<br>The default maximum number of local variables is 16. It's controlled
-by FICL_MAX_LOCALS in sysdep.h.&nbsp;
-<p><a NAME="jhlocal"></a>Ficl 2.02 includes by default an implementation
-of the Johns Hopkins local syntax (as best I can determine it from examples
-on the web). This syntax lets you declare local variables that look very
-much like a stack comment. Variables in the declaration appear in the "correct"
-order for a stack comment. Everything after the -- is treated as a comment.
-In addition, you can insert a | before the -- to declare one or more zero-initialized
-locals. Example:&nbsp;
-<blockquote><b><tt>:tuck0&nbsp;&nbsp; { a b c | d -- 0 a b c }</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; d a b c ;</tt></b></blockquote>
-The | and -- delimiters can appear at most once, and must appear in the
-order shown in the example to work correctly. The local declaration ends
-at the first occurrence of }. The declaration must all be on one line as
-presently implemented.&nbsp;
-<p>In ficl 2.04 and later, this facilty can also declare double cell locals
-(this is handy for <a href="#ootutorial">OOP</a>, where objects take two
-cells to represent on the stack). Double cell locals (AKA 2locals) have
-names that start with 2. See ficl/softwords/string.fr for examples.
-<p><a NAME="newlocal"></a>Ficl 2.01 added yet another local syntax that
-models a stack comment. This one is not compiled in the release, but you
-can add it by editing softwords/softcore.bat to include the file ficllocal.fr.
-In this case, parameters are re-ordered so that the rightmost initialized
-param comes from the top of the stack. The syntax is:&nbsp;
-<blockquote><b><tt>{{ &lt;initialized params> -- &lt;cleared params> }}</tt></b></blockquote>
-You can omit either the initialized or the cleared parameters. Parameters
-after the double dash are set to zero initially. Those to the left are
-initialized from the stack at execution time. Examples (lame ones, admittedly):&nbsp;
-<br>&nbsp;
-<blockquote>
-<pre><b><tt>: -rot&nbsp;&nbsp; ( a b c -- c a b )
-&nbsp;&nbsp;&nbsp; {{ a b c }}</tt></b>&nbsp;
-&nbsp;&nbsp;&nbsp; <b><tt>c a b&nbsp;</tt></b>&nbsp;
-<b><tt>;</tt></b>&nbsp;
-
-<b><tt>: tuck0&nbsp; ( a b c -- 0 a b c )</tt></b>&nbsp;
-<b><tt>&nbsp;&nbsp;&nbsp; {{ a b c -- d }}</tt></b>&nbsp;
-<b><tt>&nbsp;&nbsp;&nbsp; d a b c&nbsp;</tt></b>&nbsp;
-<b><tt>;&nbsp;</tt></b></pre>
-</blockquote>
-
-<h3>
-Search Order</h3>
-Ficl implements many of the search order words in terms of two primitives
-called <tt><a href="#tosearch">>SEARCH</a></tt> and <tt><a href="#searchfrom">SEARCH></a></tt>.
-As their names suggest (assuming you're familiar with Forth), they push
-and pop the search order stack. See the list of <a href="#extras">Ficl
-extras</a> for details.&nbsp;
-<br>The standard does not appear to specify any conditions under which
-the search order is reset to a sane state. Ficl resets the search order
-to its default state whenever <tt>ABORT</tt> happens. This includes stack
-underflows and overflows. <tt>QUIT</tt> does not affect the search order.
-The minimum search order (set by <tt>ONLY</tt>) is equivalent to&nbsp;
-<br><b><tt>FORTH-WORDLIST 1 SET-ORDER</tt></b>
-<br>There is a default maximum of 16 wordlists in the search order. This
-can be changed by redefining FICL_DEFAULT_VOCS (declared in sysdep.h).&nbsp;
-<h3>
-Soft Words</h3>
-Many words from all the supported wordsets are written in Forth, and stored
-as a big string that Ficl compiles when it starts. The sources for all
-of these words are in directory ficl/softwords. There is a .bat file (softcore.bat)
-and a PERL 5 script (softcore.pl) that convert Forth files into the file
-softcore.c, so softcore.c is really dependent on the Forth sources. This
-is not reflected in the Visual C++ project database. For the time being,
-it's a manual step. You can edit softcore.bat to change the list of files
-that contribute to softcore.c.&nbsp;</td>
-</tr>
-</table>
-
-<hr>
+<hr WIDTH="100%">
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
 <tr>
 <td>
@@ -996,8 +633,21 @@ as a hex value regardless of the value of <tt>BASE</tt>. Example:&nbsp;
 
 <h3>
 Search order words</h3>
-Note: Ficl resets the search order whenever it does <tt>ABORT</tt>. If
-you don't like this behavior, just comment out the dictResetSearchOrder()
+Ficl implements many of the search order words in terms of two primitives
+called <tt><a href="#tosearch">>SEARCH</a></tt> and <tt><a href="#searchfrom">SEARCH></a></tt>.
+As their names suggest (assuming you're familiar with Forth), they push
+and pop the search order stack. See the list of <a href="#extras">Ficl
+extras</a> for details.&nbsp;
+<br>The standard does not appear to specify any conditions under which
+the search order is reset to a sane state. Ficl resets the search order
+to its default state whenever <tt>ABORT</tt> happens. This includes stack
+underflows and overflows. <tt>QUIT</tt> does not affect the search order.
+The minimum search order (set by <tt>ONLY</tt>) is equivalent to&nbsp;
+<dl><b><tt>FORTH-WORDLIST 1 SET-ORDER</tt></b></dl>
+There is a default maximum of 16 wordlists in the search order. This can
+be changed by redefining FICL_DEFAULT_VOCS (declared in sysdep.h).&nbsp;
+<p><b>Note</b>: Ficl resets the search order whenever it does <tt>ABORT</tt>.
+If you don't like this behavior, just comment out the dictResetSearchOrder()
 lines in ficlExec().&nbsp;
 <br>&nbsp;
 <dt>
@@ -1068,6 +718,33 @@ set-current</tt></b></dd>
 <dd>
 Wordlist for storing implementation factors of ficl provided words. To
 see what's in there, try:&nbsp; <b><tt>hide words previous set-current</tt></b></dd>
+
+<dt>
+<tt>last-word&nbsp;&nbsp; ( -- xt )</tt></dt>
+
+<dd>
+Pushes the xt address of the most recently defined word. This applies to
+colon definitions, constants, variables, and words that use <tt>create</tt>.
+You can print the name of the most recently defined word with <tt>last-word
+>name type</tt>&nbsp;</dd>
+
+<dt>
+<tt>wid-get-name&nbsp;&nbsp; ( wid -- c-addr u )</tt></dt>
+
+<dd>
+Ficl wordlists (2.05 and later) have a name property that can be assigned.
+This is used by <tt>ORDER</tt> to list the names of wordlists in the search
+order.&nbsp;</dd>
+
+<dt>
+<tt>wid-set-name&nbsp;&nbsp; ( c-addr wid -- )</tt></dt>
+
+<dd>
+Ficl wordlists (2.05 and later) have a name property that can be assigned.
+This is used by <tt>ORDER</tt> to list the names of wordlists in the search
+order. The name is assumed to be a \0 terminated string (C style), which
+conveniently is how Ficl stores word names.&nbsp; See softwords/softcore.fr
+definition of <tt>brand-wordlist</tt>&nbsp;</dd>
 
 <dt>
 <tt>wid-set-super&nbsp;&nbsp; ( wid -- )</tt></dt>
@@ -1336,9 +1013,6 @@ for, or behaviors of, each item.&nbsp;
 <li>
 <b>aligned address requirements (3.1.3.3 Addresses);</b>&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">System dependent. You can change the default
 address alignment by defining FICL_ALIGN on your compiler's command line.
 The default value is set to 2 in sysdep.h. This causes dictionary entries
@@ -1347,16 +1021,10 @@ To align on <b>2<sup>n</sup></b> byte boundaries, set FICL_ALIGN to <b>n</b>.&nb
 <li>
 <b>behavior of 6.1.1320 EMIT for non-graphic characters</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Depends on target system, C runtime library,
 and your implementation of ficlTextOut().</font>
 <li>
 <b>character editing of 6.1.0695 ACCEPT and 6.2.1390 EXPECT</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">None implemented in the versions supplied in
 words.c. Because ficlExec() is supplied a text buffer externally, it's
@@ -1364,25 +1032,16 @@ up to your system to define how that buffer will be obtained.</font>
 <li>
 <b>character set (3.1.2 Character types, 6.1.1320 EMIT, 6.1.1750 KEY)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Depends on target system and implementation of
 ficlTextOut()</font>
 <li>
 <b>character-aligned address requirements (3.1.3.3 Addresses)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Ficl characters are one byte each. There are
 no alignment requirements.</font>
 <li>
 <b>character-set-extensions matching characteristics (3.4.2 Finding definition
 n<font color="#000000">ames)</font></b><font color="#000000">;&nbsp;</font></li>
-
-<li>
-</li>
 
 <br><font color="#000000">No special processing is performed on characters
 beyond case-folding. Therefore, extended characters will not match their
@@ -1391,23 +1050,14 @@ unaccented counterparts.</font>
 <b>conditions under which control characters match a space delimiter (3.4.1.1
 Delimiters)</b>;<font color="#FF6666">&nbsp;</font></li>
 
-<li>
-</li>
-
 <br><font color="#000000">Ficl uses the Standard C function isspace() to
 distinguish space characters. The rest is up to your library vendor.</font>
 <li>
 <b>format of the control-flow stack (3.2.3.2 Control-flow stack)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Uses the data stack</font>
 <li>
 <b>conversion of digits larger than thirty-five (3.2.1.2 Digit conversion)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">The maximum supported value of <tt>BASE</tt>
 is 36. Ficl will assertion fail in function ltoa of vm.c if the base is
@@ -1416,22 +1066,13 @@ NDEBUG is defined</font>, however, other than possibly unexpected behavior.&nbsp
 <li>
 <b>display after input terminates in 6.1.0695 ACCEPT and 6.2.1390 EXPECT</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Target system dependent</font>
 <li>
 <b>exception abort sequence (as in 6.1.0680 ABORT")</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Does <tt>ABORT</tt></font>
 <li>
 <b>input line terminator (3.2.4.1 User input device)</b>;<font color="#FF0000">&nbsp;</font></li>
-
-<li>
-</li>
 
 <br><font color="#000000">Target system dependent (implementation of outer
 loop that calls ficlExec)</font>
@@ -1439,15 +1080,9 @@ loop that calls ficlExec)</font>
 <b>maximum size of a counted string, in characters (3.1.3.4 Counted strings,
 6.1.2450 WORD)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">255</font>
 <li>
 <b>maximum size of a parsed string (3.4.1 Parsing)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br>Limited by available memory and the maximum unsigned value that can
 fit in a CELL (2<sup>32</sup>-1).&nbsp;
@@ -1455,30 +1090,18 @@ fit in a CELL (2<sup>32</sup>-1).&nbsp;
 <b>maximum size of a definition name, in characters (3.3.1.2 Definition
 names)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Ficl stores the first 31 characters of a definition
 name.</font>
 <li>
 <b>maximum string length for 6.1.1345 ENVIRONMENT?, in characters</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Same as maximum definition name length</font>
 <li>
 <b>method of selecting 3.2.4.1 User input device</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br>None supported. This is up to the target system&nbsp;
 <li>
 <b>method of selecting 3.2.4.2 User output device</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br>None supported. This is up to the target system&nbsp;
 <li>
@@ -1487,17 +1110,11 @@ name.</font>
 <li>
 <b>number of bits in one address unit (3.1.3.3 Addresses)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Target system dependent. Ficl generally supports
 processors that can address 8 bit quantities, but there is no dependency
 that I'm aware of.</font>
 <li>
 <b>number representation and arithmetic (3.2.1.1 Internal number representation)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br>System dependent. Ficl represents a CELL internally as a union that
 can hold INT32 (a signed 32 bit scalar value), UNS32 (32 bits unsigned),
@@ -1506,9 +1123,6 @@ and an untyped pointer. No specific byte ordering is assumed.&nbsp;
 <b>ranges for n, +n, u, d, +d, and ud (3.1.3 Single-cell types, 3.1.4 Cell-pair
 types)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br>Assuming a 32 bit implementation, range for signed single-cell values
 is -2<sup>31</sup>..2<sup>31</sup>-1. Range for unsigned single cell values
 is 0..2<sup>32</sup>-1. Range for signed double-cell values is -2<sup>63</sup>..2<sup>63</sup>-1.
@@ -1516,36 +1130,21 @@ Range for unsigned single cell values is 0..2<sup>64</sup>-1.&nbsp;
 <li>
 <b>read-only data-space regions (3.3.3 Data space)</b>;</li>
 
-<li>
-</li>
-
 <br>None&nbsp;
 <li>
 <b>size of buffer at 6.1.2450 WORD (3.3.3.6 Other transient regions)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br>Default is 255. Depends on the setting of nPAD in ficl.h.&nbsp;
 <li>
 <b>size of one cell in address units (3.1.3 Single-cell types)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">System dependent, generally four.</font>
 <li>
 <b>size of one character in address units (3.1.2 Character types)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">System dependent, generally one.</font>
 <li>
 <b>size of the keyboard terminal input buffer (3.3.3.5 Input buffers)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">This buffer is supplied by the host program.
 Ficl imposes no practical limit.</font>
@@ -1553,60 +1152,36 @@ Ficl imposes no practical limit.</font>
 <b>size of the pictured numeric output string buffer (3.3.3.6 Other transient
 regions)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br>Default is 255 characters. Depends on the setting of nPAD in ficl.h.&nbsp;
 <li>
 <b>size of the scratch area whose address is returned by 6.2.2000 PAD (3.3.3.6
 Other transient regions)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br>Not presently supported&nbsp;
 <li>
 <b>system case-sensitivity characteristics (3.4.2 Finding definition names)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Ficl is not case sensitive</font>
 <li>
 <b>system prompt (3.4 The Forth text interpreter, 6.1.2050 QUIT)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">"ok>"</font>
 <li>
 <b>type of division rounding (3.2.2.1 Integer division, 6.1.0100 */, 6.1.0110
 */MOD, 6.1.0230 /, 6.1.0240 /MOD, 6.1.1890 MOD)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Symmetric</font>
 <li>
 <b>values of 6.1.2250 STATE when true</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">One (no others)</font>
 <li>
 <b>values returned after arithmetic overflow (3.2.2.2 Other integer operations)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br>System dependent. Ficl makes no special checks for overflow.&nbsp;
 <li>
 <b>whether the current definition can be found after 6.1.1250 DOES> (6.1.0450
 :)</b>.&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">No. Definitions are unsmudged after ; only, and
 only then if no control structure matching problems have been detected.</font></ul>
@@ -1623,17 +1198,11 @@ combination of factors:&nbsp;
 <b>a name is neither a valid definition name nor a valid number during
 text interpretation (3.4 The Forth text interpreter)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Ficl does <tt>ABORT</tt> and prints the name
 followed by " not found".</font>
 <li>
 <b>a definition name exceeded the maximum length allowed (3.3.1.2 Definition
 names)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Ficl stores the first 31 characters of the definition
 name, and uses all characters of the name in computing its hash code. The
@@ -1642,17 +1211,11 @@ length field.</font>
 <li>
 <b>addressing a region not listed in 3.3.3 Data Space</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">No problem: all addresses in ficl are absolute.
 You can reach any 32 bit address in Ficl's address space.</font>
 <li>
 <b>argument type incompatible with specified input parameter, e.g., passing
 a flag to a word expecting an n (3.1 Data types)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Ficl makes no check for argument type compatibility.
 Effects of a mismatch vary widely depending on the specific problem and
@@ -1661,9 +1224,6 @@ operands.</font>
 <b>attempting to obtain the execution token, (e.g., with 6.1.0070 ', 6.1.1550
 FIND, etc.) of a definition with undefined interpretation semantics</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Ficl returns a valid token, but the result of
 executing that token while interpreting may be undesirable.</font>
 <li>
@@ -1671,17 +1231,11 @@ executing that token while interpreting may be undesirable.</font>
 /MOD, 6.1.1561 FM/MOD, 6.1.1890 MOD, 6.1.2214 SM/REM, 6.1.2370 UM/MOD,
 8.6.1.1820 M*/)</b>;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Results are target procesor dependent. Generally,
 Ficl makes no check for divide-by-zero. The target processor will probably
 throw an exception.</font>
 <li>
 <b>insufficient data-stack space or return-stack space (stack overflow)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">With FICL_ROBUST (sysdep.h) set >= 2, most parameter
 stack operations are checked for underflow and overflow. Ficl does not
@@ -1689,15 +1243,9 @@ check the return stack.</font>
 <li>
 <b>insufficient space for loop-control parameters</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">No check - Evil results.</font>
 <li>
 <b>insufficient space in the dictionary</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Ficl generates an error message if the dictionary
 is too full to create a definition header. It checks <tt>ALLOT</tt> as
@@ -1705,9 +1253,6 @@ well, but it is possible to make an unchecked allocation request that overflows
 the dictionary.</font>
 <li>
 <b>interpreting a word with undefined interpretation semantics</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Ficl protects all ANS Forth words with undefined
 interpretation semantics from being executed while in interpret state.
@@ -1717,18 +1262,12 @@ though.</font>
 <b>modifying the contents of the input buffer or a string literal (3.3.3.4
 Text-literal regions, 3.3.3.5 Input buffers)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Varies depending on the nature of the buffer.
 The input buffer is supplied by ficl's host function, and may reside in
 read-only memory. If so, writing the input buffer can ganerate an exception.
 String literals are stored in the dictionary, and are writable.</font>
 <li>
 <b>overflow of a pictured numeric output string</b>;</li>
-
-<li>
-</li>
 
 <br>In the unlikely event you are able to construct a pictured numeric
 string of more than 255 characters, the system will be corrupted unpredictably.
@@ -1737,9 +1276,6 @@ virtual machine. Whatever is mapped after the offending VM in memory will
 be trashed, along with the heap structures that contain it.&nbsp;
 <li>
 <b>parsed string overflow</b>;</li>
-
-<li>
-</li>
 
 <br>Ficl does not copy parsed strings unless asked to. Ordinarily, a string
 parsed from the input buffer during normal interpretation is left in-place,
@@ -1752,15 +1288,9 @@ in a value too big to be represented by a single-cell integer (6.1.0090
 *, 6.1.0100 */, 6.1.0110 */MOD, 6.1.0570 >NUMBER, 6.1.1561 FM/MOD, 6.1.2214
 SM/REM, 6.1.2370 UM/MOD, 6.2.0970 CONVERT, 8.6.1.1820 M*/)</b>;&nbsp;</li>
 
-<li>
-</li>
-
 <br><font color="#000000">Value will be truncated</font>
 <li>
 <b>reading from an empty data stack or return stack (stack underflow)</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Most stack underflows are detected and prevented
 if FICL_ROBUST (sysdep.h) is set to 2 or greater. Otherwise, the stack
@@ -1768,9 +1298,6 @@ pointer and size are likely to be trashed.</font>
 <li>
 <b>unexpected end of input buffer, resulting in an attempt to use a zero-length
 string as a name</b>;&nbsp;</li>
-
-<li>
-</li>
 
 <br><font color="#000000">Ficl returns for a new input buffer until a non-empty
 one is supplied.</font></ul>
@@ -1780,32 +1307,20 @@ of the relevant words:&nbsp;
 <li>
 <b>>IN greater than size of input buffer (3.4.1 Parsing)</b></li>
 
-<li>
-</li>
-
 <br>Bad Things occur - unpredictable bacause the input buffer is supplied
 by the host program's outer loop.&nbsp;
 <li>
 <b>6.1.2120 RECURSE appears after 6.1.1250 DOES></b></li>
-
-<li>
-</li>
 
 <br>It finds the address of the definition before <tt>DOES></tt>
 <li>
 <b>argument input source different than current input source for 6.2.2148
 RESTORE-INPUT</b></li>
 
-<li>
-</li>
-
 <br>Not implemented&nbsp;
 <li>
 <b>data space containing definitions is de-allocated (3.3.3.2 Contiguous
 regions)</b></li>
-
-<li>
-</li>
 
 <br>This is OK until the cells are overwritten with something else. The
 dictionary maintains a hash table, and the table must be updated in order
@@ -1813,32 +1328,20 @@ to de-allocate words without corruption.&nbsp;
 <li>
 <b>data space read/write with incorrect alignment (3.3.3.1 Address alignment)</b></li>
 
-<li>
-</li>
-
 <br>Target processor dependent. Consequences include: none (Intel), address
 error exception (68K).&nbsp;
 <li>
 <b>data-space pointer not properly aligned (6.1.0150 ,, 6.1.0860 C,)</b></li>
 
-<li>
-</li>
-
 <br>See above on data space read/write alignment&nbsp;
 <li>
 <b>less than u+2 stack items (6.2.2030 PICK, 6.2.2150 ROLL)</b></li>
-
-<li>
-</li>
 
 <br>Ficl detects a stack underflow and reports it, executing <tt>ABORT,</tt>
 as long as FICL_ROBUST is two or larger.&nbsp;
 <li>
 <b>loop-control parameters not available ( 6.1.0140 +LOOP, 6.1.1680 I,
 6.1.1730 J, 6.1.1760 LEAVE, 6.1.1800 LOOP, 6.1.2380 UNLOOP)</b></li>
-
-<li>
-</li>
 
 <br>Loop initiation words are responsible for checking the stack and guaranteeing
 that the control parameters are pushed. Any underflows will be detected
@@ -1847,46 +1350,29 @@ checks for return stack underflows at the end of each line of text.&nbsp;
 <li>
 <b>most recent definition does not have a name (6.1.1710 IMMEDIATE)</b></li>
 
-<li>
-</li>
-
 <br>No problem.&nbsp;
 <li>
 <b>name not defined by 6.2.2405 VALUE used by 6.2.2295 TO</b></li>
 
-<li>
-</li>
-
 <br>Ficl's version of <tt>TO</tt> works correctly with <tt>VALUE</tt>s,
-<tt>CONSTANT</tt>s and <tt>VARIABLE</tt>s.&nbsp;
+<tt>CONSTANT</tt>s
+and <tt>VARIABLE</tt>s.&nbsp;
 <li>
 <b>name not found (6.1.0070 ', 6.1.2033 POSTPONE, 6.1.2510 ['], 6.2.2530
 [COMPILE])</b></li>
-
-<li>
-</li>
 
 <br>Ficl prints an error message and does <tt>ABORT</tt>
 <li>
 <b>parameters are not of the same type (6.1.1240 DO, 6.2.0620 ?DO, 6.2.2440
 WITHIN)</b></li>
 
-<li>
-</li>
-
 <br>No check. Results vary depending on the specific problem.&nbsp;
 <li>
 <b>6.1.2033 POSTPONE or 6.2.2530 [COMPILE] applied to 6.2.2295 TO</b></li>
 
-<li>
-</li>
-
 <br>The word is postponed correctly.&nbsp;
 <li>
 <b>string longer than a counted string returned by 6.1.2450 WORD</b></li>
-
-<li>
-</li>
 
 <br>Ficl stores the first FICL_STRING_MAX-1 chars in the destination buffer.
 (The extra character is the trailing space required by the standard. Yuck.)&nbsp;
@@ -1894,17 +1380,11 @@ WITHIN)</b></li>
 <b>u greater than or equal to the number of bits in a cell (6.1.1805 LSHIFT,
 6.1.2162 RSHIFT)</b></li>
 
-<li>
-</li>
-
 <br>Depends on target process or and C runtime library implementations
 of the &lt;&lt; and >> operators on unsigned values. For I386, the processor
 appears to shift modulo the number of bits in a cell.&nbsp;
 <li>
 <b>word not defined via 6.1.1000 CREATE (6.1.0550 >BODY, 6.1.1250 DOES>)</b></li>
-
-<li>
-</li>
 
 <br><b>words improperly used outside 6.1.0490 &lt;# and 6.1.0040 #> (6.1.0030
 #, 6.1.0050 #S, 6.1.1670 HOLD, 6.1.2210 SIGN)</b>
@@ -1923,9 +1403,6 @@ Locals Implementation-defined options</h3>
 <b>maximum number of locals in a definition (13.3.3 Processing locals,
 13.6.2.1795 LOCALS|)</b></li>
 
-<li>
-</li>
-
 <br>Default is 16. Change by redefining FICL_MAX_LOCALS, defined in sysdep.h</ul>
 
 <h3>
@@ -1935,17 +1412,11 @@ Locals Ambiguous conditions</h3>
 <li>
 <b>executing a named local while in interpretation state (13.6.1.0086 (LOCAL))</b></li>
 
-<li>
-</li>
-
 <br>Locals can be found in interpretation state while in the context of
 a definition under construction. Under these circumstances, locals behave
 correctly. Locals are not visible at all outside the scope of a definition.&nbsp;
 <li>
 <b>name not defined by VALUE or LOCAL (13.6.1.2295 TO)</b></li>
-
-<li>
-</li>
 
 <br>See the CORE ambiguous conditions, above (no change)</ul>
 
@@ -1955,9 +1426,6 @@ Programming Tools Implementation-defined options</h3>
 <ul>
 <li>
 <b>source and format of display by 15.6.1.2194 SEE</b></li>
-
-<li>
-</li>
 
 <br>SEE de-compiles definitions from the dictionary. Because Ficl words
 are threaded by their header addresses, it is very straightforward to print
@@ -1974,16 +1442,10 @@ Search Order Implementation-defined options</h3>
 <b>maximum number of word lists in the search order (16.3.3 Finding definition
 names, 16.6.1.2197 SET-ORDER)</b>&nbsp;</li>
 
-<li>
-</li>
-
 <br>Defaults to 16. Can be changed by redefining FICL_DEFAULT_VOCS, declared
 in sysdep.h&nbsp;
 <li>
 <b>minimum search order (16.6.1.2197 SET-ORDER, 16.6.2.1965 ONLY)</b>&nbsp;</li>
-
-<li>
-</li>
 
 <br>Equivalent to <tt>FORTH-WORDLIST 1 SET-ORDER</tt></ul>
 
@@ -1994,9 +1456,6 @@ Search Order Ambiguous conditions</h3>
 <li>
 <b>changing the compilation word list (16.3.3 Finding definition names)</b></li>
 
-<li>
-</li>
-
 <br>Ficl stores a link to the current definition independently of the compile
 wordlist while it is being defined, and links it into the compile wordlist
 only after the definition completes successfully. Changing the compile
@@ -2005,110 +1464,14 @@ compile wordlist.&nbsp;
 <li>
 <b>search order empty (16.6.2.2037 PREVIOUS)</b></li>
 
-<li>
-</li>
-
 <br>Ficl prints an error message if the search order underflows, and resets
 the order to its default state.&nbsp;
 <li>
 <b>too many word lists in search order (16.6.2.0715 ALSO)</b></li>
 
-<li>
-</li>
-
 <br>Ficl prints an error message if the search order overflows, and resets
 the order to its default state.</ul>
 </td>
-</tr>
-</table>
-
-<hr>
-<p><a NAME="links"></a>
-<p>For more information
-<ul>
-<li>
-<a href="http://www.taygeta.com/ficl.html">Web home of ficl</a></li>
-
-<li>
-<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl204/ficl204.zip">Download
-ficl 2.04</a></b></li>
-
-<li>
-<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl204/ficlwin.zip">Download
-ficlWin</a> (not for resale. please contact me for resale license arrangements)</b></li>
-
-<li>
-<a href="ficlddj.pdf">Manuscript of Ficl article for January 1999 Dr. Dobb's
-Journal</a></li>
-
-<li>
-<a href="jwsforml.pdf">1998 FORML Conference paper</a></li>
-
-<li>
-<a href="http://www.taygeta.com/forthlit.html">Forth literature</a></li>
-
-<ul>
-<li>
-<a href="http://www.softsynth.com/pforth/pf_tut.htm">Phil Burk's Forth
-Tutorial</a></li>
-
-<li>
-<a href="http://www.taygeta.com/forth/dpans.html">Draft Proposed American
-National Standard for Forth</a></li>
-</ul>
-
-<li>
-<a href="http://www.forth.org">Forth Interest Group</a></li>
-</ul>
-
-<h2>
-<a NAME="includesficl"></a>Some software that uses ficl</h2>
-
-<ul>
-<li>
-<a href="http://www.freebsd.org/">FreeBSD</a> boot loader</li>
-
-<li>
-<a href="http://www.pagesz.net/~sessoms/debuffer/">Palm Pilot Debuffer</a>
-(Eric Sessoms)</li>
-
-<li>
-<a href="http://www.swcp.com/~jchavez/osmond.html">Mac PC Board Layout
-tool</a> (J Chavez)</li>
-
-<li>
-<a href="http://www.netcomsystems.com">NetCom Systems</a> ML7710 (Martin
-Usher)</li>
-</ul>
-
-<hr>
-<table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
-<tr>
-<td>
-<h2>
-<a NAME="lawyerbait"></a>DISCLAIMER OF WARRANTY and LICENSE</h2>
-<i>Ficl is freeware. Use it in any way that you like, with the understanding
-that the code is not supported.</i>
-<p>Any third party may reproduce, distribute, or modify the ficl software
-code or any derivative works thereof without any compensation or license,
-provided that the original author information and this disclaimer text
-are retained in the source code files. The ficl software code is provided
-on an "as is" basis without warranty of any kind, including, without limitation,
-the implied warranties of merchantability and fitness for a particular
-purpose and their equivalents under the laws of any jurisdiction.&nbsp;
-<p>The FiclWin distribution, a derivative work of the ficl source code,
-is hereby licensed for unrestricted non-commercial use under the ficl license
-provided the user notifies the author (John Sadler) in writing or by electronic
-mail or their intended use of the FiclWin sources. You may freely redistribute
-the FiclWin distribution provided it contains this notice and adheres to
-all other provisions of this license.&nbsp;
-<p>Reselling the FiclWin source code, executable, or works derived from
-the FiclWin source code is prohibited under this license. Please contact
-me directly in order to discuss license terms for commercial use and distribution.
-<p>I am interested in hearing from anyone who uses ficl. If you have a
-problem, a success story, a defect, an enhancement request, or if you would
-like to contribute to the ficl release, please <a href="mailto:john_sadler@alum.mit.edu">send
-me email</a>.&nbsp;</td>
 </tr>
 </table>
 

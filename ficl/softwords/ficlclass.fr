@@ -4,7 +4,7 @@
 \ John Sadler 14 Sep 1998
 \
 \ ** C - W O R D
-\ Models a ficl word...
+\ Models a FICL_WORD
 
 object subclass c-word
     c-word     ref: .link
@@ -37,6 +37,7 @@ object subclass c-word
 end-class
 
 \ ** C - W O R D L I S T
+\ Models a FICL_HASH
 \ Example of use:
 \ get-current c-wordlist --> ref current
 \ current --> ?
@@ -44,17 +45,26 @@ end-class
 \ current --> .hash --> next --> ?
 
 object subclass c-wordlist
-	c-wordlist ref: .parent
-	c-4byte    obj: .size
-	c-word     ref: .hash
+    c-wordlist ref: .parent
     c-ptr      obj: .name
+    c-cell     obj: .size
+    c-word     ref: .hash   ( first entry in hash table )
 
     : ?
-        2drop ." ficl wordlist " cr ;
-	: push  drop  >search ;
-	: pop   2drop previous ;
-	: set-current   drop set-current ;
-	: words   --> push  words previous ;
+        --> get-name ." ficl wordlist "  type cr ;
+    : push  drop  >search ;
+    : pop   2drop previous ;
+    : set-current   drop set-current ;
+    : get-name   drop wid-get-name ;
+    : words   { 2this -- }
+        this my=[ .size get ] 0 do 
+            i this my=[ .hash index ]  ( 2list-head )
+            begin
+                2dup --> get-name type space
+                --> next over
+            0= until 2drop cr
+        loop
+    ;
 end-class
 
 \ : named-wid  wordlist postpone c-wordlist  metaclass => ref ;

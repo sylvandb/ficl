@@ -27,7 +27,7 @@
 </tr>
 
 <tr>
-<td><b></b></td>
+<td></td>
 </tr>
 </table>
 
@@ -36,7 +36,100 @@
 <tr>
 <td>
 <h2>
-<a NAME="whatsnew"></a>What's new in version 2.04</h2>
+<a NAME="whatsnew"></a>What's new in version 2.05</h2>
+
+<h3>
+General&nbsp;</h3>
+
+<ul>
+<li>
+HTML documentation extensively revised</li>
+
+<li>
+Incorporated Alpha (64 bit) patches from the freeBSD team.</li>
+
+<li>
+Split SEARCH and SEARCH EXT words from words.c to search.c</li>
+
+<li>
+2LOCALS defined in <a href="ficl_loc.html#jhlocal">Johns Hopkins local
+syntax</a> now lose the first '2' in their names.</li>
+</ul>
+
+<h3>
+Bug fixes</h3>
+<a href="http://www.taygeta.com/forth/dpans9.htm#9.6.2.0680">ABORT"</a>
+now works correctly (I promise!)
+<br><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.2125">REFILL</a>
+works better
+<h3>
+New words</h3>
+
+<ul>
+<li>
+ANS CORE EXT words: <a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0415">2r@</a><a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0410">2r></a>
+<a href="http://www.taygeta.com/forth/dpans6.htm#6.2.0340">2>r</a>&nbsp;</li>
+
+<li>
+ANS DOUBLE words: <a href="http://www.taygeta.com/forth/dpans8.htm#8.6.1.0440">2VARIABLE</a></li>
+
+<li>
+ANS ORDER now lists wordlists by name</li>
+
+<li>
+ANS .S now displays all stack entries on one line, like a stack comment</li>
+
+<li>
+<tt>wid-get-name</tt>&nbsp;&nbsp; given a wid, returns the address and
+count of its name. If no name, count is 0</li>
+
+<li>
+<tt>wid-set-name</tt>&nbsp;&nbsp; set optional wid name pointer to the
+\0 terminated string address specified.</li>
+
+<li>
+<tt>ficl-named-wordlist</tt> creates a ficl-wordlist and names it. This
+is now used in <tt>vocabulary</tt> and <tt>ficl-vocabulary</tt>&nbsp;</li>
+
+<li>
+<tt>last-word</tt>&nbsp; returns the xt of the word being defined or most
+recently defined.</li>
+
+<li>
+<tt>q@</tt> and <tt>q!</tt> operate on quadbyte quantities for 64 bit friendliness</li>
+</ul>
+
+<h3>
+New OO stuff</h3>
+
+<ul>
+<li>
+Class methods <tt>ALLOT</tt> and <tt>ALLOT-ARRAY</tt></li>
+
+<li>
+<tt>METHOD</tt> define method names globally</li>
+
+<li>
+<tt>MY=></tt> early bind a method call to "this" class</li>
+
+<li>
+<tt>MY=[ ]</tt> early bind a string of method calls to "this" class and
+obj members</li>
+
+<li>
+<tt>C-></tt> late bind method invocation with CATCH</li>
+
+<li>
+Metaclass method <tt>resume-class</tt> and instance word <tt>suspend-class</tt>
+create mutually referring classes. Example in string.fr</li>
+
+<li>
+Early binding words are now in the instance-vars wordlist, not visible
+unless defining a class.</li>
+</ul>
+
+<h2>
+Version 2.04</h2>
 
 <h3>
 ficlwin</h3>
@@ -107,7 +200,7 @@ C-hashstring class derived from c-string computes hashcode too.</li>
 <tr>
 <td>
 <h2>
-What's new in version 2.03</h2>
+Version 2.03</h2>
 This is the first version of Ficl that includes contributed code. Thanks
 especially to Daniel Sobral, Michael Gauland for contributions and bug
 finding.&nbsp;
@@ -254,7 +347,7 @@ behavior is conditioned on INLINE_INNER_LOOP in sysdep.h. Default: 1 unless
 _DEBUG is set. In part, this is because VC++ 5 goes apoplectic when trying
 to compile it as a function. See&nbsp;</li>
 
-<br>comments in vm.c&nbsp;
+<br>comments in vm.c
 <li>
 EVALUATE respects the count parameter, and also passes exceptional return
 conditions back out to the calling instance of ficlExec.</li>
@@ -295,7 +388,7 @@ Deleted license paste-o in readme.txt (oops).</li>
 <tr>
 <td>
 <h2>
-What's new in version 2.02</h2>
+Version 2.02</h2>
 New words&nbsp;
 <ul>
 <li>
@@ -379,7 +472,7 @@ referent.</li>
 <tr>
 <td>
 <h2>
-What's new in version 2.01</h2>
+Version 2.01</h2>
 
 <ul>
 <li>
@@ -397,7 +490,7 @@ the Johns Hopkins syntax)</li>
 <tr>
 <td>
 <h2>
-What's new in version 2.0</h2>
+Version 2.0</h2>
 
 <ul>
 <li>

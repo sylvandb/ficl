@@ -15,8 +15,8 @@ Idioms in C</font></font></b>
 OO Characteristics</font></font></b>
 <h3>
 <b><i><font face="Arial">Object</font></i></b></h3>
-<font face="Times New Roman,Times"><b>"A package of information and descriptions
-of its manipulation"</b> [<a href="#robson">Robson</a>]</font>
+<a NAME="object-def"></a><font face="Times New Roman,Times"><b>"A package
+of information and descriptions of its manipulation"</b> [<a href="#robson">Robson</a>]</font>
 <p><font face="Times New Roman,Times">Objects separate interface from implementation,
 "what" is wanted (on the outside) from "how" it is accomplished (on the
 inside). This idea of hiding the data inside a package with a fixed set
@@ -49,15 +49,18 @@ adheres rigorously to the idea that the object itself has sole ownership
 of the mapping from methods to messages.</font>
 <h3>
 <b><i><font face="Arial">Class</font></i></b></h3>
-<b><font face="Times New Roman,Times">"A description of one or more similar
-objects"</font></b> [<a href="#robson">Robson</a>]
-<p>A specific object described by a particular class is called an instance
-of the class. A class can be thought of as an object whose members are
-the methods of instances of the class, and whose methods provide for creation,
-initialization, and destruction of an instance. All instances of a particular
-class use the same method to respond to a given message. Classes may define
-other members that are shared by all instances of the class. These are
-called class variables. (In C++, these would be static members.)
+<a NAME="class-def"></a><b><font face="Times New Roman,Times">"A description
+of one or more similar objects"</font></b> [<a href="#robson">Robson</a>]
+<p><a NAME="instance-def"></a>A specific object described by a particular
+class is called an <b>instance</b> of the class.
+<br>(Example: Dog is a class; Poodle is a subclass of Dog; FiFi is an object,
+an instance of Poodle).
+<br>A class is a kind of object that describes the behaviors (methods)
+of its instances, and whose methods provide for creation, initialization,
+and destruction of an instance. All instances of a particular class use
+the same method to respond to a given message. Classes may define other
+members that are shared by all instances of the class. These are called
+class variables. (In C++, these would be static members.)
 <h3>
 <b><i><font face="Arial">Inheritance</font></i></b></h3>
 <font face="Times New Roman,Times">A means for creating a new object or
@@ -147,15 +150,15 @@ automatic initialization / destruction,</font>
 <b><font face="Arial"><font size=+1>Strategy 1: message maps and aggregation</font></font></b></h3>
 <font face="Times New Roman,Times">Class: a struct with a pointer to a
 method table (message map). Contructor and destuctor are really initializer
-and destructor, and are invoked manually at beginning and end of lifetime.</font><font face="Times New Roman,Times"></font>
+and destructor, and are invoked manually at beginning and end of lifetime.</font>
 <p><font face="Times New Roman,Times">Messages and methods: mapping table
 (first cut: use macros like MFC to create a mapping between messages and
 methods). Alternative: message map can be built at run-time (hash, tree,
-linked list) – method resolution may be slower.</font><font face="Times New Roman,Times"></font>
+linked list) – method resolution may be slower.</font>
 <p><font face="Times New Roman,Times">Inheritance: aggregate the parent
 struct (recursively) at the beginning of the derived one, link the child
 method table to the parent and search recursively to resolve messages to
-methods</font><font face="Times New Roman,Times"></font>
+methods</font>
 <p><font face="Times New Roman,Times">Pros and cons:</font>
 <blockquote><font face="Times New Roman,Times">+ flexible and minimal manual
 steps required</font>
@@ -165,12 +168,12 @@ write a preprocessor!</font>
 penalty</font>
 <br><font face="Times New Roman,Times">&shy; defeats compile time type
 checking, may require a single prototype for all methods</font></blockquote>
-<font face="Times New Roman,Times"></font>
+
 <p><br><b><font face="Arial"><font size=+1>Strategy 2: manual name mangling</font></font></b>
 <br><font face="Times New Roman,Times">This is how the <a href="#samek">Samek</a>
 article handles encapsulation</font>
 <p><b><font face="Arial"><font size=+1>Strategy 3: preprocessor</font></font></b>
-<br><font face="Times New Roman,Times">This is how C++ started out.</font><font face="Times New Roman,Times"></font>
+<br><font face="Times New Roman,Times">This is how C++ started out.</font>
 <p><b><font face="Arial"><font size=+1>References</font></font></b>
 <ul>
 <li>

@@ -3,7 +3,7 @@
 ** Forth Inspired Command Language - 64 bit math support routines
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 25 January 1998
-** $Header$
+** $Id$
 *******************************************************************/
 /*
 ** N O T I C E -- DISCLAIMER OF WARRANTY

@@ -2,7 +2,7 @@
 \ ** ANS conditional compile directives [if] [else] [then]
 \ ** Requires ficl 2.0 or greater...
 
-hidden dup >search ficl-set-current
+hide
 
 : ?[if]   ( c-addr u -- c-addr u flag )
     2dup 2dup

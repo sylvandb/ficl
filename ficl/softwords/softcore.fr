@@ -30,19 +30,32 @@ decimal 32 constant bl
 : spaces  ( n -- )   0 ?do space loop ;
 
 : abort"  
-    postpone if 
-    postpone ." 
-    postpone cr 
-    [ -2 ] literal ,
-    postpone throw
-    postpone endif 
-; immediate 
+    state @ if
+        postpone if
+        postpone ."
+        postpone type
+        postpone cr
+        -2
+        postpone literal
+        postpone throw
+        postpone endif
+    else
+	    [char] " parse
+        rot if
+            type
+            cr
+            -2 throw
+        else
+            2drop
+        endif
+    endif
+; immediate
 
 
 \ ** CORE EXT
 .( loading CORE EXT words ) cr
 0  constant false 
--1 constant true 
+false invert constant true 
 : <>   = 0= ; 
 : 0<>  0= 0= ; 
 : compile,  , ; 
@@ -89,8 +102,8 @@ decimal 32 constant bl
 \ gets the name of the word made by create and applies it to the wordlist...
 : brand-wordlist  ( wid -- )   last-word >name drop wid-set-name ;
 
-: ficl-named-wordlist  ( name -- )
-    ficl-wordlist dup create , brand-wordlist ;
+: ficl-named-wordlist  \ ( hash-size name -- ) run: ( -- wid )
+    ficl-wordlist dup create , brand-wordlist does> @ ;
 
 : wordlist   ( -- )  
     1 ficl-wordlist ;
@@ -122,7 +135,7 @@ decimal 32 constant bl
 \ previous ( pop HIDDEN off the search order )
 
 1 ficl-named-wordlist hidden
-: hide     hidden @ dup >search ficl-set-current ;
+: hide     hidden dup >search ficl-set-current ;
 
 \ ALSO dups the search stack...
 : also   ( -- )  

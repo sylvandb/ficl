@@ -20,33 +20,33 @@ object subclass c-string
     c-ptr  obj: .buf
     32 constant min-buf
 
-    : get-count   ( 2this -- count )  c-string => .count  c-4byte => get ;
-    : set-count   ( count 2this -- )  c-string => .count  c-4byte => set ;
+    : get-count   ( 2this -- count )  my=[ .count  get ] ;
+    : set-count   ( count 2this -- )  my=[ .count  set ] ;
 
     : ?empty   ( 2this -- flag )  --> get-count 0= ;
 
-    : get-buflen   ( 2this -- len )  c-string => .buflen  c-4byte => get ;
-    : set-buflen   ( len 2this -- )  c-string => .buflen  c-4byte => set ;
+    : get-buflen   ( 2this -- len )  my=[ .buflen  get ] ;
+    : set-buflen   ( len 2this -- )  my=[ .buflen  set ] ;
 
-    : get-buf   ( 2this -- ptr )  c-string => .buf  c-ptr => get-ptr ;
+    : get-buf   ( 2this -- ptr )     my=[ .buf get-ptr ] ;
     : set-buf   { ptr len 2this -- }  
-        ptr this c-string => .buf  c-ptr => set-ptr 
-        len this c-string => set-buflen 
+        ptr this my=[ .buf set-ptr ]
+        len this my=> set-buflen 
     ;
 
     \ set buffer to null and buflen to zero
     : clr-buf   ( 2this -- )
-        0 0 2over  c-string => set-buf 
-        0 -rot     c-string => set-count
+        0 0 2over  my=> set-buf 
+        0 -rot     my=> set-count
     ;
 
     \ free the buffer if there is one, set buf pointer to null
     : free-buf   { 2this -- }
-        this c-string => get-buf 
+        this my=> get-buf 
         ?dup if 
             free 
 			abort" c-string free failed"
-			this  c-string => clr-buf
+			this  my=> clr-buf
         endif
     ;
 
@@ -58,7 +58,7 @@ object subclass c-string
         endif
 
         \ force buflen to be a positive multiple of min-buf chars
-        c-string => min-buf size over / 1+ * chars to size
+        my=> min-buf size over / 1+ * chars to size
 
         \ if buffer is null, allocate one, else resize it
         this --> get-buflen  0= 

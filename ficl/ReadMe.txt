@@ -1,11 +1,7 @@
 Coming up:
 Web server scripting extension (GoAhead port)
 
-"Private" flag for methods?
 method: defining word for public methods
-my=>
-catch a method invocation
-2value 2variable 
 
 ficlwin Debugger pane - step, stack trace, breakpoint
 Design:
@@ -17,26 +13,41 @@ Design:
 Requires a debug VM that checks for breaks, step mode, etc.
 How to get stack parameters to execution vm, or get input text to debug vm?
 
->>> rel 2.05
-Alpha patches from the freeBSD team incorporated
-Split SEARCH and SEARCH EXT words form words.c to search.c
-ABORT" now complies with the ANS (-2 THROWs)
-2LOCALS in jhlocal syntax now lose the first 2 in their names.
-
-ANS DOUBLE words: 2r@ 2r> 2>r
+rel 2.05 -- June 2000
+- *** HTML documentation extensively revised ***
+- Incorporated Alpha (64 bit) patches from the freeBSD team.
+- Split SEARCH and SEARCH EXT words from words.c to search.c
+- ABORT" now complies with the ANS (-2 THROWs)
+- 2LOCALS defined in jhlocal syntax now lose the first 
+  '2' in their names. See ficl_loc.html
 
 ficl words
+- ABORT" works correctly (oops)
+- REFILL works correctly
+- ANS CORE EXT words: 2r@ 2r> 2>r 
+- ANS DOUBLE words: 2variable
+- .S now displays all stack entries on one line, like a stack comment
 - wid-get-name   given a wid, returns the address and count of its name. If no name, count is 0
 - wid-set-name   set optional wid name pointer to the \0 terminated string address specified.
+- ficl-named-wordlist creates a ficl-wordlist and names it
 - last-word  returns the xt of the word being defined or most recently defined.
 - q@ and q! operate on quadbyte quantities for 64 bit friendliness
+
 softcore.fr words
 - ORDER now lists wordlists by name
 - ficl-named-wordlist
 - brand-wordlist
+
 New OO stuff
+- Class methods ALLOT and ALLOT-ARRAY
+- METHOD  define method names globally
+- my=> early bind a method call to "this" class
+- my=[ ] early bind a string of method calls to "this" class and obj members
+- c-> late bind method invocation with CATCH
 - metaclass method resume-class and instance word suspend-class to create
   mutually referring classes. Example in string.fr
+- early binding words are now in the instance-vars wordlist, 
+  not visible unless defining a class.
 
 
 rel 2.04 -- May 2000

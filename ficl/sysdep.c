@@ -6,7 +6,7 @@
 ** Implementations of FICL external interface functions... 
 **
 ** (simple) port to Linux, Skip Carter 26 March 1998
-** $Header$
+** $Id$
 *******************************************************************/
 
 #include <stdlib.h>
