@@ -3,6 +3,23 @@
 \ ** John Sadler (john_sadler@alum.mit.edu)
 \ ** September, 1998
 
+\ ** Ficl USER variables
+\ ** See words.c for primitive def'n of USER
+\ #if FICL_WANT_USER
+
+variable nUser  0 nUser ! 
+: user   \ name ( -- )  
+    nUser dup @ user 1 swap +! ; 
+
+\ #endif
+
+\ ** ficl extras
+\ EMPTY cleans the parameter stack
+: empty   ( xn..x1 -- ) depth 0 ?do drop loop ;
+\ CELL- undoes CELL+
+: cell-   ( addr -- addr )  [ 1 cells ] literal -  ;
+: -rot   ( a b c -- c a b )  2 -roll ;
+
 \ ** CORE 
 : abs   ( x -- x )
     dup 0< if negate endif ;
@@ -48,6 +65,47 @@ decimal 32 constant bl
 
 : end-locals  ( -- )  0 0 (local) ;  immediate
 
+\ ** stack comment style local syntax...
+\ {{ a b c -- d e }}
+\ variables before the "--" are initialized in reverse order
+\ from the stack. Those after the "--" are zero initialized
+\ Uses locals...
+\ locstate: 0 = looking for -- or }}
+\           1 = found --
+0 constant zero
+
+: ?--   s" --" compare 0= ;
+: ?}}   s" }}" compare 0= ;
+
+: {{
+    0 dup  locals| nLocs locstate |
+    begin
+        parse-word 
+        ?dup 0= abort" Error: out of text without seeing }}"
+        2dup 2dup  ?-- -rot ?}} or 0=
+    while
+        nLocs 1+ to nLocs
+    repeat
+
+    ?-- if 1 to locstate endif
+
+    nLocs 0 do
+        (local) 
+    loop
+
+    locstate 1 = if
+        begin
+            parse-word
+            2dup ?}} 0=
+        while
+            postpone zero  (local)
+        repeat
+        2drop
+    endif
+
+    0 0 (local)
+; immediate
+ 
 \ #endif
 
 \ ** TOOLS word set...
@@ -94,24 +152,6 @@ decimal 32 constant bl
 \ FICL-SET-CURRENT sets the compile wordlist and pushes the previous value
 : ficl-set-current   ( wid -- old-wid )  
     get-current swap set-current ; 
-
-
-\ ** Ficl USER variables
-\ ** See words.c for primitive def'n of USER
-\ #if FICL_WANT_USER
-
-variable nUser  0 nUser ! 
-: user   \ name ( -- )  
-    nUser dup @ user 1 swap +! ; 
-
-\ #endif
-
-\ ** ficl extras
-\ EMPTY cleans the parameter stack
-: empty   ( xn..x1 -- ) depth 0 ?do drop loop ;
-\ CELL- undoes CELL+
-: cell-   ( addr -- addr )  [ 1 cells ] literal -  ;
-: -rot   ( a b c -- c a b )  2 -roll ;
 
 \ ** E N D   S O F T C O R E . F R
 

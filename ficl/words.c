@@ -3641,6 +3641,7 @@ static void doLocalIm(FICL_VM *pVM)
 **************************************************************************/
 static void localParen(FICL_VM *pVM)
 {
+    static CELL *pMark = NULL;
     FICL_DICT *pDict = ficlGetDict();
     STRINGINFO si;
     SI_SETLEN(si, stackPopUNS32(pVM->pStack));
@@ -3660,7 +3661,8 @@ static void localParen(FICL_VM *pVM)
         if (nLocals == 0)
         {   /* compile code to create a local stack frame */
             dictAppendCell(pDict, LVALUEtoCELL(pLinkParen));
-            stackPushPtr(pVM->pStack, pDict->here);
+            /* save location in dictionary for #locals */
+            pMark = pDict->here;
             dictAppendCell(pDict, LVALUEtoCELL(nLocals));
             /* compile code to initialize first local */
             dictAppendCell(pDict, LVALUEtoCELL(pToLocal0));
@@ -3678,9 +3680,8 @@ static void localParen(FICL_VM *pVM)
         nLocals++;
     }
     else if (nLocals > 0)
-    {       /* pop address of frame link parameter, set value to nLocals */
-        INT32 *pI32 = stackPopPtr(pVM->pStack);
-        *pI32 = nLocals;
+    {       /* write nLocals to (link) param area in dictionary */
+        *(INT32 *)pMark = nLocals;
     }
 
     return;

@@ -260,9 +260,9 @@ int main(int argc, char **argv)
     FICL_VM *pVM;
 
     ficlInitSystem(10000);
+    buildTestInterface();
     pVM = ficlNewVM();
 
-    buildTestInterface();
     ficlExec(pVM, ".ver .( " __DATE__ " ) cr quit");
 
     /*

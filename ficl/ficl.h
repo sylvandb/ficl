@@ -205,7 +205,7 @@ struct ficl_dict;
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "2.00"
+#define FICL_VER    "2.01"
 #define FICL_PROMPT "ok> "
 
 /*

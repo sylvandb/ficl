@@ -9,13 +9,13 @@
 
 <CENTER>
 <H1>
-<B>ficl 2.0 release notes</B></H1></CENTER>
+<B>ficl 2.01 release notes</B></H1></CENTER>
 
 <TABLE BORDER=0 CELLSPACING=3 WIDTH="600" >
 <TR>
 <TD><B>Forth Inspired Command Language&nbsp;</B></TD>
 
-<TD ROWSPAN="4"><IMG SRC="Logo.jpg" HEIGHT=64 WIDTH=64></TD>
+<TD ROWSPAN="4"><IMG SRC="ficl_logo.jpg" HEIGHT=64 WIDTH=64></TD>
 </TR>
 
 <TR>
@@ -27,7 +27,7 @@
 </TR>
 
 <TR>
-<TD><B>Revision 2.0: 14 September 1998&nbsp;</B></TD>
+<TD><B>Revision 2.01: 18 September 1998&nbsp;</B></TD>
 </TR>
 </TABLE>
 
@@ -48,7 +48,7 @@ Contents</H2>
 <A HREF="#manifest">Distribution source files</A></LI>
 
 <LI>
-<A HREF="#whatsnew">What's new in Ficl 2.0</A></LI>
+<A HREF="#whatsnew">What's new in this release</A></LI>
 
 <LI>
 <A HREF="#objects">Objects in ficl</A></LI>
@@ -328,7 +328,29 @@ See softcore.bat for the actual list of files that contribute to softcore.c.</TD
 &nbsp;
 <H2>
 
-<HR WIDTH="100%"><A NAME="whatsnew"></A>What's new in version 2.0</H2>
+<HR WIDTH="100%"></H2>
+
+<H2>
+<A NAME="whatsnew"></A>What's new in version 2.01</H2>
+
+<TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
+<TR>
+<TD>
+<UL>
+<LI>
+Bug fix: <TT>(local)</TT> used to leave a value on the stack between the
+first and last locals declared. This value is now stored in a static.</LI>
+
+<LI>
+Added new local syntax with parameter re-ordering. <A HREF="#newlocal">See
+description below</A>.</LI>
+</UL>
+</TD>
+</TR>
+</TABLE>
+
+<H2>
+What's new in version 2.0</H2>
 
 <TABLE BORDER=0 CELLSPACING=3 COLS=1 WIDTH="600" >
 <TR>
@@ -358,7 +380,7 @@ Various bug fixes</LI>
 
 <H3>
 Local Variables</H3>
-Ficl now includes support for <TT>LOCALS</TT> and <TT>LOCALS EXT</TT> words
+Ficl includes support for <TT>LOCALS</TT> and <TT>LOCALS EXT</TT> words
 (all three of them!). I've implemented both of the local variable syntaxes
 suggested in DPANS Appendix A.13. Examples: (By the way, Ficl implements
 <TT>-ROT</TT> as <TT>: -rot&nbsp;&nbsp; 2 -roll ;</TT> )&nbsp;
@@ -383,6 +405,23 @@ too. Local variables can make Forth code quite a bit easier to read, so
 I'd encourage you to experiment with them.&nbsp;
 <BR>The default maximum number of local variables is 16. It's controlled
 by FICL_MAX_LOCALS in sysdep.h.&nbsp;
+<BR><A NAME="newlocal"></A>Ficl 2.01 adds a third local syntax that more
+closely models a stack comment. With this syntax, parameters are re-ordered
+so that the rightmost initialized param comes from the top of the stack.
+The syntax is:&nbsp;
+<UL><B><TT>{{ &lt;initialized params> -- &lt;cleared params> }}</TT></B></UL>
+You can omit either the initialized or the cleared parameters. Parameters
+after the double dash are set to zero initially. Those to the left are
+initialized from the stack at execution time. Examples (lame ones, admittedly):&nbsp;
+<UL><B><TT>: -rot&nbsp;&nbsp; ( a b c -- c a b )</TT></B>&nbsp;
+<BR><B><TT>&nbsp;&nbsp;&nbsp; {{ a b c }}</TT></B>&nbsp;
+<BR><B><TT>&nbsp;&nbsp;&nbsp; c a b&nbsp;</TT></B>&nbsp;
+<BR><B><TT>;</TT></B>&nbsp;
+<BR><B><TT>: tuck0&nbsp; ( a b c -- 0 a b c )</TT></B>&nbsp;
+<BR><B><TT>&nbsp;&nbsp;&nbsp; {{ a b c -- d }}</TT></B>&nbsp;
+<BR><B><TT>&nbsp;&nbsp;&nbsp; d a b c&nbsp;</TT></B>&nbsp;
+<BR><B><TT>;&nbsp;</TT></B></UL>
+
 <H3>
 Search Order</H3>
 Ficl implements many of the search order words in terms of two primitives
@@ -793,9 +832,12 @@ meta "name" -- offset' )</TT></B></DT>
 <B><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Execution:&nbsp; ( -- instance class )</TT></B></DT>
 
-<DT>
+<DD>
 Aggregate an uninitialized instance of class as a member variable of the
-class under construction.<A NAME="arraycolon"></A><B><TT>array:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+class under construction.</DD>
+
+<DT>
+<A NAME="arraycolon"></A><B><TT>array:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ( offset n class meta "name" -- offset' )</TT></B></DT>
 
 <DT>
