@@ -2317,6 +2317,23 @@ static void compileOnly(FICL_VM *pVM)
 }
 
 
+static void setObjectFlag(FICL_VM *pVM)
+{
+    IGNORE(pVM);
+    dictSetFlags(vmGetDict(pVM), FW_ISOBJECT, 0);
+    return;
+}
+
+static void isObject(FICL_VM *pVM)
+{
+    int flag;
+    FICL_WORD *pFW = (FICL_WORD *)stackPopPtr(pVM->pStack);
+    
+    flag = ((pFW != NULL) && (pFW->flags & FW_ISOBJECT)) ? FICL_TRUE : FICL_FALSE;
+    stackPushINT(pVM->pStack, flag);
+    return;
+}
+
 static void cstringLit(FICL_VM *pVM)
 {
     FICL_STRING *sp = (FICL_STRING *)(pVM->ip);
@@ -3126,8 +3143,6 @@ static void count(FICL_VM *pVM)
 static void environmentQ(FICL_VM *pVM)
 {
     FICL_DICT *envp;
-    FICL_COUNT len;
-    char *cp;
     FICL_WORD *pFW;
     STRINGINFO si;
 #if FICL_ROBUST > 1
@@ -3135,11 +3150,9 @@ static void environmentQ(FICL_VM *pVM)
 #endif
 
     envp = pVM->pSys->envp;
-    len = (FICL_COUNT)POPUNS();
-    cp = POPPTR();
+    si.count = (FICL_COUNT)stackPopUNS(pVM->pStack);
+    si.cp    = stackPopPtr(pVM->pStack);
 
-    IGNORE(len);
-    SI_PSZ(si, cp);
     pFW = dictLookup(envp, si);
 
     if (pFW != NULL)
@@ -4855,6 +4868,8 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "endif",     endifCoIm,      FW_COMPIMMED);
     dictAppendWord(dp, "last-word", getLastWord,    FW_DEFAULT);
     dictAppendWord(dp, "hash",      hash,           FW_DEFAULT);
+    dictAppendWord(dp, "objectify", setObjectFlag,  FW_DEFAULT);
+    dictAppendWord(dp, "?object",   isObject,       FW_DEFAULT);
     dictAppendWord(dp, "parse-word",parseNoCopy,    FW_DEFAULT);
     dictAppendWord(dp, "sfind",     sFind,          FW_DEFAULT);
     dictAppendWord(dp, "sliteral",  sLiteralCoIm,   FW_COMPIMMED); /* STRING */

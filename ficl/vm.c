@@ -157,6 +157,87 @@ void vmInnerLoop(FICL_VM *pVM)
     M_INNER_LOOP(pVM);
 }
 #endif
+#if 0
+/*
+** Recast inner loop that inlines tokens for control structures, arithmetic and stack operations, 
+** as well as create does> : ; and various literals
+*/
+typedef enum
+{
+    PATCH = 0,
+    L0,
+    L1,
+    L2,
+    LMINUS1,
+    LMINUS2,
+    DROP,
+    SWAP,
+    DUP,
+    PICK,
+    ROLL,
+    FETCH,
+    STORE,
+    BRANCH,
+    CBRANCH,
+    LEAVE,
+    TO_R,
+    R_FROM,
+    EXIT;
+} OPCODE;
+
+typedef CELL *IPTYPE;
+
+void vmInnerLoop(FICL_VM *pVM)
+{
+    IPTYPE ip = pVM->ip;
+    FICL_STACK *pStack = pVM->pStack;
+
+    for (;;)
+    {
+        OPCODE o = (*ip++).i;
+        CELL c;
+        switch (o)
+        {
+        case L0:
+            stackPushINT(pStack, 0);
+            break;
+        case L1:
+            stackPushINT(pStack, 1);
+            break;
+        case L2:
+            stackPushINT(pStack, 2);
+            break;
+        case LMINUS1:
+            stackPushINT(pStack, -1);
+            break;
+        case LMINUS2:
+            stackPushINT(pStack, -2);
+            break;
+        case DROP:
+            stackDrop(pStack, 1);
+            break;
+        case SWAP:
+            stackRoll(pStack, 1);
+            break;
+        case DUP:
+            stackPick(pStack, 0);
+            break;
+        case PICK:
+            c = *ip++;
+            stackPick(pStack, c.i);
+            break;
+        case ROLL:
+            c = *ip++;
+            stackRoll(pStack, c.i);
+            break;
+        case EXIT:
+            return;
+        }
+    }
+
+    return;
+}
+#endif
 
 
 

@@ -236,7 +236,7 @@ typedef struct ficl_system_info FICL_SYSTEM_INFO;
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "3.01"
+#define FICL_VER    "3.02"
 #if !defined (FICL_PROMPT)
 #define FICL_PROMPT "ok> "
 #endif
@@ -546,6 +546,7 @@ int wordIsCompileOnly(FICL_WORD *pFW);
 #define FW_IMMEDIATE    1   /* execute me even if compiling */
 #define FW_COMPILE      2   /* error if executed when not compiling */
 #define FW_SMUDGE       4   /* definition in progress - hide me */
+#define FW_ISOBJECT     8   /* word is an object or object member variable */
 
 #define FW_COMPIMMED    (FW_IMMEDIATE | FW_COMPILE)
 #define FW_DEFAULT      0

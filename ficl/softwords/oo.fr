@@ -52,7 +52,9 @@ also oop definitions
 \ has an extra field for the vtable method count. Hasvtable declares
 \ refs to vtable classes
 \
-\ Revised August 2001 - Ficl vtable support
+\ Revised Nov 2001 - metaclass debug method now finds only metaclass methods
+\
+\ Planned: Ficl vtable support
 \ Each class has a vtable size parameter
 \ END-CLASS allocates and clears the vtable - then it walks class's method 
 \ list and inserts all new methods into table. For each method, if the table
@@ -177,13 +179,23 @@ instance-vars dup >search ficl-set-current
     current-class @ dup postpone =>
 ; immediate compile-only
 
+\ Problem: my=[ assumes that each method except the last is am obj: member
+\ which contains its class as the first field of its parameter area. The code
+\ detects non-obect members and assumes the class does not change in this case.
+\ This handles methods like index, prev, and next correctly, but does not deal
+\ correctly with CLASS.
 : my=[   \ same as my=> , but binds a chain of methods
     current-class @  
     begin 
-        parse-word 2dup 
-        s" ]" compare while  ( class c-addr u )
-        lookup-method  nip  dup             ( xt xt )
-        compile,  >body cell+ @             ( class' )
+        parse-word 2dup             ( class c-addr u c-addr u )
+        s" ]" compare while         ( class c-addr u )
+        lookup-method               ( class xt )
+        dup compile,                ( class xt )
+        dup ?object if        \ If object member, get new class. Otherwise assume same class
+           nip >body cell+ @        ( new-class )
+        else 
+           drop                     ( class )
+        endif
     repeat 2drop drop 
 ; immediate compile-only
 
@@ -230,14 +242,14 @@ instance-vars dup >search ficl-set-current
 \ Example: object obj: m_obj
 \
 : do-aggregate
+    objectify
     does>   ( instance class pfa -- a-instance a-class )
     2@          ( inst class a-class a-offset )
     2swap drop  ( a-class a-offset inst )
     + swap      ( a-inst a-class )
 ;
 
-: obj:   ( offset class meta "name" -- offset' )
-    locals| meta class offset |
+: obj:   { offset class meta -- offset' }  \ "name" 
     create  offset , class , 
     class meta --> get-size  offset +
     do-aggregate
@@ -251,7 +263,7 @@ instance-vars dup >search ficl-set-current
 \
 : array:   ( offset n class meta "name" -- offset' )
     locals| meta class nobjs offset |
-    create offset , class ,
+    create offset , class , 
     class meta --> get-size  nobjs * offset + 
     do-aggregate
 ;
@@ -534,14 +546,14 @@ create  .size  ( class metaclass -- size ) \ return class's payload size
     0= until  cr
 ;
 
-\ decompile a method
+\ decompile an instance method
 : see  ( class meta -- )   
     metaclass => get-wid >search see previous ;
 
-\ debug a method
-\ Eg: my-object --> debug my-method
+\ debug a method of metaclass
+\ Eg: my-class --> debug my-method
 : debug  ( class meta -- )
-	metaclass => get-wid >search debug previous ;
+	find-method-xt debug-xt ;
 
 previous set-current    
 \ E N D   M E T A C L A S S
@@ -669,6 +681,12 @@ instance-vars >search
 previous set-current
 \ E N D   O B J E C T
 
-
+\ reset to default search order
 only definitions
+
+\ redefine oop in default search order to put OOP words in the search order and make them
+\ the compiling wordlist...
+
+: oo   only also oop definitions ;
+
 \ #endif

@@ -1,7 +1,9 @@
-debugger vocabulary - use ficlexec to do debug commands
-SYSTEM extension redirects STDOUT to window in ficlwin
-File regression suite
+rel 3.02 -- December 2001
 
+Fixed a bug in "environment?" - was ignoring the length of the supplied string.
+"my=[" detects object members (using ?object) and assumes all other members leave class unchanged
+Added "objectify" and "?object" for use by OO infrastructure
+Ficl OO tutorial expanded and revised. Thanks to David McNab for his demo and suggestions.
 Consolidated context and pExtend pointers of FICL_SYSTEM - VM's pExtend pointer
   is initialized from the copy in FICL_SYSTEM upon VM creation.
 Ficlwin character handling is more robust

@@ -74,7 +74,13 @@ int ficlParsePrefix(FICL_VM *pVM, STRINGINFO si)
     FICL_HASH *pHash;
     FICL_WORD *pFW = ficlLookup(pVM->pSys, list_name);
 
-    assert(pFW);
+    /* 
+    ** Make sure we found the prefix dictionary - otherwise silently fail
+    ** If forth-wordlist is not in the search order, we won't find the prefixes.
+    */
+    if (!pFW)
+        return FICL_FALSE;
+
     pHash = (FICL_HASH *)(pFW->param[0].p);
     /*
     ** Walk the list looking for a match with the beginning of the incoming token

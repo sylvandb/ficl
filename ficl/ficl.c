@@ -685,6 +685,7 @@ static void ficlSetVersionEnv(FICL_SYSTEM *pSys)
     int minor = 0;
     sscanf(FICL_VER, "%d.%d", &major, &minor);
     ficlSetEnvD(pSys, "ficl-version", major, minor);
+    ficlSetEnv (pSys, "ficl-robust",  FICL_ROBUST);
     return;
 }
 

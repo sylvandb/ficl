@@ -33,7 +33,6 @@ decimal 32 constant bl
     state @ if
         postpone if
         postpone ."
-\        postpone type
         postpone cr
         -2
         postpone literal
@@ -59,7 +58,11 @@ false invert constant true
 : <>   = 0= ; 
 : 0<>  0= 0= ; 
 : compile,  , ; 
+: convert   char+ 65535 >number drop ;  \ cribbed from DPANS A.6.2.0970
 : erase   ( addr u -- )    0 fill ; 
+variable span
+: expect  ( c-addr u1 -- ) accept span ! ;
+\ see marker.fr for MARKER implementation
 : nip     ( y x -- x )     swap drop ; 
 : tuck    ( y x -- x y x)  swap over ; 
 : within  ( test low high -- flag )   over - >r - r>  u<  ;
@@ -168,7 +171,7 @@ set-current   \ stop hiding words
    ." Compile: " get-current list-wid cr  
 ; 
 
-: debug  ' debug-xt ;
+: debug  ' debug-xt ; immediate
 : on-step   ." S: " .s cr ;
 
 
