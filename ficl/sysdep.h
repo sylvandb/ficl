@@ -138,6 +138,14 @@ typedef struct
 #endif
 
 /*
+** FICL_WANT_DEBUGGER
+** Includes ficl code necesary to single step the VM. Turned on in ficlWin.
+*/
+#if !defined (FICL_WANT_DEBUGGER)
+#define FICL_WANT_DEBUGGER 0
+#endif
+
+/*
 ** PORTABLE_LONGMULDIV causes ficlLongMul and ficlLongDiv to be
 ** defined in C in sysdep.c. Use this if you cannot easily 
 ** generate an inline asm definition

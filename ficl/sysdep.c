@@ -84,10 +84,7 @@ void  ficlFree   (void *p)
 
 void *ficlRealloc(void *p, size_t size)
 {
-    if (p)
-        free(p);
-
-    return malloc(size);
+    return realloc(p, size);
 }
 
 /*
@@ -169,10 +166,14 @@ void  ficlFree   (void *p)
 
 void *ficlRealloc(void *p, size_t size)
 {
+	void *pv = malloc(size);
     if (p)
+	{
+		memcpy(pv, p, size)
         free(p);
+	}
 
-    return malloc(size);
+    return pv;
 }
 
 
@@ -259,10 +260,7 @@ void  ficlFree   (void *p)
 
 void *ficlRealloc(void *p, size_t size)
 {
-    if (p)
-        free(p);
-
-    return malloc(size);
+    return realloc(p, size);
 }
 
 

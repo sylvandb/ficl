@@ -346,6 +346,7 @@ FICL_DICT  *dictCreateHashed(unsigned nCells, unsigned nHash)
 
     pDict = ficlMalloc(nAlloc);
     assert(pDict);
+	memset(pDict, 0, sizeof (FICL_DICT));
     pDict->size = nCells;
     dictEmpty(pDict, nHash);
     return pDict;
@@ -367,8 +368,7 @@ void dictDelete(FICL_DICT *pDict)
 /**************************************************************************
                         d i c t E m p t y
 ** Empty the dictionary, reset its hash table, and reset its search order.
-** Clears and (re-)creates the main hash table (pForthWords) with the
-** size specified by nHash.
+** Clears and (re-)creates the hash table with the size specified by nHash.
 **************************************************************************/
 void dictEmpty(FICL_DICT *pDict, unsigned nHash)
 {
