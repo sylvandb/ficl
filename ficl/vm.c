@@ -160,6 +160,17 @@ void vmInnerLoop(FICL_VM *pVM)
 
 
 /**************************************************************************
+                        v m G e t D i c t
+** Returns the address dictionary for this VM's system
+**************************************************************************/
+FICL_DICT  *vmGetDict(FICL_VM *pVM)
+{
+	assert(pVM);
+	return pVM->pSys->dp;
+}
+
+
+/**************************************************************************
                         v m G e t S t r i n g
 ** Parses a string out of the VM input buffer and copies up to the first
 ** FICL_STRING_MAX characters to the supplied destination buffer, a

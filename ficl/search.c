@@ -55,7 +55,7 @@
 **************************************************************************/
 static void definitions(FICL_VM *pVM)
 {
-    FICL_DICT *pDict = ficlGetDict();
+    FICL_DICT *pDict = vmGetDict(pVM);
 
     assert(pDict);
     if (pDict->nLists < 1)
@@ -77,7 +77,7 @@ static void definitions(FICL_VM *pVM)
 **************************************************************************/
 static void forthWordlist(FICL_VM *pVM)
 {
-    FICL_HASH *pHash = ficlGetDict()->pForthWords;
+    FICL_HASH *pHash = vmGetDict(pVM)->pForthWords;
     stackPushPtr(pVM->pStack, pHash);
     return;
 }
@@ -91,7 +91,7 @@ static void forthWordlist(FICL_VM *pVM)
 static void getCurrent(FICL_VM *pVM)
 {
     ficlLockDictionary(TRUE);
-    stackPushPtr(pVM->pStack, ficlGetDict()->pCompile);
+    stackPushPtr(pVM->pStack, vmGetDict(pVM)->pCompile);
     ficlLockDictionary(FALSE);
     return;
 }
@@ -107,7 +107,7 @@ static void getCurrent(FICL_VM *pVM)
 **************************************************************************/
 static void getOrder(FICL_VM *pVM)
 {
-    FICL_DICT *pDict = ficlGetDict();
+    FICL_DICT *pDict = vmGetDict(pVM);
     int nLists = pDict->nLists;
     int i;
 
@@ -168,7 +168,7 @@ static void searchWordlist(FICL_VM *pVM)
 static void setCurrent(FICL_VM *pVM)
 {
     FICL_HASH *pHash = stackPopPtr(pVM->pStack);
-    FICL_DICT *pDict = ficlGetDict();
+    FICL_DICT *pDict = vmGetDict(pVM);
     ficlLockDictionary(TRUE);
     pDict->pCompile = pHash;
     ficlLockDictionary(FALSE);
@@ -191,7 +191,7 @@ static void setOrder(FICL_VM *pVM)
 {
     int i;
     int nLists = stackPopINT(pVM->pStack);
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
 
     if (nLists > FICL_DEFAULT_VOCS)
     {
@@ -235,7 +235,7 @@ static void setOrder(FICL_VM *pVM)
 **************************************************************************/
 static void ficlWordlist(FICL_VM *pVM)
 {
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
     FICL_HASH *pHash;
     FICL_UNS nBuckets;
     
@@ -256,7 +256,7 @@ static void ficlWordlist(FICL_VM *pVM)
 **************************************************************************/
 static void searchPop(FICL_VM *pVM)
 {
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
     int nLists;
 
     ficlLockDictionary(TRUE);
@@ -278,7 +278,7 @@ static void searchPop(FICL_VM *pVM)
 **************************************************************************/
 static void searchPush(FICL_VM *pVM)
 {
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
 
     ficlLockDictionary(TRUE);
     if (dp->nLists > FICL_DEFAULT_VOCS)
@@ -300,7 +300,7 @@ static void widGetName(FICL_VM *pVM)
 {
     FICL_HASH *pHash = vmPop(pVM).p;
     char *cp = pHash->name;
-    int len = 0;
+    FICL_INT len = 0;
     
     if (cp)
         len = strlen(cp);
@@ -378,9 +378,9 @@ void ficlCompileSearch(FICL_SYSTEM *pSys)
     /*
     ** Set SEARCH environment query values
     */
-    ficlSetEnv("search-order",      FICL_TRUE);
-    ficlSetEnv("search-order-ext",  FICL_TRUE);
-    ficlSetEnv("wordlists",         FICL_DEFAULT_VOCS);
+    ficlSetEnv(pSys, "search-order",      FICL_TRUE);
+    ficlSetEnv(pSys, "search-order-ext",  FICL_TRUE);
+    ficlSetEnv(pSys, "wordlists",         FICL_DEFAULT_VOCS);
 
     dictAppendWord(dp, "wid-get-name", widGetName,  FW_DEFAULT);
     dictAppendWord(dp, "wid-set-name", widSetName,  FW_DEFAULT);

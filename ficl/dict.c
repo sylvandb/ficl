@@ -461,7 +461,7 @@ void dictEmpty(FICL_DICT *pDict, unsigned nHash)
 **************************************************************************/
 void dictHashSummary(FICL_VM *pVM)
 {
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
     FICL_HASH *pFHash;
     FICL_WORD **pHash;
     unsigned size;
@@ -566,15 +566,16 @@ FICL_WORD *dictLookup(FICL_DICT *pDict, STRINGINFO si)
 
 
 /**************************************************************************
-                        d i c t L o o k u p L o c
+                        f i c l L o o k u p L o c
 ** Same as dictLookup, but looks in system locals dictionary first...
 ** Assumes locals dictionary has only one wordlist...
 **************************************************************************/
 #if FICL_WANT_LOCALS
-FICL_WORD *dictLookupLoc(FICL_DICT *pDict, STRINGINFO si)
+FICL_WORD *ficlLookupLoc(FICL_SYSTEM *pSys, STRINGINFO si)
 {
     FICL_WORD *pFW = NULL;
-    FICL_HASH *pHash = ficlGetLoc()->pForthWords;
+	FICL_DICT *pDict = pSys->dp;
+    FICL_HASH *pHash = ficlGetLoc(pSys)->pForthWords;
     int i;
     UNS16 hashCode   = hashHashCode(si);
 

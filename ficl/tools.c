@@ -95,7 +95,7 @@ static BREAKPOINT bpStep = {NULL, NULL};
 **************************************************************************/
 static void vmSetBreak(FICL_VM *pVM, BREAKPOINT *pBP)
 {
-    FICL_WORD *pStep = ficlLookup("step-break");
+    FICL_WORD *pStep = ficlLookup(pVM->pSys, "step-break");
     assert(pStep);
 
     pBP->address = pVM->ip;
@@ -121,9 +121,8 @@ static void debugPrompt(FICL_VM *pVM)
 ** like it's in the dictionary address range.
 ** NOTE: this excludes :noname words!
 **************************************************************************/
-int isAFiclWord(FICL_WORD *pFW)
+int isAFiclWord(FICL_DICT *pd, FICL_WORD *pFW)
 {
-    FICL_DICT *pd  = ficlGetDict();
 
     if (!dictIncludes(pd, pFW))
        return 0;
@@ -131,7 +130,16 @@ int isAFiclWord(FICL_WORD *pFW)
     if (!dictIncludes(pd, pFW->name))
         return 0;
 
-    return ((pFW->nName > 0) && (pFW->name[pFW->nName] == '\0'));
+	if ((pFW->link != NULL) && !dictIncludes(pd, pFW->link))
+		return 0;
+
+    if ((pFW->nName <= 0) || (pFW->name[pFW->nName] != '\0'))
+		return 0;
+
+	if (strlen(pFW->name) != pFW->nName)
+		return 0;
+
+	return 1;
 }
 
 
@@ -152,10 +160,10 @@ static int isPrimitive(FICL_WORD *pFW)
 **************************************************************************/
 #define nSEARCH_CELLS 100
 
-static FICL_WORD *findEnclosingWord(CELL *cp)
+static FICL_WORD *findEnclosingWord(FICL_VM *pVM, CELL *cp)
 {
     FICL_WORD *pFW;
-    FICL_DICT *pd = ficlGetDict();
+    FICL_DICT *pd = vmGetDict(pVM);
     int i;
 
     if (!dictIncludes(pd, (void *)cp))
@@ -164,7 +172,7 @@ static FICL_WORD *findEnclosingWord(CELL *cp)
     for (i = nSEARCH_CELLS; i > 0; --i, --cp)
     {
         pFW = (FICL_WORD *)(cp + 1 - (sizeof (FICL_WORD) / sizeof (CELL)));
-        if (isAFiclWord(pFW))
+        if (isAFiclWord(pd, pFW))
             return pFW;
     }
 
@@ -188,25 +196,29 @@ static FICL_WORD *findEnclosingWord(CELL *cp)
 static void seeColon(FICL_VM *pVM, CELL *pc)
 {
 	char *cp = pVM->pad + 1;
-	FICL_WORD *pSemiParen = ficlLookup("(;)");
+    FICL_DICT *pd = vmGetDict(pVM);
+	FICL_WORD *pSemiParen = ficlLookup(pVM->pSys, "(;)");
     assert(pSemiParen);
 
     for (; pc->p != pSemiParen; pc++)
     {
         FICL_WORD *pFW = (FICL_WORD *)(pc->p);
 
-        if (isAFiclWord(pFW))
+        if (isAFiclWord(pd, pFW))
         {
             WORDKIND kind = ficlWordClassify(pFW);
             CELL c;
 
-			cp[-1] = ((void *)pc == (void *)pVM->ip) ? '>' : ' ';
+			if ((void *)pc == (void *)pVM->ip)
+				cp[-1] = '>';
+			else
+				cp[-1] = ' ';
 
             switch (kind)
             {
             case LITERAL:
                 c = *++pc;
-                if (isAFiclWord(c.p))
+                if (isAFiclWord(pd, c.p))
                 {
                     FICL_WORD *pLit = (FICL_WORD *)c.p;
                     sprintf(cp, "    literal %.*s (%#lx)", 
@@ -416,7 +428,7 @@ void stepOver(FICL_VM *pVM)
 {
     FICL_WORD *pFW;
     WORDKIND kind;
-    FICL_WORD *pStep = ficlLookup("step-break");
+    FICL_WORD *pStep = ficlLookup(pVM->pSys, "step-break");
     assert(pStep);
 
     pFW = *pVM->ip;
@@ -481,7 +493,7 @@ void stepBreak(FICL_VM *pVM)
         /*
         ** If there's an onStep, do it
         */
-        pOnStep = ficlLookup("on-step");
+        pOnStep = ficlLookup(pVM->pSys, "on-step");
         if (pOnStep)
             ficlExecXT(pVM, pOnStep);
 
@@ -516,7 +528,7 @@ void stepBreak(FICL_VM *pVM)
     else if (!strincmp(si.cp, "l", si.count))
     {
         FICL_WORD *xt;
-        xt = findEnclosingWord((CELL *)(pVM->ip));
+        xt = findEnclosingWord(pVM, (CELL *)(pVM->ip));
         if (xt)
         {
             stackPushPtr(pVM->pStack, xt);
@@ -622,7 +634,7 @@ static void displayRStack(FICL_VM *pVM)
     int d = stackDepth(pStk);
     int i;
     CELL *pCell;
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
 
     vmCheckStack(pVM, 0, 0);
 
@@ -642,7 +654,7 @@ static void displayRStack(FICL_VM *pVM)
             */
             if (dictIncludes(dp, c.p))
             {
-                FICL_WORD *pFW = findEnclosingWord(c.p);
+                FICL_WORD *pFW = findEnclosingWord(pVM, c.p);
                 if (pFW)
                 {
                     int offset = (CELL *)c.p - &pFW->param[0];
@@ -666,7 +678,7 @@ static void displayRStack(FICL_VM *pVM)
 **************************************************************************/
 static void forgetWid(FICL_VM *pVM)
 {
-    FICL_DICT *pDict = ficlGetDict();
+    FICL_DICT *pDict = vmGetDict(pVM);
     FICL_HASH *pHash;
 
     pHash = (FICL_HASH *)stackPopPtr(pVM->pStack);
@@ -691,7 +703,7 @@ static void forgetWid(FICL_VM *pVM)
 static void forget(FICL_VM *pVM)
 {
     void *where;
-    FICL_DICT *pDict = ficlGetDict();
+    FICL_DICT *pDict = vmGetDict(pVM);
     FICL_HASH *pHash = pDict->pCompile;
 
     ficlTick(pVM);
@@ -710,7 +722,7 @@ static void forget(FICL_VM *pVM)
 #define nCOLWIDTH 8
 static void listWords(FICL_VM *pVM)
 {
-    FICL_DICT *dp = ficlGetDict();
+    FICL_DICT *dp = vmGetDict(pVM);
     FICL_HASH *pHash = dp->pSearch[dp->nLists - 1];
     FICL_WORD *wp;
     int nChars = 0;
@@ -772,7 +784,7 @@ static void listWords(FICL_VM *pVM)
 **************************************************************************/
 static void listEnv(FICL_VM *pVM)
 {
-    FICL_DICT *dp = ficlGetEnv();
+    FICL_DICT *dp = vmGetDict(pVM);
     FICL_HASH *pHash = dp->pForthWords;
     FICL_WORD *wp;
     unsigned i;
@@ -808,7 +820,7 @@ static void envConstant(FICL_VM *pVM)
 
     vmGetWordToPad(pVM);
     value = POPUNS();
-    ficlSetEnv(pVM->pad, (FICL_UNS)value);
+    ficlSetEnv(pVM->pSys, pVM->pad, (FICL_UNS)value);
     return;
 }
 
@@ -823,7 +835,7 @@ static void env2Constant(FICL_VM *pVM)
     vmGetWordToPad(pVM);
     v2 = POPUNS();
     v1 = POPUNS();
-    ficlSetEnvD(pVM->pad, v1, v2);
+    ficlSetEnvD(pVM->pSys, pVM->pad, v1, v2);
     return;
 }
 
@@ -851,8 +863,8 @@ void ficlCompileTools(FICL_SYSTEM *pSys)
     /*
     ** Set TOOLS environment query values
     */
-    ficlSetEnv("tools",            FICL_TRUE);
-    ficlSetEnv("tools-ext",        FICL_FALSE);
+    ficlSetEnv(pSys, "tools",            FICL_TRUE);
+    ficlSetEnv(pSys, "tools-ext",        FICL_FALSE);
 
     /*
     ** Ficl extras

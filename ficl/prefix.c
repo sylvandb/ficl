@@ -72,7 +72,7 @@ int ficlParsePrefix(FICL_VM *pVM, STRINGINFO si)
 {
     int i;
     FICL_HASH *pHash;
-    FICL_WORD *pFW = ficlLookup(list_name);
+    FICL_WORD *pFW = ficlLookup(pVM->pSys, list_name);
 
     assert(pFW);
     pHash = (FICL_HASH *)(pFW->param[0].p);
@@ -92,7 +92,8 @@ int ficlParsePrefix(FICL_VM *pVM, STRINGINFO si)
             */
             if (!strincmp(SI_PTR(si), pFW->name, (FICL_UNS)n))
             {
-                vmSetTibIndex(pVM, vmGetTibIndex(pVM) - 1 - SI_COUNT(si) + n);
+                /* (sadler) fixed off-by-one error when the token has no trailing space in the TIB */
+				vmSetTibIndex(pVM, si.cp + n - pVM->tib.cp );
                 vmExecute(pVM, pFW);
 
                 return FICL_TRUE;
@@ -114,7 +115,7 @@ static void tempBase(FICL_VM *pVM, int base)
     if (!ficlParseNumber(pVM, si)) 
     {
         int i = SI_COUNT(si);
-        vmThrowErr(pVM, "0x%.*s is not a valid hex value", i, SI_PTR(si));
+        vmThrowErr(pVM, "%.*s not recognized", i, SI_PTR(si));
     }
 
     pVM->base = oldbase;
@@ -164,6 +165,10 @@ void ficlCompilePrefix(FICL_SYSTEM *pSys)
     pHash->name = list_name;
     dictAppendWord(dp, list_name, constantParen, FW_DEFAULT);
     dictAppendCell(dp, LVALUEtoCELL(pHash));
+
+	/*
+	** Put __tempbase in the forth-wordlist
+	*/
     dictAppendWord(dp, "__tempbase", fTempBase, FW_DEFAULT);
 
     /*

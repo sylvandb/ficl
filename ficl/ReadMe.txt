@@ -1,3 +1,26 @@
+rel 3.00 -- June 2001
+
+- Added pSys parameter to most ficlXXXX functions - multiple system support
+  dictLookupLoc renamed to ficlLookupLoc after addition of pSys param
+  ficlInitSystem returns a FICL_SYSTEM*
+  ficlTermSystem
+  ficlNewVM
+  ficlLookup
+  ficlGetDict
+  ficlGetEnv
+  ficlSetEnv
+  ficlSetEnvD
+  ficlGetLoc
+  ficlBuild
+
+- Fixed off-by-one bug in ficlParsePrefix
+- Ficl parse-steps now work correctly - mods to interpret()
+- Made tools.c:isAFiclWord more selective
+- Tweaked makefiles and code to make gcc happy under linux
+- Vetted all instances of LVALUEtoCELL to make sure they're working on CELL sized operands 
+  (for 64 bit compatibility)
+- Doc updates
+
 rel 2.06 -- May 2001 (feast or famine around here)
 
 - Debugger changes:

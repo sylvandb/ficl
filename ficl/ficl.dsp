@@ -245,6 +245,10 @@ SOURCE=.\doc\ficl_oop.html
 # End Source File
 # Begin Source File
 
+SOURCE=.\doc\ficl_parse.html
+# End Source File
+# Begin Source File
+
 SOURCE=.\doc\ficl_rel.html
 # End Source File
 # Begin Source File

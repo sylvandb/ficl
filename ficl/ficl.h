@@ -3,6 +3,7 @@
 ** Forth Inspired Command Language
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 19 July 1997
+** Dedicated to RHS, in loving memory
 ** $Id$
 *******************************************************************/
 /*
@@ -131,7 +132,7 @@
 ** F o r   M o r e   I n f o r m a t i o n
 **
 ** Web home of ficl
-**   http://www.taygeta.com/forth/compilers
+**   http://ficl.sourceforge.net
 ** Check this website for Forth literature (including the ANSI standard)
 **   http://www.taygeta.com/forthlit.html
 ** and here for software and more links
@@ -224,15 +225,18 @@ extern "C" {
 ** Forward declarations... read on.
 */
 struct ficl_word;
+typedef struct ficl_word FICL_WORD;
 struct vm;
+typedef struct vm FICL_VM;
 struct ficl_dict;
+typedef struct ficl_dict FICL_DICT;
 struct ficl_system;
 typedef struct ficl_system FICL_SYSTEM;
 
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "2.06"
+#define FICL_VER    "3.00"
 #if !defined (FICL_PROMPT)
 #define FICL_PROMPT "ok> "
 #endif
@@ -264,7 +268,7 @@ typedef union _cell
 } CELL;
 
 /*
-** LVALUEtoCELL does a little pointer trickery to cast any 32 bit
+** LVALUEtoCELL does a little pointer trickery to cast any CELL sized
 ** lvalue (informal definition: an expression whose result has an
 ** address) to CELL. Remember that constants and casts are NOT
 ** themselves lvalues!
@@ -359,59 +363,59 @@ typedef struct _ficlStack
 /*
 ** Stack methods... many map closely to required Forth words.
 */
-FICL_STACK *stackCreate(unsigned nCells);
-void        stackDelete(FICL_STACK *pStack);
-int         stackDepth (FICL_STACK *pStack);
-void        stackDrop  (FICL_STACK *pStack, int n);
-CELL        stackFetch (FICL_STACK *pStack, int n);
-CELL        stackGetTop(FICL_STACK *pStack);
-void        stackLink  (FICL_STACK *pStack, int nCells);
-void        stackPick  (FICL_STACK *pStack, int n);
-CELL        stackPop   (FICL_STACK *pStack);
-void       *stackPopPtr(FICL_STACK *pStack);
-FICL_UNS    stackPopUNS(FICL_STACK *pStack);
-FICL_INT    stackPopINT(FICL_STACK *pStack);
-void        stackPush  (FICL_STACK *pStack, CELL c);
+FICL_STACK *stackCreate   (unsigned nCells);
+void        stackDelete   (FICL_STACK *pStack);
+int         stackDepth    (FICL_STACK *pStack);
+void        stackDrop     (FICL_STACK *pStack, int n);
+CELL        stackFetch    (FICL_STACK *pStack, int n);
+CELL        stackGetTop   (FICL_STACK *pStack);
+void        stackLink     (FICL_STACK *pStack, int nCells);
+void        stackPick     (FICL_STACK *pStack, int n);
+CELL        stackPop      (FICL_STACK *pStack);
+void       *stackPopPtr   (FICL_STACK *pStack);
+FICL_UNS    stackPopUNS   (FICL_STACK *pStack);
+FICL_INT    stackPopINT   (FICL_STACK *pStack);
+void        stackPush     (FICL_STACK *pStack, CELL c);
 void        stackPushPtr  (FICL_STACK *pStack, void *ptr);
-void        stackPushUNS(FICL_STACK *pStack, FICL_UNS u);
-void        stackPushINT(FICL_STACK *pStack, FICL_INT i);
-void        stackReset (FICL_STACK *pStack);
-void        stackRoll  (FICL_STACK *pStack, int n);
-void        stackSetTop(FICL_STACK *pStack, CELL c);
-void        stackStore (FICL_STACK *pStack, int n, CELL c);
-void        stackUnlink(FICL_STACK *pStack);
+void        stackPushUNS  (FICL_STACK *pStack, FICL_UNS u);
+void        stackPushINT  (FICL_STACK *pStack, FICL_INT i);
+void        stackReset    (FICL_STACK *pStack);
+void        stackRoll     (FICL_STACK *pStack, int n);
+void        stackSetTop   (FICL_STACK *pStack, CELL c);
+void        stackStore    (FICL_STACK *pStack, int n, CELL c);
+void        stackUnlink   (FICL_STACK *pStack);
 
 #if (FICL_WANT_FLOAT)
 float       stackPopFloat (FICL_STACK *pStack);
-void        stackPushFloat(FICL_STACK *pStack, float f);
+void        stackPushFloat(FICL_STACK *pStack, FICL_FLOAT f);
 #endif
 
 /*
 ** Shortcuts (Guy Carver)
 */
-#define PUSHPTR(p)  stackPushPtr(pVM->pStack,p)
-#define PUSHUNS(u)  stackPushUNS(pVM->pStack,u)
-#define PUSHINT(i)  stackPushINT(pVM->pStack,i)
-#define PUSHFLOAT(f)    stackPushFloat(pVM->fStack,f)
-#define PUSH(c)     stackPush(pVM->pStack,c)
-#define POPPTR()    stackPopPtr(pVM->pStack)
-#define POPUNS()    stackPopUNS(pVM->pStack)
-#define POPINT()    stackPopINT(pVM->pStack)
-#define POPFLOAT()  stackPopFloat(pVM->fStack)
-#define POP()       stackPop(pVM->pStack)
-#define GETTOP()    stackGetTop(pVM->pStack)
-#define SETTOP(c)   stackSetTop(pVM->pStack,LVALUEtoCELL(c))
-#define GETTOPF()   stackGetTop(pVM->fStack)
-#define SETTOPF(c)  stackSetTop(pVM->fStack,LVALUEtoCELL(c))
-#define STORE(n,c)  stackStore(pVM->pStack,n,LVALUEtoCELL(c))
-#define DEPTH()     stackDepth(pVM->pStack)
-#define DROP(n)     stackDrop(pVM->pStack,n)
-#define DROPF(n)    stackDrop(pVM->fStack,n)
-#define FETCH(n)    stackFetch(pVM->pStack,n)
-#define PICK(n)     stackPick(pVM->pStack,n)
-#define PICKF(n)    stackPick(pVM->fStack,n)
-#define ROLL(n)     stackRoll(pVM->pStack,n)
-#define ROLLF(n)    stackRoll(pVM->fStack,n)
+#define PUSHPTR(p)   stackPushPtr(pVM->pStack,p)
+#define PUSHUNS(u)   stackPushUNS(pVM->pStack,u)
+#define PUSHINT(i)   stackPushINT(pVM->pStack,i)
+#define PUSHFLOAT(f) stackPushFloat(pVM->fStack,f)
+#define PUSH(c)      stackPush(pVM->pStack,c)
+#define POPPTR()     stackPopPtr(pVM->pStack)
+#define POPUNS()     stackPopUNS(pVM->pStack)
+#define POPINT()     stackPopINT(pVM->pStack)
+#define POPFLOAT()   stackPopFloat(pVM->fStack)
+#define POP()        stackPop(pVM->pStack)
+#define GETTOP()     stackGetTop(pVM->pStack)
+#define SETTOP(c)    stackSetTop(pVM->pStack,LVALUEtoCELL(c))
+#define GETTOPF()    stackGetTop(pVM->fStack)
+#define SETTOPF(c)   stackSetTop(pVM->fStack,LVALUEtoCELL(c))
+#define STORE(n,c)   stackStore(pVM->pStack,n,LVALUEtoCELL(c))
+#define DEPTH()      stackDepth(pVM->pStack)
+#define DROP(n)      stackDrop(pVM->pStack,n)
+#define DROPF(n)     stackDrop(pVM->fStack,n)
+#define FETCH(n)     stackFetch(pVM->pStack,n)
+#define PICK(n)      stackPick(pVM->pStack,n)
+#define PICKF(n)     stackPick(pVM->fStack,n)
+#define ROLL(n)      stackRoll(pVM->pStack,n)
+#define ROLLF(n)     stackRoll(pVM->fStack,n)
 
 /* 
 ** The virtual machine (VM) contains the state for one interpreter.
@@ -425,7 +429,7 @@ void        stackPushFloat(FICL_STACK *pStack, float f);
 ** Throw an exception
 */
 
-typedef struct ficl_word ** IPTYPE; /* the VM's instruction pointer */
+typedef FICL_WORD ** IPTYPE; /* the VM's instruction pointer */
 
 /*
 ** Each VM has a placeholder for an output function -
@@ -433,7 +437,7 @@ typedef struct ficl_word ** IPTYPE; /* the VM's instruction pointer */
 ** through a different device. If you specify no
 ** OUTFUNC, it defaults to ficlTextOut.
 */
-typedef void (*OUTFUNC)(struct vm *pVM, char *text, int fNewline);
+typedef void (*OUTFUNC)(FICL_VM *pVM, char *text, int fNewline);
 
 /*
 ** Each VM operates in one of two non-error states: interpreting
@@ -464,17 +468,16 @@ typedef void (*OUTFUNC)(struct vm *pVM, char *text, int fNewline);
 /*
 ** OK - now we can really define the VM...
 */
-typedef struct vm
+struct vm
 {
     FICL_SYSTEM    *pSys;       /* Which system this VM belongs to  */
-    struct vm      *link;       /* Ficl keeps a VM list for simple teardown */
+    FICL_VM        *link;       /* Ficl keeps a VM list for simple teardown */
     jmp_buf        *pState;     /* crude exception mechanism...     */
     OUTFUNC         textOut;    /* Output callback - see sysdep.c   */
     void *          pExtend;    /* vm extension pointer             */
     short           fRestart;   /* Set TRUE to restart runningWord  */
     IPTYPE          ip;         /* instruction pointer              */
-    struct ficl_word 
-                   *runningWord;/* address of currently running word (often just *(ip-1) ) */
+    FICL_WORD      *runningWord;/* address of currently running word (often just *(ip-1) ) */
     FICL_UNS        state;      /* compiling or interpreting        */
     FICL_UNS        base;       /* number conversion base           */
     FICL_STACK     *pStack;     /* param stack                      */
@@ -488,7 +491,7 @@ typedef struct vm
     CELL            user[FICL_USER_CELLS];
 #endif
     char            pad[nPAD];  /* the scratch area (see above)     */
-} FICL_VM;
+};
 
 /*
 ** A FICL_CODE points to a function that gets called to help execute
@@ -514,10 +517,10 @@ typedef void (*FICL_CODE)(FICL_VM *pVm);
 ** words in a linked list called the dictionary.
 ** A FICL_WORD starts each entry in the list.
 ** Version 1.02: space for the name characters is allotted from
-** the dictionary ahead of the word struct - this saves about half 
-** the storage on average with very little runtime cost.
+** the dictionary ahead of the word struct, rather than using
+** a fixed size array for each name.
 */
-typedef struct ficl_word
+struct ficl_word
 {
     struct ficl_word *link;     /* Previous word in the dictionary      */
     UNS16 hash;
@@ -526,7 +529,7 @@ typedef struct ficl_word
     char *name;                 /* First nFICLNAME chars of word name   */
     FICL_CODE code;             /* Native code to execute the word      */
     CELL param[1];              /* First data cell of the word          */
-} FICL_WORD;
+};
 
 /*
 ** Worst-case size of a word header: nFICLNAME chars in name
@@ -562,28 +565,29 @@ int wordIsCompileOnly(FICL_WORD *pFW);
 
 
 void        vmBranchRelative(FICL_VM *pVM, int offset);
-FICL_VM *   vmCreate (FICL_VM *pVM, unsigned nPStack, unsigned nRStack);
-void        vmDelete (FICL_VM *pVM);
-void        vmExecute(FICL_VM *pVM, FICL_WORD *pWord);
-char *      vmGetString(FICL_VM *pVM, FICL_STRING *spDest, char delimiter);
-STRINGINFO  vmGetWord(FICL_VM *pVM);
-STRINGINFO  vmGetWord0(FICL_VM *pVM);
-int         vmGetWordToPad(FICL_VM *pVM);
-STRINGINFO  vmParseString(FICL_VM *pVM, char delimiter);
+FICL_VM *   vmCreate       (FICL_VM *pVM, unsigned nPStack, unsigned nRStack);
+void        vmDelete       (FICL_VM *pVM);
+void        vmExecute      (FICL_VM *pVM, FICL_WORD *pWord);
+FICL_DICT  *vmGetDict      (FICL_VM *pVM);
+char *      vmGetString    (FICL_VM *pVM, FICL_STRING *spDest, char delimiter);
+STRINGINFO  vmGetWord      (FICL_VM *pVM);
+STRINGINFO  vmGetWord0     (FICL_VM *pVM);
+int         vmGetWordToPad (FICL_VM *pVM);
+STRINGINFO  vmParseString  (FICL_VM *pVM, char delimiter);
 STRINGINFO  vmParseStringEx(FICL_VM *pVM, char delimiter, char fSkipLeading);
-CELL        vmPop(FICL_VM *pVM);
-void        vmPush(FICL_VM *pVM, CELL c);
-void        vmPopIP  (FICL_VM *pVM);
-void        vmPushIP (FICL_VM *pVM, IPTYPE newIP);
-void        vmQuit   (FICL_VM *pVM);
-void        vmReset  (FICL_VM *pVM);
-void        vmSetTextOut(FICL_VM *pVM, OUTFUNC textOut);
+CELL        vmPop          (FICL_VM *pVM);
+void        vmPush         (FICL_VM *pVM, CELL c);
+void        vmPopIP        (FICL_VM *pVM);
+void        vmPushIP       (FICL_VM *pVM, IPTYPE newIP);
+void        vmQuit         (FICL_VM *pVM);
+void        vmReset        (FICL_VM *pVM);
+void        vmSetTextOut   (FICL_VM *pVM, OUTFUNC textOut);
 #if FICL_WANT_DEBUGGER
-void        vmStep(FICL_VM *pVM);
+void        vmStep         (FICL_VM *pVM);
 #endif
-void        vmTextOut(FICL_VM *pVM, char *text, int fNewline);
-void        vmThrow  (FICL_VM *pVM, int except);
-void        vmThrowErr(FICL_VM *pVM, char *fmt, ...);
+void        vmTextOut      (FICL_VM *pVM, char *text, int fNewline);
+void        vmThrow        (FICL_VM *pVM, int except);
+void        vmThrowErr     (FICL_VM *pVM, char *fmt, ...);
 
 #define vmGetRunningWord(pVM) ((pVM)->runningWord)
 
@@ -628,11 +632,11 @@ void        vmCheckFStack(FICL_VM *pVM, int popCells, int pushCells);
 ** PopTib restores the TIB state given a saved TIB from PushTib
 ** GetInBuf returns a pointer to the next unused char of the TIB
 */
-void        vmPushTib(FICL_VM *pVM, char *text, FICL_INT nChars, TIB *pSaveTib);
-void        vmPopTib(FICL_VM *pVM, TIB *pTib);
-#define     vmGetInBuf(pVM) ((pVM)->tib.cp + (pVM)->tib.index)
-#define     vmGetInBufLen(pVM) ((pVM)->tib.end - (pVM)->tib.cp)
-#define     vmGetInBufEnd(pVM) ((pVM)->tib.end)
+void        vmPushTib  (FICL_VM *pVM, char *text, FICL_INT nChars, TIB *pSaveTib);
+void        vmPopTib   (FICL_VM *pVM, TIB *pTib);
+#define     vmGetInBuf(pVM)      ((pVM)->tib.cp + (pVM)->tib.index)
+#define     vmGetInBufLen(pVM)   ((pVM)->tib.end - (pVM)->tib.cp)
+#define     vmGetInBufEnd(pVM)   ((pVM)->tib.end)
 #define     vmGetTibIndex(pVM)    (pVM)->tib.index
 #define     vmSetTibIndex(pVM, i) (pVM)->tib.index = i
 #define     vmUpdateTib(pVM, str) (pVM)->tib.index = (str) - (pVM)->tib.cp
@@ -682,13 +686,11 @@ typedef struct ficl_hash
     FICL_WORD *table[1];
 } FICL_HASH;
 
-void        hashForget(FICL_HASH *pHash, void *where);
-UNS16       hashHashCode(STRINGINFO si);
+void        hashForget    (FICL_HASH *pHash, void *where);
+UNS16       hashHashCode  (STRINGINFO si);
 void        hashInsertWord(FICL_HASH *pHash, FICL_WORD *pFW);
-FICL_WORD  *hashLookup(struct ficl_hash *pHash, 
-                       STRINGINFO si, 
-                       UNS16 hashCode);
-void        hashReset(FICL_HASH *pHash);
+FICL_WORD  *hashLookup    (FICL_HASH *pHash, STRINGINFO si, UNS16 hashCode);
+void        hashReset     (FICL_HASH *pHash);
 
 /*
 ** A Dictionary is a linked list of FICL_WORDs. It is also Ficl's
@@ -721,7 +723,7 @@ void        hashReset(FICL_HASH *pHash);
 ** size -- number of cells in the dictionary (total)
 ** dict -- start of data area. Must be at the end of the struct.
 */
-typedef struct ficl_dict
+struct ficl_dict
 {
     CELL *here;
     FICL_WORD *smudge;
@@ -731,16 +733,16 @@ typedef struct ficl_dict
     int        nLists;
     unsigned   size;    /* Number of cells in dict (total)*/
     CELL       dict[1]; /* Base of dictionary memory      */
-} FICL_DICT;
+};
 
 void       *alignPtr(void *ptr);
 void        dictAbortDefinition(FICL_DICT *pDict);
-void        dictAlign(FICL_DICT *pDict);
-int         dictAllot(FICL_DICT *pDict, int n);
-int         dictAllotCells(FICL_DICT *pDict, int nCells);
-void        dictAppendCell(FICL_DICT *pDict, CELL c);
-void        dictAppendChar(FICL_DICT *pDict, char c);
-FICL_WORD  *dictAppendWord(FICL_DICT *pDict, 
+void        dictAlign      (FICL_DICT *pDict);
+int         dictAllot      (FICL_DICT *pDict, int n);
+int         dictAllotCells (FICL_DICT *pDict, int nCells);
+void        dictAppendCell (FICL_DICT *pDict, CELL c);
+void        dictAppendChar (FICL_DICT *pDict, char c);
+FICL_WORD  *dictAppendWord (FICL_DICT *pDict, 
                            char *name, 
                            FICL_CODE pCode, 
                            UNS8 flags);
@@ -748,26 +750,26 @@ FICL_WORD  *dictAppendWord2(FICL_DICT *pDict,
                            STRINGINFO si, 
                            FICL_CODE pCode, 
                            UNS8 flags);
-void        dictAppendUNS(FICL_DICT *pDict, FICL_UNS u);
-int         dictCellsAvail(FICL_DICT *pDict);
-int         dictCellsUsed (FICL_DICT *pDict);
-void        dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int n);
+void        dictAppendUNS  (FICL_DICT *pDict, FICL_UNS u);
+int         dictCellsAvail (FICL_DICT *pDict);
+int         dictCellsUsed  (FICL_DICT *pDict);
+void        dictCheck      (FICL_DICT *pDict, FICL_VM *pVM, int n);
 FICL_DICT  *dictCreate(unsigned nCELLS);
 FICL_DICT  *dictCreateHashed(unsigned nCells, unsigned nHash);
 FICL_HASH  *dictCreateWordlist(FICL_DICT *dp, int nBuckets);
-void        dictDelete(FICL_DICT *pDict);
-void        dictEmpty(FICL_DICT *pDict, unsigned nHash);
+void        dictDelete     (FICL_DICT *pDict);
+void        dictEmpty      (FICL_DICT *pDict, unsigned nHash);
 void        dictHashSummary(FICL_VM *pVM);
-int         dictIncludes(FICL_DICT *pDict, void *p);
-FICL_WORD  *dictLookup(FICL_DICT *pDict, STRINGINFO si);
+int         dictIncludes   (FICL_DICT *pDict, void *p);
+FICL_WORD  *dictLookup     (FICL_DICT *pDict, STRINGINFO si);
 #if FICL_WANT_LOCALS
-FICL_WORD  *dictLookupLoc(FICL_DICT *pDict, STRINGINFO si);
+FICL_WORD  *ficlLookupLoc  (FICL_SYSTEM *pSys, STRINGINFO si);
 #endif
 void        dictResetSearchOrder(FICL_DICT *pDict);
-void        dictSetFlags(FICL_DICT *pDict, UNS8 set, UNS8 clr);
+void        dictSetFlags   (FICL_DICT *pDict, UNS8 set, UNS8 clr);
 void        dictSetImmediate(FICL_DICT *pDict);
-void        dictUnsmudge(FICL_DICT *pDict);
-CELL       *dictWhere(FICL_DICT *pDict);
+void        dictUnsmudge   (FICL_DICT *pDict);
+CELL       *dictWhere      (FICL_DICT *pDict);
 
 
 /* 
@@ -818,7 +820,7 @@ void ficlListParseSteps(FICL_VM *pVM);
 ** not a problem provided the precompiled dictionaries are identical for 
 ** all systems.
 */
-typedef struct ficl_system 
+struct ficl_system 
 {
     FICL_SYSTEM *link;
     FICL_VM *vmList;
@@ -829,7 +831,7 @@ typedef struct ficl_system
 #endif
     FICL_WORD *pInterp[3];
     FICL_WORD *parseList[FICL_MAX_PARSE_STEPS];
-} FICL_SYSTEM;
+};
 
 /*
 ** External interface to FICL...
@@ -846,7 +848,7 @@ typedef struct ficl_system
 ** precompiled part. Try 1K cells minimum. Use "words" to find
 ** out how much of the dictionary is used at any time.
 */
-void       ficlInitSystem(int nDictCells);
+FICL_SYSTEM *ficlInitSystem(int nDictCells);
 
 /*
 ** f i c l T e r m S y s t e m
@@ -854,7 +856,7 @@ void       ficlInitSystem(int nDictCells);
 ** were created with ficlNewVM (see below). Call this function to
 ** reclaim all memory used by the dictionary and VMs.
 */
-void       ficlTermSystem(void);
+void       ficlTermSystem(FICL_SYSTEM *pSys);
 
 /*
 ** f i c l E x e c
@@ -888,7 +890,7 @@ int        ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord);
 ** address of the VM, or NULL if an error occurs.
 ** Precondition: successful execution of ficlInitSystem
 */
-FICL_VM   *ficlNewVM(void);
+FICL_VM   *ficlNewVM(FICL_SYSTEM *pSys);
 
 /*
 ** Force deletion of a VM. You do not need to do this 
@@ -911,19 +913,19 @@ int ficlSetStackSize(int nStackCells);
 ** dictionary with the given name, or NULL if no match.
 ** Precondition: successful execution of ficlInitSystem
 */
-FICL_WORD *ficlLookup(char *name);
+FICL_WORD *ficlLookup(FICL_SYSTEM *pSys, char *name);
 
 /*
 ** f i c l G e t D i c t
 ** Utility function - returns the address of the system dictionary.
 ** Precondition: successful execution of ficlInitSystem
 */
-FICL_DICT *ficlGetDict(void);
-FICL_DICT *ficlGetEnv(void);
-void       ficlSetEnv(char *name, FICL_UNS value);
-void       ficlSetEnvD(char *name, FICL_UNS hi, FICL_UNS lo);
+FICL_DICT *ficlGetDict(FICL_SYSTEM *pSys);
+FICL_DICT *ficlGetEnv (FICL_SYSTEM *pSys);
+void       ficlSetEnv (FICL_SYSTEM *pSys, char *name, FICL_UNS value);
+void       ficlSetEnvD(FICL_SYSTEM *pSys, char *name, FICL_UNS hi, FICL_UNS lo);
 #if FICL_WANT_LOCALS
-FICL_DICT *ficlGetLoc(void);
+FICL_DICT *ficlGetLoc (FICL_SYSTEM *pSys);
 #endif
 /* 
 ** f i c l B u i l d
@@ -941,7 +943,7 @@ FICL_DICT *ficlGetLoc(void);
 **          Most words can use FW_DEFAULT.
 ** nAllot - number of extra cells to allocate in the parameter area (usually zero)
 */
-int        ficlBuild(char *name, FICL_CODE code, char flags);
+int        ficlBuild(FICL_SYSTEM *pSys, char *name, FICL_CODE code, char flags);
 
 /* 
 ** f i c l C o m p i l e C o r e
@@ -972,7 +974,7 @@ void       parseStepParen(FICL_VM *pVM);
 /*
 ** From tools.c
 */
-int        isAFiclWord(FICL_WORD *pFW);
+int        isAFiclWord(FICL_DICT *pd, FICL_WORD *pFW);
 
 /* 
 ** The following supports SEE and the debugger.

@@ -292,7 +292,7 @@ void stackPushINT(FICL_STACK *pStack, FICL_INT i)
 }
 
 #if (FICL_WANT_FLOAT)
-void stackPushFloat(FICL_STACK *pStack, float f)
+void stackPushFloat(FICL_STACK *pStack, FICL_FLOAT f)
 {
     *pStack->sp++ = LVALUEtoCELL(f);
 }

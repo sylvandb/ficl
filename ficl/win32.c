@@ -244,8 +244,8 @@ static void include(FICL_VM *pVM)
 {
     STRINGINFO si;
     FICL_WORD *pFW;
-    FICL_DICT *dp  = ficlGetDict();
-    FICL_CODE pCreateParen = ficlLookup("(create)")->code;
+    FICL_DICT *dp  = vmGetDict(pVM);
+    FICL_CODE pCreateParen = ficlLookup(pVM->pSys, "(create)")->code;
 
     si = parseFileName(pVM);
 
@@ -268,8 +268,8 @@ static void reinclude(FICL_VM *pVM)
 {
     STRINGINFO si;
     FICL_WORD *pFW;
-    FICL_DICT *dp  = ficlGetDict();
-    FICL_CODE pCreateParen = ficlLookup("(create)")->code;
+    FICL_DICT *dp  = vmGetDict(pVM);
+    FICL_CODE pCreateParen = ficlLookup(pVM->pSys, "(create)")->code;
 
     si = parseFileName(pVM);
 
