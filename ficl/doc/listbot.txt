@@ -1,0 +1,17 @@
+<!-- Begin ListBot Code -->
+<form method="post" action="http://www.listbot.com/cgi-bin/subscriber">
+<table border=0><tr><td colspan=2>
+Join our mailing list!<br>
+Enter your email address below,<br>
+then click the 'Join List' button:<br>
+</td></tr><tr><td>
+<input type=text name="e_mail">
+<input type=hidden name="list_id" value="ficl">
+<input type=hidden name="Act" value="subscribe_list">
+</td><td>
+<input type=image src="http://www.listbot.com/subscribe_button.gif" border=0 width=88 height=31 alt="Click here to join our mailing list!">
+</td></tr><tr><td colspan=2>
+<font size=1 face="arial"><a href="http://www.listbot.com/" target="_top">Powered by ListBot</a></font><br>
+</td></tr></table>
+</form>
+<!-- End ListBot Code -->
