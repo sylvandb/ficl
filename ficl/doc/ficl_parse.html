@@ -5,6 +5,11 @@
    <meta name="Author" content="john sadler">
    <meta name="Description" content="the coolest embedded scripting language ever">
    <title>Ficl Parse Steps</title>
+    <LINK media="screen" href="ficlstyle.css" type="text/css" rel="stylesheet">
+<STYLE type="text/css">
+    
+</STYLE>
+
 </head>
 <body>
 <link REL="SHORTCUT ICON" href="ficl.ico">
@@ -81,7 +86,7 @@ typedef int (*FICL_PARSE_STEP)(FICL_VM *pVM, STRINGINFO si);
 <p>
 Upon entry to the parse step, <code>si</code> points to the incoming token. The parse step
 must return <code>FICL_TRUE</code> if it succeeds in matching the token, and 
-<code>FICL_TRUE</code> otherwise. If it succeeds in matching a token, the parse step
+<code>FICL_FALSE</code> otherwise. If it succeeds in matching a token, the parse step
 applies semantics to it before returning. See <code>ficlParseNumber()</code> in words.c for
 an example.
 </p>
@@ -106,9 +111,8 @@ and executes the code associated with the prefix. This code can be anything you 
 typically do something with the remainder of the token. If the prefix code does not consume the
 rest of the token, it will go through the parse process again (which may be what you want).
 </p><p>
-Prefixes are defined in prefix.c and in softwords/prefix.fr. The easiest way to add a new prefix is
-to insert it into prefix.fr and rebuild the system. You can also add prefixes interactively
-by bracketing prefix definitions as follows (see prefix,fr):
+Prefixes are defined in <code>prefix.c</code> and in <code>softwords/prefix.fr</code>. The easiest way to add a new prefix is
+to insert it into <code>prefix.fr</code> and rebuild the system. You can also add prefixes interactively by bracketing prefix definitions as follows (see prefix.fr):
 </p>
 <pre>
 start-prefixes  ( defined in prefix.fr )
