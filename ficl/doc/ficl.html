@@ -4,61 +4,15 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="john sadler">
    <meta name="Description" content="the coolest embedded scripting language ever">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en]C-CCK-MCD {Sony}  (WinNT; U) [Netscape]">
-   <title>Ficl Documentation</title>
+   <title>Ficl - Embedded Scripting</title>
 </head>
 <body>
 <link REL="SHORTCUT ICON" href="ficl.ico">
-<h1>
-<b>Ficl Documentation</b></h1>
+<h1><b>Ficl Documentation</b></h1>
 
-<table BORDER=0 CELLSPACING=3 WIDTH="640" >
-<tr>
-<td><b>Forth Inspired Command Language&nbsp;</b></td>
+<script language="javascript" src="ficlheader.js"></script>
 
-<td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
-
-<td ROWSPAN="4"><a href="http://www.links2go.net/topic/Forth"><img SRC="skey.gif" ALT="Key Resource" BORDER=0 height=81 width=81></a></td>
-</tr>
-
-<tr>
-<td><b>Author: John Sadler (<a href="mailto:john_sadler@alum.mit.edu">john_sadler@alum.mit.edu</a>)</b></td>
-</tr>
-
-<tr>
-<td><b>Created: 19 July 1997&nbsp;</b></td>
-</tr>
-
-<tr>
-<td><b>Revision 2.05: October 2000</b></td>
-</tr>
-
-<tr>
-<td COLSPAN="3"><!-- Begin ListBot Code --><form method="post" action="http://www.listbot.com/cgi-bin/subscriber">
-<table BORDER=0 >
-<tr>
-<td COLSPAN="2">Join the ficl mailing list - enter your email address here
-to be notified of new releases:&nbsp;</td>
-</tr>
-
-<tr>
-<td><input type=text name="e_mail"><input type=hidden name="list_id" value="ficl"><input type=hidden name="Act" value="subscribe_list"></td>
-
-<td><input type=image src="http://www.listbot.com/subscribe_button.gif" border=0 
- width=88 height=31 alt="Click here to join our mailing list!"></td>
-</tr>
-
-<tr>
-<td COLSPAN="2"><font face="arial"><font size=-2><a href="http://www.listbot.com/" target="_top">Powered
-by ListBot</a></font></font></td>
-</tr>
-</table>
-</form><!-- End ListBot Code --></td>
-</tr>
-</table>
-
-<h2>
-Contents</h2>
+<h2>Contents</h2>
 
 <ul>
 <li>
@@ -71,11 +25,11 @@ Contents</h2>
 <font size=+1><a href="#download">Download</a></font></li>
 
 <li>
-<font size=+1><a href="#links">References</a></font></li>
+<font size=+1><a href="#links">Tutorials and References</a></font></li>
 
 <li>
-<font color="#000000"><font size=+1><a href="#includesficl">Some software
-that incorporates Ficl</a></font></font></li>
+<font size=+1><a href="#includesficl">Some software
+that incorporates Ficl</a></font></li>
 
 <li>
 <font size=+1><a href="#lawyerbait">Disclaimer &amp; License</a></font></li>
@@ -130,14 +84,15 @@ that incorporates Ficl</a></font></font></li>
 <tr>
 <td>
 <h1>
-<a NAME="whatis"></a>What is ficl?</h1>
-<font size=+1>Ficl is a complete programming language interpreter designed
+<a NAME="whatis"></a>What is ficl?
+</h1>
+Ficl is a complete programming language interpreter designed
 to be embedded into other systems as a command/macro/development prototype
 language. Ficl provides object extensions that can be used to wrap methods
 and structures of the host system without altering them. The syntax is
 based on ANS Forth and the code is Standard C. See below for examples of
 <a href="#includesficl">software
-that includes ficl</a>. Ficl stands for "Forth inspired command language".&nbsp;</font></td>
+that includes ficl</a>. Ficl stands for "Forth inspired command language".&nbsp;</td>
 </tr>
 
 <tr>
@@ -190,20 +145,23 @@ Provide object oriented extensions</li>
 
 <ul>
 <li>
-<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl205/ficl205.zip">Download
-ficl (latest release)</a></b></li>
+<b><a href="http://sourceforge.net/project/showfiles.php?group_id=24441">Download
+ficl (latest release)</a></b>
+</li>
 
 <li>
-<b><a href="ftp://ftp.taygeta.com/pub/Forth/Compilers/native/misc/ficl205/ficlwin.zip">Download
-ficlWin</a> (not for resale. please contact me for resale license arrangements)</b></li>
+<b><a href="http://sourceforge.net/project/showfiles.php?group_id=24441">Download
+ficlWin</a> (not for resale. please contact me for resale license arrangements)</b>
+</li>
 </ul>
 
 <h2>
-<a NAME="links"></a>More information on Ficl and Forth</h2>
+<a NAME="links"></a>More information on Ficl and Forth
+</h2>
 
 <ul>
 <li>
-<a href="http://www.taygeta.com/ficl.html">Web home of Ficl</a></li>
+<a href="http://ficl.sourceforge.net">Web home of Ficl</a></li>
 
 <li>
 <a href="ficlddj.pdf">Manuscript of Ficl article for January 1999 Dr. Dobb's
@@ -214,25 +172,29 @@ Journal</a></li>
 Ficl</a></li>
 
 <li>
-<a href="http://www.taygeta.com/forthlit.html">Forth literature index on
-Taygeta</a></li>
-
-<ul>
-<li>
 <a href="http://www.taygeta.com/forth_intro/stackflo.html">An Introduction
-to Forth using Stack Flow</a></li>
+to Forth using Stack Flow</a> (start here if you're new to Forth)</li>
 
 <li>
 <a href="http://www.softsynth.com/pforth/pf_tut.htm">Phil Burk's Forth
 Tutorial</a></li>
 
 <li>
-<a href="http://www.taygeta.com/forth/dpans.html">Draft Proposed American
-National Standard for Forth</a></li>
-</ul>
+<a href="http://www.complang.tuwien.ac.at/forth/threaded-code.html">Anton Ertl's description of Threaded Code</a>
+</li>
 
 <li>
-<a href="http://www.forth.org">Forth Interest Group</a></li>
+<a href="http://ficl.sourceforge.net/dpans/dpans.html">Draft Proposed American
+National Standard for Forth</a> (quite readable, actually)
+</li>
+
+<li>
+<a href="http://www.taygeta.com/forthlit.html">Forth literature index on
+Taygeta</a></li>
+
+<li>
+<a href="http://www.forth.org">Forth Interest Group</a>
+</li>
 </ul>
 
 <h2>
@@ -240,19 +202,32 @@ National Standard for Forth</a></li>
 
 <ul>
 <li>
-<a href="http://www.freebsd.org/">FreeBSD</a> boot loader</li>
+<a href="http://www.freebsd.org/">FreeBSD</a> boot loader (Daniel Sobral, Jordan Hubbard)</li>
 
 <li>
-<a href="http://www.pagesz.net/~sessoms/debuffer/">Palm Pilot Debuffer</a>
-(Eric Sessoms)</li>
+<a href="http://www.chipcenter.com/networking/images/prod/prod158a.pdf">SwitchCore</a>
+Gigabit Ethernet switches (Örjan Gustavsson )</li>
 
 <li>
-<a href="http://www.swcp.com/~jchavez/osmond.html">Mac PC Board Layout
+<a href="http://debuffer.sourceforge.net/">Palm Pilot Debuffer</a>
+(Eric Sessoms) Also see ficlx, a C++ interface to ficl, on the same site</li>
+
+<li>
+<a href="http://www.swcp.com/~jchavez/osmond.html">Osmond PC Board Layout
 tool</a> (J Chavez)</li>
 
 <li>
 <a href="http://www.netcomsystems.com">NetCom Systems</a> ML7710 (Martin
 Usher)</li>
+<li>
+<a href="http://www.parview.com/ds/homepage.html">ParView</a> GPS system
+</li>
+<li>
+<a href="http://www.thekompany.com/products/powerplant/software/Languages/Embedded.php3">PowerPlant Software</a> Development Environment for Linux
+</li>
+<li>
+<a href="mailto:john_sadler@alum.mit.edu"><i>Your Product Name Here!!!</i></a>
+</li>
 </ul>
 
 <hr>
@@ -261,24 +236,23 @@ Usher)</li>
 <td>
 <h2>
 <a NAME="lawyerbait"></a>DISCLAIMER OF WARRANTY and LICENSE</h2>
-<i>Ficl is freeware. Use it in any way that you like, with the understanding
-that the code is not supported.</i>
-<p>Any third party may reproduce, distribute, or modify the ficl software
-code or any derivative works thereof without any compensation or license,
-provided that the original author information and this disclaimer text
-are retained in the source code files. The ficl software code is provided
-on an "as is" basis without warranty of any kind, including, without limitation,
-the implied warranties of merchantability and fitness for a particular
-purpose and their equivalents under the laws of any jurisdiction.&nbsp;
-<p>The FiclWin distribution, a derivative work of the ficl source code,
-is hereby licensed for unrestricted non-commercial use under the ficl license
-provided the user notifies the author (John Sadler) in writing or by electronic
-mail or their intended use of the FiclWin sources. You may freely redistribute
-the FiclWin distribution provided it contains this notice and adheres to
-all other provisions of this license.&nbsp;
-<p>Reselling the FiclWin source code, executable, or works derived from
-the FiclWin source code is prohibited under this license. Please contact
-me directly in order to discuss license terms for commercial use and distribution.
+<p>Ficl is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.</p>
+
+<p>The ficl software code is provided on an "as is"  basis without
+warranty of any kind, including, without limitation, the implied
+warranties of merchantability and fitness for a particular purpose
+and their equivalents under the laws of any jurisdiction.  
+See the <a HREF="http://www.fsf.org/copyleft/lesser.html">
+GNU Lesser General Public License</a> for more details.</p>
+
+<p>Any third party may reproduce, distribute, or modify the ficl
+software code or any derivative works thereof without any 
+compensation, provided that the author information
+and license text are retained in the source code files.</p>
+
 <p>I am interested in hearing from anyone who uses ficl. If you have a
 problem, a success story, a defect, an enhancement request, or if you would
 like to contribute to the ficl release, please <a href="mailto:john_sadler@alum.mit.edu">send
@@ -295,7 +269,11 @@ me email</a>.&nbsp;</td>
 
 <ul>
 <li>
-Code is written in ANSI C for portability.&nbsp;</li>
+Simple to integrate into existing systems: the sample implementation requires
+three Ficl function calls (see the example program in testmain.c).</li>
+
+<li>
+Written in ANSI C for portability.&nbsp;</li>
 
 <li>
 Standard: Implements the ANS Forth CORE word set, part of the CORE EXT
@@ -309,12 +287,13 @@ specific way. You can even add new control structures (not surprising if
 you're familiar with Forth)</li>
 
 <li>
-Ficl and C can interact in two ways: Ficl can wrap C code, and C functions
+Ficl and C/C++ can interact in two ways: Ficl can wrap C code, and C functions
 can invoke ficl code.</li>
 
 <li>
-Ficl code is thread safe and re-entrant:&nbsp; All Ficl VMs share one system
-dictionary; each Ficl virtual machine has an otherwise complete state,
+Ficl code is thread safe and re-entrant:&nbsp; All Ficl Virtual Machines share one system
+dictionary (version 3.0 will permit multiple dictionaries); 
+each Ficl Virtual Machine has an otherwise complete state,
 and each can be bound to a separate I/O channel (or none at all). An optional
 function called ficlLockDictionary() can control exclusive dictionary access.
 This function is stubbed out by default (See FICL_MULTITHREAD in sysdep.h).
@@ -330,25 +309,19 @@ could provide a mutual exclusion mechanism to serialize access to a VM
 from multiple threads.</font></li>
 
 <li>
-Simple incorporation into existing systems: the sample implementation requires
-three Ficl function calls (see the example program in testmain.c).</li>
-
-<li>
-ROM able: Ficl is designed to work in RAM based and ROM code / RAM data
+ROMable: Ficl is designed to work in RAM based and ROM code / RAM data
 environments. It does require somewhat more memory than a pure ROM implementation
 because it builds its system dictionary in RAM at startup time.</li>
 
 <li>
-Written an ANSI C to be as simple as I can make it to understand, support,
+Written in ANSI C to be as simple as I can make it to understand, support,
 debug, and port. Compiles without complaint at /Az /W4 (require ANSI C,
-max. warnings) under Microsoft VC++</li>
+max. warnings) under Microsoft VC++. Ports to several other toolchains and operating systems 
+(notably FreeBSD and Linux flavors) exist.</li>
 
 <li>
 Does full 32 bit math (but you need to implement two mixed precision math
 primitives (see sysdep.c))</li>
-
-<li>
-Type 1 indirect threaded interpreter</li>
 </ul>
 </td>
 </tr>
@@ -366,9 +339,8 @@ in <tt>sysdep.h</tt> and <tt>sysdep.c</tt> and edit them to suit your system.
 For example, <tt>INT16</tt> is a <tt>short</tt> on some compilers and an
 <tt>int</tt>
 on others. Check the default <tt>CELL</tt> alignment controlled by <tt>FICL_ALIGN</tt>.
-If necessary, add new definitions of <tt>ficlMalloc, ficlFree, ficlRealloc,
-ficlLockDictionary</tt>, and <tt>ficlTextOut</tt> to work with your operating
-system. Finally, use
+If necessary, add new definitions of <tt>ficlMalloc, ficlFree, ficlRealloc</tt>, 
+and <tt>ficlTextOut</tt> to work with your operating system. Finally, use
 <tt>testmain.c</tt> as a guide to installing the ficl
 system and one or more virtual machines into your code. You do not need
 to include <tt>testmain.c</tt> in your build.&nbsp;
@@ -922,11 +894,7 @@ Synonym for <tt>THEN</tt></dd>
 Pushes the xt address of the most recently defined word. This applies to
 colon definitions, constants, variables, and words that use <tt>create</tt>.
 You can print the name of the most recently defined word with&nbsp;</dd>
-
-<dl>
-<dd>
-<b><tt>last-word >name type</tt>&nbsp;</b></dd>
-</dl>
+<b><tt>last-word >name type</tt>&nbsp;</b>
 
 <dt>
 <tt>parse-word&nbsp;&nbsp; ( &lt;spaces>name -- c-addr u )</tt></dt>
@@ -971,7 +939,7 @@ of <tt>BASE</tt></dd>
 </dl>
 
 <h3>
-<a NAME="exficlwin"></a>FiclWin Extras (defined in testmain.c)</h3>
+<a NAME="exficlwin"></a>Extra words defined in testmain.c (Win32 and POSIX versions)</h3>
 
 <dl>
 <dt>
@@ -1031,7 +999,7 @@ attempting to optimize the hash function. I no longer harbor those illusions.</d
 </dl>
 
 <h3>
-FiclWin Exclusives (no source provided)</h3>
+Words defined in FiclWin only</h3>
 
 <dl>
 <dt>

@@ -1,26 +1,74 @@
-Coming up:
-Web server scripting extension (GoAhead port)
 
-rel 2.05 -- August 2000
-- Step debugger 
-- *** HTML documentation extensively revised ***
-- Incorporated Alpha (64 bit) patches from the freeBSD team.
+rel 2.05 -- April 2001
+
+This is a transitional release, but it adds a lot of new features. 
+Ficl 3.0 will change the API to allow multiple concurrent FICL_SYSTEMs. 
+This involves the addition of a single parameter to several functions 
+(the parameter is a pointer to a FICL_SYSTEM).
+
+* Thanks to everyone who contributed fixes and features for this release! Especially
+* Guy Carver, Orjan Gustafson, Larry Hastings, Daniel Sobral, and Reuben Thomas.
+
+- HTML documentation extensively revised
+- Simple source debugger -- see tools.c
+- The text interpreter is now extensible - this is accomplished through the use
+  of ficlAddParseStep. FICL_MAX_PARSE_STEPS limits the number of parse steps
+  (default: 8). You can write a precompiled parse step (see ficlParseNumber) and
+  append it to the chain, or you can write one in ficl and use ADD-PARSE-STEP 
+  to append it. Default parse steps are initialized in ficlInitSystem. You can list
+  the parse steps with parse-order ( -- ).
+- There is now a FICL_SYSTEM structure. This is a transitional release - version 3.0
+  will alter several API prototypes to take this as a parameter, allowing multiple
+  systems per process (and therefore multiple dictionaries). For those who use ficl
+  under a virtual memory O/S like Linux or Win NT, you can just create multiple ficl
+  processes (not threads) instead and save youself the wait.
+- Fixes for improved command line operation in testmain.c (Larry Hastings)
+- Numerous extensions to OO facility, including a new allot methods, ability
+  to catch method invocations (thanks to Daniel Sobral again)
+- Incorporated Alpha (64 bit) patches contributed by Daniel Sobral and the freeBSD team
+  Ficl is now 64 bit friendly! UNS32 is now FICL_UNS.
 - Split SEARCH and SEARCH EXT words from words.c to search.c
 - ABORT" now complies with the ANS (-2 THROWs)
-- 2LOCALS defined in jhlocal syntax now lose the first 
-  '2' in their names. See ficl_loc.html
+- 2LOCALS defined in jhlocal syntax now lose the "2:" in their names. See ficl_loc.html
+- Floating point support contributed by Guy Carver (Enable FICL_WANT_FLOAT in sysdep.h).
+- Win32 vtable model for objects (Guy Carver)
+- Win32 dll load/call suport (Larry Hastings)
+- Prefix support (Larry Hastings) (prefix.c prefix.fr FICL_EXTENDED_PREFIX) makes it 
+  easy to extend the parser to recignize prefixes like 0x and act on them. Use show-prefixes
+  to see what's defined.
+- Cleaned up initialization sequence so that it's all in ficlInitSystem
 
-ficl words
-- ABORT" works correctly (oops)
-- REFILL works correctly
+Ficl words
+- ABORT" and REFILL fixed (thanks to Daniel Sobral)
 - ANS CORE EXT words: 2r@ 2r> 2>r 
+- Numerous ANS FLOAT and FLOAT EXT words (Larry Carver) -- see float.c
 - ANS DOUBLE words: 2variable
 - .S now displays all stack entries on one line, like a stack comment
-- wid-get-name   given a wid, returns the address and count of its name. If no name, count is 0
-- wid-set-name   set optional wid name pointer to the \0 terminated string address specified.
-- ficl-named-wordlist creates a ficl-wordlist and names it
-- last-word  returns the xt of the word being defined or most recently defined.
+- wid-get-name   ( -- c-adr u )
+  given a wid, returns the address and count of its name. If no name, count is 0
+- wid-set-name   ( c-addr -- )
+  set optional wid name pointer to the \0 terminated string address specified.
+- ficl-named-wordlist  ( -- wid ) "name"
+  creates a ficl-wordlist and names it
+- last-word  ( -- xt ) 
+  returns the xt of the word being defined or most recently defined.
 - q@ and q! operate on quadbyte quantities for 64 bit friendliness
+- add-parse-step   ( xt -- )
+  Allows the parser to be extended. To create a parse step, define a word that
+  consumes a counted string from the stack and returns (minimally) a flag. Once installed in the
+  parse chain, this word will be called when the previous steps in the chain have failed to
+  parse the current token. Upon entry, the token's address and count will be on the stack.
+  If the parse step succeeds in parsing the token, it should apply whatever semantics the token
+  requires, then push FICL_TRUE on the stack. If it fails, the step should push FICL_FALSE.
+  To install the parse step, use add-parse-step passing it the xt of the new parse step. 
+  Add-parse-step may fail silently if the parse list is full. You can confirm success using
+  parse-order ( -- ). 
+- (parse-step)   ( c-addr u -- ??? flag )
+  Runtime support for precompiled parse steps (see ficl.c: AddPrecompiledParseStep)
+- env-constant ( u -- ) "name"
+- env-2constant ( ud -- ) "name"
+  set environment values from Ficl. Use .env ( -- ) to view defined symbols 
+  in the environment, or environment? (CORE) to find their values.
 
 softcore.fr words
 - ORDER now lists wordlists by name
@@ -28,15 +76,19 @@ softcore.fr words
 - brand-wordlist
 
 New OO stuff
+- Double width locals - prefix a local name with "2:" and it is automatically
+  created as a double cell local. Handy for objects. Example:
+  : method  { 2:this -- } this --> do-nothing ;
 - Class methods ALLOT and ALLOT-ARRAY
 - METHOD  define method names globally
 - my=> early bind a method call to "this" class
 - my=[ ] early bind a string of method calls to "this" class and obj members
 - c-> late bind method invocation with CATCH
-- metaclass method resume-class and instance word suspend-class to create
+- metaclass method RESUME-CLASS and instance word SUSPEND-CLASS to create
   mutually referring classes. Example in string.fr
 - early binding words are now in the instance-vars wordlist, 
   not visible unless defining a class.
+- string.fr enhanced for dynamic allocation and resize of string contents
 
 
 rel 2.04 -- May 2000

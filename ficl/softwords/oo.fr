@@ -1,3 +1,4 @@
+\ #if FICL_WANT_OOP
 \ ** ficl/softwords/oo.fr
 \ ** F I C L   O - O   E X T E N S I O N S
 \ ** john sadler aug 1998
@@ -63,7 +64,7 @@ hide
 	postpone sliteral
 ; compile-only
 
-: lookup-method  { class 2name -- class xt }
+: lookup-method  { class 2:name -- class xt }
 	name class cell+ @  ( c-addr u wid )
 	search-wordlist     ( 0 | xt 1 | xt -1 )
 	0= if
@@ -356,14 +357,14 @@ create  .size  ( class metaclass -- size ) \ return class's payload size
 ;
 
 \ Create an anonymous initialized instance from the dictionary
-: allot   { 2this -- 2instance }
+: allot   { 2:this -- 2:instance }
     here   ( instance-address )
     this my=> get-size  allot
     this drop 2dup --> init
 ;
 
 \ Create an anonymous array of initialized instances from the dictionary
-: allot-array   { nobj 2this -- 2instance }
+: allot-array   { nobj 2:this -- 2:instance }
     here   ( instance-address )
     this my=> get-size  nobj * allot
     this drop 2dup     ( 2instance 2instance )
@@ -389,7 +390,7 @@ create  .size  ( class metaclass -- size ) \ return class's payload size
 \     ( and whatever else goes in c-akbar )
 \ end-class    ( done with c-akbar )
 \
-: resume-class   { 2this -- old-wid addr[size] size }
+: resume-class   { 2:this -- old-wid addr[size] size }
     this --> .wid @ ficl-set-current  ( old-wid )
     this --> .size dup @   ( old-wid addr[size] size )
     instance-vars >search
@@ -577,3 +578,4 @@ previous set-current
 
 
 only definitions
+\ #endif

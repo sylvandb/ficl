@@ -69,3 +69,17 @@ testing exception words
 { exctest1 -> 1 }
 { exctest2 -> 2 }
 { exctest? abort -> -1 }
+
+testing refill
+0 [if]
+.( Error )
+[else]
+1 [if]
+[else]
+.( Error )
+[then]
+[then]
+
+testing prefixes
+{ 0x10 -> decimal 16 }
+{ hex 0d10 -> decimal 10 }

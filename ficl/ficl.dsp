@@ -96,7 +96,15 @@ SOURCE=.\ficl.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\float.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\math64.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\prefix.c
 # End Source File
 # Begin Source File
 
@@ -125,6 +133,19 @@ SOURCE=.\tools.c
 # Begin Source File
 
 SOURCE=.\vm.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\win32.c
+
+!IF  "$(CFG)" == "ficl - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "ficl - Win32 Debug"
+
+# ADD CPP /Ze
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -184,6 +205,10 @@ SOURCE=.\softwords\oo.fr
 # End Source File
 # Begin Source File
 
+SOURCE=.\softwords\prefix.fr
+# End Source File
+# Begin Source File
+
 SOURCE=.\softwords\softcore.bat
 # End Source File
 # Begin Source File
@@ -197,6 +222,38 @@ SOURCE=.\softwords\softcore.pl
 # Begin Source File
 
 SOURCE=.\softwords\string.fr
+# End Source File
+# End Group
+# Begin Group "doc"
+
+# PROP Default_Filter ".html,.js"
+# Begin Source File
+
+SOURCE=..\doc\ficl.html
+# End Source File
+# Begin Source File
+
+SOURCE=..\doc\ficl_debug.html
+# End Source File
+# Begin Source File
+
+SOURCE=..\doc\ficl_loc.html
+# End Source File
+# Begin Source File
+
+SOURCE=..\doc\ficl_oop.html
+# End Source File
+# Begin Source File
+
+SOURCE=..\doc\ficl_rel.html
+# End Source File
+# Begin Source File
+
+SOURCE=..\doc\ficlheader.js
+# End Source File
+# Begin Source File
+
+SOURCE=..\doc\oo_in_c.html
 # End Source File
 # End Group
 # Begin Source File

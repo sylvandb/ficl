@@ -1,3 +1,4 @@
+\ #if (FICL_WANT_OOP)
 \ ** ficl/softwords/ficlclass.fr
 \ Classes to model ficl data structures in objects
 \ This is a demo!
@@ -52,7 +53,7 @@ object subclass c-wordlist
     : pop   2drop previous ;
     : set-current   drop set-current ;
     : get-name   drop wid-get-name ;
-    : words   { 2this -- }
+    : words   { 2:this -- }
         this my=[ .size get ] 0 do 
             i this my=[ .hash index ]  ( 2list-head )
             begin
@@ -80,4 +81,4 @@ object subclass c-ficlstack
         --> .sp --> .addr --> prev --> get ;
 end-class
 
-
+#endif

@@ -6,6 +6,35 @@
 ** Created: 6 June 2000
 ** $Id$
 *******************************************************************/
+/*
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
+** 
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+** 
+** The ficl software code is provided on an "as is"  basis without
+** warranty of any kind, including, without limitation, the implied
+** warranties of merchantability and fitness for a particular purpose
+** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
+** 
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release (yay!), please
+** send me email at the address above. 
+*/
 
 #include <string.h>
 #include "ficl.h"
@@ -185,7 +214,7 @@ static void setOrder(FICL_VM *pVM)
 
 
 /**************************************************************************
-                        w o r d l i s t
+                        f i c l - w o r d l i s t
 ** SEARCH ( -- wid )
 ** Create a new empty word list, returning its word list identifier wid.
 ** The new word list may be returned from a pool of preallocated word
@@ -199,7 +228,7 @@ static void setOrder(FICL_VM *pVM)
 **    hash entries in the wordlist. Ficl 2.02 and later define WORDLIST as
 **    : wordlist 1 ficl-wordlist ;
 **************************************************************************/
-static void wordlist(FICL_VM *pVM)
+static void ficlWordlist(FICL_VM *pVM)
 {
     FICL_DICT *dp = ficlGetDict();
     FICL_HASH *pHash;
@@ -209,15 +238,7 @@ static void wordlist(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 1);
 #endif
     nBuckets = stackPopUNS(pVM->pStack);
-
-    dictAlign(dp);
-    pHash    = (FICL_HASH *)dp->here;
-    dictAllot(dp, sizeof (FICL_HASH) 
-        + (nBuckets-1) * sizeof (FICL_WORD *));
-
-    pHash->size = nBuckets;
-    hashReset(pHash);
-
+    pHash = dictCreateWordlist(dp, nBuckets);
     stackPushPtr(pVM->pStack, pHash);
     return;
 }
@@ -273,15 +294,15 @@ static void searchPush(FICL_VM *pVM)
 static void widGetName(FICL_VM *pVM)
 {
     FICL_HASH *pHash = vmPop(pVM).p;
-	char *cp = pHash->name;
-	int len = 0;
-	
-	if (cp)
-		len = strlen(cp);
+    char *cp = pHash->name;
+    int len = 0;
+    
+    if (cp)
+        len = strlen(cp);
 
-	vmPush(pVM, LVALUEtoCELL(cp));
-	vmPush(pVM, LVALUEtoCELL(len));
-	return;
+    vmPush(pVM, LVALUEtoCELL(cp));
+    vmPush(pVM, LVALUEtoCELL(len));
+    return;
 }
 
 /**************************************************************************
@@ -291,10 +312,10 @@ static void widGetName(FICL_VM *pVM)
 **************************************************************************/
 static void widSetName(FICL_VM *pVM)
 {
-	char *cp = (char *)vmPop(pVM).p;
-	FICL_HASH *pHash = vmPop(pVM).p;
-	pHash->name = cp;
-	return;
+    char *cp = (char *)vmPop(pVM).p;
+    FICL_HASH *pHash = vmPop(pVM).p;
+    pHash->name = cp;
+    return;
 }
 
 
@@ -324,8 +345,9 @@ static void setParentWid(FICL_VM *pVM)
 ** Builds the primitive wordset and the environment-query namespace.
 **************************************************************************/
 
-void ficlCompileSearch(FICL_DICT *dp)
+void ficlCompileSearch(FICL_SYSTEM *pSys)
 {
+    FICL_DICT *dp = pSys->dp;
     assert (dp);
 
     /*
@@ -345,9 +367,8 @@ void ficlCompileSearch(FICL_DICT *dp)
     dictAppendWord(dp, "set-current",  
                                     setCurrent,     FW_DEFAULT);
     dictAppendWord(dp, "set-order", setOrder,       FW_DEFAULT);
-    dictAppendWord(dp, "ficl-wordlist", wordlist,   FW_DEFAULT);
-    dictAppendWord(dp, "wid-get-name", widGetName,  FW_DEFAULT);
-    dictAppendWord(dp, "wid-set-name", widSetName,  FW_DEFAULT);
+    dictAppendWord(dp, "ficl-wordlist", 
+                                    ficlWordlist,   FW_DEFAULT);
 
     /*
     ** Set SEARCH environment query values
@@ -356,6 +377,8 @@ void ficlCompileSearch(FICL_DICT *dp)
     ficlSetEnv("search-order-ext",  FICL_TRUE);
     ficlSetEnv("wordlists",         FICL_DEFAULT_VOCS);
 
+    dictAppendWord(dp, "wid-get-name", widGetName,  FW_DEFAULT);
+    dictAppendWord(dp, "wid-set-name", widSetName,  FW_DEFAULT);
     dictAppendWord(dp, "wid-set-super", 
                                     setParentWid,   FW_DEFAULT);
     return;

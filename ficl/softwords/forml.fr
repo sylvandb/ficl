@@ -19,7 +19,7 @@ object --> sub c-example
         --> .length --> get
     ;
 
-    : set-name  { c-addr u 2this -- }
+    : set-name  { c-addr u 2:this -- }
         u       this --> .length --> set
         c-addr  this --> .name  u move
     ;
@@ -47,13 +47,13 @@ set-current
 object subclass c-led
     c-byte obj: .state
 
-    : on   { led# 2this -- }
+    : on   { led# 2:this -- }
         this --> .state --> get
         1 led# lshift or dup !oreg
         this --> .state --> set
     ;
 
-    : off   { led# 2this -- }
+    : off   { led# 2:this -- }
         this --> .state --> get
         1 led# lshift invert and dup !oreg
         this --> .state --> set
@@ -64,7 +64,7 @@ end-class
 
 object subclass c-switch
 
-    : ?on   { bit# 2this -- flag }
+    : ?on   { bit# 2:this -- flag }
         
         1 bit# lshift
     ;

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#ifdef WIN32
+#if defined (_WIN32)
 #include <direct.h>
 #endif
 #include <sys/types.h>
@@ -27,7 +27,7 @@ static void ficlGetCWD(FICL_VM *pVM)
 {
     char *cp;
 
-#ifdef WIN32   
+#if defined (_WIN32)
     cp = _getcwd(NULL, 80);
 #else
    cp = getcwd(NULL, 80);
@@ -50,11 +50,7 @@ static void ficlChDir(FICL_VM *pVM)
     vmGetString(pVM, pFS, '\n');
     if (pFS->count > 0)
     {
-#ifdef WIN32
-       int err = _chdir(pFS->text);
-#else
        int err = chdir(pFS->text);
-#endif
        if (err)
         {
             vmTextOut(pVM, "Error: path not found", 1);
@@ -115,11 +111,7 @@ static void ficlLoad(FICL_VM *pVM)
     FILE   *fp;
     int     result;
     CELL    id;
-#ifdef WIN32       
-    struct _stat buf;
-#else
     struct stat buf;
-#endif
 
 
     vmGetString(pVM, pFilename, '\n');
@@ -133,11 +125,7 @@ static void ficlLoad(FICL_VM *pVM)
     /*
     ** get the file's size and make sure it exists 
     */
-#ifdef WIN32       
-    result = _stat( pFilename->text, &buf );
-#else
     result = stat( pFilename->text, &buf );
-#endif
 
     if (result != 0)
     {
@@ -170,12 +158,18 @@ static void ficlLoad(FICL_VM *pVM)
             cp[len] = '\0';
 
         result = ficlExec(pVM, cp);
-        if (result != VM_OUTOFTEXT)
+        /* handle "bye" in loaded files. --lch */
+        switch (result)
         {
-            pVM->sourceID = id;
-            fclose(fp);
-            vmThrowErr(pVM, "Error loading file <%s> line %d", pFilename->text, nLine);
-            break; 
+            case VM_OUTOFTEXT:
+            case VM_USEREXIT:
+                break;
+
+            default:
+                pVM->sourceID = id;
+                fclose(fp);
+                vmThrowErr(pVM, "Error loading file <%s> line %d", pFilename->text, nLine);
+                break; 
         }
     }
     /*
@@ -188,6 +182,9 @@ static void ficlLoad(FICL_VM *pVM)
     pVM->sourceID = id;
     fclose(fp);
 
+    /* handle "bye" in loaded files. --lch */
+    if (result == VM_USEREXIT)
+        vmThrow(pVM, VM_USEREXIT);
     return;
 }
 
@@ -260,32 +257,17 @@ static void clocksPerSec(FICL_VM *pVM)
 }
 
 
-static void execxt(FICL_VM *pVM)
-{
-    FICL_WORD *pFW;
-#if FICL_ROBUST > 1
-    vmCheckStack(pVM, 1, 0);
-#endif
-
-    pFW = stackPopPtr(pVM->pStack);
-    ficlExecXT(pVM, pFW);
-
-    return;
-}
-
-
-void buildTestInterface(void)
+void buildTestInterface()
 {
     ficlBuild("break",    ficlBreak,    FW_DEFAULT);
     ficlBuild("clock",    ficlClock,    FW_DEFAULT);
     ficlBuild("cd",       ficlChDir,    FW_DEFAULT);
-    ficlBuild("execxt",   execxt,       FW_DEFAULT);
     ficlBuild("load",     ficlLoad,     FW_DEFAULT);
     ficlBuild("pwd",      ficlGetCWD,   FW_DEFAULT);
     ficlBuild("system",   ficlSystem,   FW_DEFAULT);
     ficlBuild("spewhash", spewHash,     FW_DEFAULT);
     ficlBuild("clocks/sec", 
-                          clocksPerSec, FW_DEFAULT);
+                                clocksPerSec, FW_DEFAULT);
 
     return;
 }
@@ -295,14 +277,14 @@ void buildTestInterface(void)
 #define nINBUF 256
 int main(int argc, char **argv)
 {
+    int ret = 0;
     char in[nINBUF];
     FICL_VM *pVM;
-
     ficlInitSystem(10000);
     buildTestInterface();
     pVM = ficlNewVM();
 
-    ficlExec(pVM, ".ver .( " __DATE__ " ) cr quit");
+    ret = ficlExec(pVM, ".ver .( " __DATE__ " ) cr quit");
 
     /*
     ** load file from cmd line...
@@ -310,21 +292,16 @@ int main(int argc, char **argv)
     if (argc  > 1)
     {
         sprintf(in, ".( loading %s ) cr load %s\n cr", argv[1], argv[1]);
-        ficlExec(pVM, in);
+        ret = ficlExec(pVM, in);
     }
 
-    for (;;)
+    while (ret != VM_USEREXIT)
     {
-        int ret;
         fgets(in, nINBUF, stdin);
         ret = ficlExec(pVM, in);
-        if (ret == VM_USEREXIT)
-        {
-            ficlTermSystem();
-            break;
-        }
     }
 
+    ficlTermSystem();
     return 0;
 }
 

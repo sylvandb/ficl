@@ -16,6 +16,35 @@
 **
 ** 29 jun 1998 (sadler) added variable sized hash table support
 */
+/*
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
+** 
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+** 
+** The ficl software code is provided on an "as is"  basis without
+** warranty of any kind, including, without limitation, the implied
+** warranties of merchantability and fitness for a particular purpose
+** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
+** 
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release (yay!), please
+** send me email at the address above. 
+*/
 
 #include <stdlib.h>
 #include <stdio.h>          /* sprintf */
@@ -346,10 +375,29 @@ FICL_DICT  *dictCreateHashed(unsigned nCells, unsigned nHash)
 
     pDict = ficlMalloc(nAlloc);
     assert(pDict);
-	memset(pDict, 0, sizeof (FICL_DICT));
+
     pDict->size = nCells;
     dictEmpty(pDict, nHash);
     return pDict;
+}
+
+
+/**************************************************************************
+                        d i c t C r e a t e W o r d l i s t
+** Create and initialize an anonymous wordlist
+**************************************************************************/
+FICL_HASH *dictCreateWordlist(FICL_DICT *dp, int nBuckets)
+{
+    FICL_HASH *pHash;
+    
+    dictAlign(dp);
+    pHash    = (FICL_HASH *)dp->here;
+    dictAllot(dp, sizeof (FICL_HASH) 
+        + (nBuckets-1) * sizeof (FICL_WORD *));
+
+    pHash->size = nBuckets;
+    hashReset(pHash);
+    return pHash;
 }
 
 
@@ -670,7 +718,8 @@ UNS16 hashHashCode(STRINGINFO si)
     if (si.count == 0)
         return 0;
 
-    for (cp = (UNS8 *)si.cp; *cp && si.count; cp++, si.count--)
+    /* changed to run without errors under Purify -- lch */
+    for (cp = (UNS8 *)si.cp; si.count && *cp; cp++, si.count--)
     {
         code = (UNS16)((code << 4) + tolower(*cp));
         shift = (UNS16)(code & 0xf000);
@@ -725,7 +774,7 @@ void hashInsertWord(FICL_HASH *pHash, FICL_WORD *pFW)
 **************************************************************************/
 FICL_WORD *hashLookup(FICL_HASH *pHash, STRINGINFO si, UNS16 hashCode)
 {
-    FICL_COUNT nCmp = (FICL_COUNT)si.count;
+    FICL_UNS nCmp = si.count;
     FICL_WORD *pFW;
     UNS16 hashIdx;
 
@@ -770,7 +819,7 @@ void hashReset(FICL_HASH *pHash)
     }
 
     pHash->link = NULL;
-	pHash->name = NULL;
+    pHash->name = NULL;
     return;
 }
 

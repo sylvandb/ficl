@@ -5,6 +5,35 @@
 ** Created: 16 Oct 1997
 ** $Id$
 *******************************************************************/
+/*
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
+** 
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+** 
+** The ficl software code is provided on an "as is"  basis without
+** warranty of any kind, including, without limitation, the implied
+** warranties of merchantability and fitness for a particular purpose
+** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
+** 
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release (yay!), please
+** send me email at the address above. 
+*/
 #include <stdlib.h>
 
 #include "ficl.h"
@@ -47,6 +76,24 @@ void vmCheckStack(FICL_VM *pVM, int popCells, int pushCells)
 
     return;
 }
+
+#if FICL_WANT_FLOAT
+void vmCheckFStack(FICL_VM *pVM, int popCells, int pushCells)
+{
+    FICL_STACK *fStack = pVM->fStack;
+    int nFree = fStack->base + fStack->nCells - fStack->sp;
+
+    if (popCells > STKDEPTH(fStack))
+    {
+        vmThrowErr(pVM, "Error: float stack underflow");
+    }
+
+    if (nFree < pushCells - popCells)
+    {
+        vmThrowErr(pVM, "Error: float stack overflow");
+    }
+}
+#endif
 
 /*******************************************************************
                     s t a c k C r e a t e
@@ -206,6 +253,12 @@ FICL_INT stackPopINT(FICL_STACK *pStack)
     return (*--pStack->sp).i;
 }
 
+#if (FICL_WANT_FLOAT)
+float stackPopFloat(FICL_STACK *pStack)
+{
+    return (*(--pStack->sp)).f;
+}
+#endif
 
 /*******************************************************************
                     s t a c k P u s h
@@ -231,6 +284,13 @@ void stackPushINT(FICL_STACK *pStack, FICL_INT i)
 {
     *pStack->sp++ = LVALUEtoCELL(i);
 }
+
+#if (FICL_WANT_FLOAT)
+void stackPushFloat(FICL_STACK *pStack, float f)
+{
+    *pStack->sp++ = LVALUEtoCELL(f);
+}
+#endif
 
 /*******************************************************************
                     s t a c k R e s e t

@@ -12,6 +12,35 @@
 ** well as a pile of state variables and the two dedicated registers
 ** of the interp.
 */
+/*
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
+** 
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+** 
+** The ficl software code is provided on an "as is"  basis without
+** warranty of any kind, including, without limitation, the implied
+** warranties of merchantability and fitness for a particular purpose
+** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
+** 
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release (yay!), please
+** send me email at the address above. 
+*/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -36,7 +65,9 @@ void vmBranchRelative(FICL_VM *pVM, int offset)
 
 /**************************************************************************
                         v m C r e a t e
-** 
+** Creates a virtual machine either from scratch (if pVM is NULL on entry)
+** or by resizing and reinitializing an existing VM to the specified stack
+** sizes.
 **************************************************************************/
 FICL_VM *vmCreate(FICL_VM *pVM, unsigned nPStack, unsigned nRStack)
 {
@@ -55,6 +86,12 @@ FICL_VM *vmCreate(FICL_VM *pVM, unsigned nPStack, unsigned nRStack)
         stackDelete(pVM->rStack);
     pVM->rStack = stackCreate(nRStack);
 
+#if FICL_WANT_FLOAT
+    if (pVM->fStack)
+        stackDelete(pVM->fStack);
+    pVM->fStack = stackCreate(nPStack);
+#endif
+
     pVM->textOut = ficlTextOut;
 
     vmReset(pVM);
@@ -64,7 +101,8 @@ FICL_VM *vmCreate(FICL_VM *pVM, unsigned nPStack, unsigned nRStack)
 
 /**************************************************************************
                         v m D e l e t e
-** 
+** Free all memory allocated to the specified VM and its subordinate 
+** structures.
 **************************************************************************/
 void vmDelete (FICL_VM *pVM)
 {
@@ -72,6 +110,9 @@ void vmDelete (FICL_VM *pVM)
     {
         ficlFree(pVM->pStack);
         ficlFree(pVM->rStack);
+#if FICL_WANT_FLOAT
+        ficlFree(pVM->fStack);
+#endif
         ficlFree(pVM);
     }
 
@@ -194,7 +235,7 @@ STRINGINFO vmGetWord0(FICL_VM *pVM)
 
 /**************************************************************************
                         v m G e t W o r d T o P a d
-** Does vmGetWord0 and copies the result to the pad as a NULL terminated
+** Does vmGetWord and copies the result to the pad as a NULL terminated
 ** string. Returns the length of the string. If the string is too long 
 ** to fit in the pad, it is truncated.
 **************************************************************************/
@@ -202,7 +243,7 @@ int vmGetWordToPad(FICL_VM *pVM)
 {
     STRINGINFO si;
     char *cp = (char *)pVM->pad;
-    si = vmGetWord0(pVM);
+    si = vmGetWord(pVM);
 
     if (SI_COUNT(si) > nPAD)
         SI_SETLEN(si, nPAD);
@@ -225,7 +266,7 @@ int vmGetWordToPad(FICL_VM *pVM)
 **************************************************************************/
 STRINGINFO vmParseString(FICL_VM *pVM, char delim)
 { 
-	return vmParseStringEx(pVM, delim, 1);
+    return vmParseStringEx(pVM, delim, 1);
 }
 
 STRINGINFO vmParseStringEx(FICL_VM *pVM, char delim, char fSkipLeading)
@@ -235,11 +276,11 @@ STRINGINFO vmParseStringEx(FICL_VM *pVM, char delim, char fSkipLeading)
     char *pEnd      = vmGetInBufEnd(pVM);
     char ch;
 
-	if (fSkipLeading)
-	{                       /* skip lead delimiters */
-		while ((pSrc != pEnd) && (*pSrc == delim))
-			pSrc++;
-	}
+    if (fSkipLeading)
+    {                       /* skip lead delimiters */
+        while ((pSrc != pEnd) && (*pSrc == delim))
+            pSrc++;
+    }
 
     SI_SETPTR(si, pSrc);    /* mark start of text */
 
@@ -339,15 +380,10 @@ void vmPopTib(FICL_VM *pVM, TIB *pTib)
 **************************************************************************/
 void vmQuit(FICL_VM *pVM)
 {
-    static FICL_WORD *pInterp = NULL;
-    if (!pInterp)
-        pInterp = ficlLookup("interpret");
-    assert(pInterp);
-
     stackReset(pVM->rStack);
     pVM->fRestart    = 0;
-    pVM->ip          = &pInterp;
-    pVM->runningWord = pInterp;
+    pVM->ip          = NULL;
+    pVM->runningWord = NULL;
     pVM->state       = INTERPRET;
     pVM->tib.cp      = NULL;
     pVM->tib.end     = NULL;
@@ -366,6 +402,9 @@ void vmReset(FICL_VM *pVM)
 {
     vmQuit(pVM);
     stackReset(pVM->pStack);
+#if FICL_WANT_FLOAT
+    stackReset(pVM->fStack);
+#endif
     pVM->base        = 10;
     return;
 }
@@ -394,7 +433,7 @@ void vmSetTextOut(FICL_VM *pVM, OUTFUNC textOut)
 #if FICL_WANT_DEBUGGER
 void vmStep(FICL_VM *pVM)
 {
-	M_VM_STEP(pVM);
+    M_VM_STEP(pVM);
 }
 #endif
 
@@ -623,24 +662,22 @@ char *caseFold(char *cp)
 
 /**************************************************************************
                         s t r i n c m p
-** 
+** (jws) simplified the code a bit in hopes of appeasing Purify
 **************************************************************************/
-int strincmp(char *cp1, char *cp2, FICL_COUNT count)
+int strincmp(char *cp1, char *cp2, FICL_UNS count)
 {
     int i = 0;
-    char c1, c2;
 
-    for (c1 = *cp1, c2 = *cp2;
-        ((i == 0) && count && c1 && c2);
-        c1 = *++cp1, c2 = *++cp2, count--)
+    for (; 0 < count; ++cp1, ++cp2, --count)
     {
-        i = tolower(c1) - tolower(c2);
+        i = tolower(*cp1) - tolower(*cp2);
+        if (i != 0)
+            return i;
+        else if (*cp1 == '\0')
+            return 0;
     }
-
-    return i;
+    return 0;
 }
-
-
 
 /**************************************************************************
                         s k i p S p a c e

@@ -6,20 +6,28 @@
 ** $Id$
 *******************************************************************/
 /*
-** N O T I C E -- DISCLAIMER OF WARRANTY
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
 ** 
-** Ficl is freeware. Use it in any way that you like, with
-** the understanding that the code is supported on a "best effort"
-** basis only.
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
 ** 
-** Any third party may reproduce, distribute, or modify the ficl
-** software code or any derivative  works thereof without any 
-** compensation or license, provided that the author information
-** and this disclaimer text are retained in the source code files.
 ** The ficl software code is provided on an "as is"  basis without
 ** warranty of any kind, including, without limitation, the implied
 ** warranties of merchantability and fitness for a particular purpose
 ** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
 ** 
 ** I am interested in hearing from anyone who uses ficl. If you have
 ** a problem, a success story, a defect, an enhancement request, or
@@ -213,6 +221,8 @@ extern "C" {
 struct ficl_word;
 struct vm;
 struct ficl_dict;
+struct ficl_system;
+typedef struct ficl_system FICL_SYSTEM;
 
 /* 
 ** the Good Stuff starts here...
@@ -239,9 +249,13 @@ struct ficl_dict;
 */
 typedef union _cell
 {
-	FICL_INT i;
+    FICL_INT i;
     FICL_UNS u;
-	void *p;
+#if (FICL_WANT_FLOAT)
+    FICL_FLOAT f;
+#endif
+    void *p;
+    void (*fn)(void);
 } CELL;
 
 /*
@@ -299,7 +313,7 @@ typedef struct
             {si.cp = pfs->text; si.count = pfs->count;}
 
 /*
-** Ficl uses a this little structure to hold the address of 
+** Ficl uses this little structure to hold the address of 
 ** the block of text it's working on and an index to the next
 ** unconsumed character in the string. Traditionally, this is
 ** done by a Text Input Buffer, so I've called this struct TIB.
@@ -349,7 +363,7 @@ CELL        stackGetTop(FICL_STACK *pStack);
 void        stackLink  (FICL_STACK *pStack, int nCells);
 void        stackPick  (FICL_STACK *pStack, int n);
 CELL        stackPop   (FICL_STACK *pStack);
-void       *stackPopPtr   (FICL_STACK *pStack);
+void       *stackPopPtr(FICL_STACK *pStack);
 FICL_UNS    stackPopUNS(FICL_STACK *pStack);
 FICL_INT    stackPopINT(FICL_STACK *pStack);
 void        stackPush  (FICL_STACK *pStack, CELL c);
@@ -361,6 +375,38 @@ void        stackRoll  (FICL_STACK *pStack, int n);
 void        stackSetTop(FICL_STACK *pStack, CELL c);
 void        stackStore (FICL_STACK *pStack, int n, CELL c);
 void        stackUnlink(FICL_STACK *pStack);
+
+#if (FICL_WANT_FLOAT)
+float       stackPopFloat (FICL_STACK *pStack);
+void        stackPushFloat(FICL_STACK *pStack, float f);
+#endif
+
+/*
+** Shortcuts (Guy Carver)
+*/
+#define PUSHPTR(p)  stackPushPtr(pVM->pStack,p)
+#define PUSHUNS(u)  stackPushUNS(pVM->pStack,u)
+#define PUSHINT(i)  stackPushINT(pVM->pStack,i)
+#define PUSHFLOAT(f)    stackPushFloat(pVM->fStack,f)
+#define PUSH(c)     stackPush(pVM->pStack,c)
+#define POPPTR()    stackPopPtr(pVM->pStack)
+#define POPUNS()    stackPopUNS(pVM->pStack)
+#define POPINT()    stackPopINT(pVM->pStack)
+#define POPFLOAT()  stackPopFloat(pVM->fStack)
+#define POP()       stackPop(pVM->pStack)
+#define GETTOP()    stackGetTop(pVM->pStack)
+#define SETTOP(c)   stackSetTop(pVM->pStack,LVALUEtoCELL(c))
+#define GETTOPF()   stackGetTop(pVM->fStack)
+#define SETTOPF(c)  stackSetTop(pVM->fStack,LVALUEtoCELL(c))
+#define STORE(n,c)  stackStore(pVM->pStack,n,LVALUEtoCELL(c))
+#define DEPTH()     stackDepth(pVM->pStack)
+#define DROP(n)     stackDrop(pVM->pStack,n)
+#define DROPF(n)    stackDrop(pVM->fStack,n)
+#define FETCH(n)    stackFetch(pVM->pStack,n)
+#define PICK(n)     stackPick(pVM->pStack,n)
+#define PICKF(n)    stackPick(pVM->fStack,n)
+#define ROLL(n)     stackRoll(pVM->pStack,n)
+#define ROLLF(n)    stackRoll(pVM->fStack,n)
 
 /* 
 ** The virtual machine (VM) contains the state for one interpreter.
@@ -407,7 +453,7 @@ typedef void (*OUTFUNC)(struct vm *pVM, char *text, int fNewline);
 ** ANS Forth requires that a word's name contain {1..31} characters.
 */
 #if !defined nFICLNAME
-#define nFICLNAME		31
+#define nFICLNAME       31
 #endif
 
 /*
@@ -415,6 +461,7 @@ typedef void (*OUTFUNC)(struct vm *pVM, char *text, int fNewline);
 */
 typedef struct vm
 {
+    FICL_SYSTEM    *pSys;       /* Which system this VM belongs to  */
     struct vm      *link;       /* Ficl keeps a VM list for simple teardown */
     jmp_buf        *pState;     /* crude exception mechanism...     */
     OUTFUNC         textOut;    /* Output callback - see sysdep.c   */
@@ -427,6 +474,9 @@ typedef struct vm
     FICL_UNS        base;       /* number conversion base           */
     FICL_STACK     *pStack;     /* param stack                      */
     FICL_STACK     *rStack;     /* return stack                     */
+#if FICL_WANT_FLOAT
+    FICL_STACK     *fStack;     /* float stack (optional)           */
+#endif
     CELL            sourceID;   /* -1 if string, 0 if normal input  */
     TIB             tib;        /* address of incoming text string  */
 #if FICL_WANT_USER
@@ -559,6 +609,9 @@ void        vmInnerLoop(FICL_VM *pVM);
 ** a word's stack effect comment.
 */
 void        vmCheckStack(FICL_VM *pVM, int popCells, int pushCells);
+#if FICL_WANT_FLOAT
+void        vmCheckFStack(FICL_VM *pVM, int popCells, int pushCells);
+#endif
 
 /*
 ** TIB access routines...
@@ -575,6 +628,7 @@ void        vmPopTib(FICL_VM *pVM, TIB *pTib);
 #define     vmGetInBuf(pVM) ((pVM)->tib.cp + (pVM)->tib.index)
 #define     vmGetInBufLen(pVM) ((pVM)->tib.end - (pVM)->tib.cp)
 #define     vmGetInBufEnd(pVM) ((pVM)->tib.end)
+#define     vmGetTibIndex(pVM)    (pVM)->tib.index
 #define     vmSetTibIndex(pVM, i) (pVM)->tib.index = i
 #define     vmUpdateTib(pVM, str) (pVM)->tib.index = (str) - (pVM)->tib.cp
 
@@ -598,7 +652,7 @@ char        digit_to_char(int value);
 char       *strrev( char *string );
 char       *skipSpace(char *cp, char *end);
 char       *caseFold(char *cp);
-int         strincmp(char *cp1, char *cp2, FICL_COUNT count);
+int         strincmp(char *cp1, char *cp2, FICL_UNS count);
 
 #if defined(_WIN32) && !FICL_MAIN
 #pragma warning(default: 4273)
@@ -612,14 +666,14 @@ int         strincmp(char *cp1, char *cp2, FICL_COUNT count);
 ** just a pointer to a FICL_HASH in this implementation.
 */
 #if !defined HASHSIZE /* Default size of hash table. For most uniform */
-#define HASHSIZE 127  /*   performance, use a prime number!   */
+#define HASHSIZE 241  /*   performance, use a prime number!   */
 #endif
 
 typedef struct ficl_hash 
 {
     struct ficl_hash *link;  /* link to parent class wordlist for OO */
-	char      *name;         /* optional pointer to \0 terminated wordlist name */
-    unsigned   size;
+    char      *name;         /* optional pointer to \0 terminated wordlist name */
+    unsigned   size;         /* number of buckets in the hash */
     FICL_WORD *table[1];
 } FICL_HASH;
 
@@ -695,6 +749,7 @@ int         dictCellsUsed (FICL_DICT *pDict);
 void        dictCheck(FICL_DICT *pDict, FICL_VM *pVM, int nCells);
 FICL_DICT  *dictCreate(unsigned nCELLS);
 FICL_DICT  *dictCreateHashed(unsigned nCells, unsigned nHash);
+FICL_HASH  *dictCreateWordlist(FICL_DICT *dp, int nBuckets);
 void        dictDelete(FICL_DICT *pDict);
 void        dictEmpty(FICL_DICT *pDict, unsigned nHash);
 void        dictHashSummary(FICL_VM *pVM);
@@ -709,6 +764,67 @@ void        dictSetImmediate(FICL_DICT *pDict);
 void        dictUnsmudge(FICL_DICT *pDict);
 CELL       *dictWhere(FICL_DICT *pDict);
 
+
+/* 
+** P A R S E   S T E P
+** (New for 2.05)
+** See words.c: interpWord
+** By default, ficl goes through two attempts to parse each token from its input
+** stream: it first attempts to match it with a word in the dictionary, and
+** if that fails, it attempts to convert it into a number. This mechanism is now
+** extensible by additional steps. This allows extensions like floating point and 
+** double number support to be factored cleanly.
+**
+** Each parse step is a function that receives the next input token as a STRINGINFO.
+** If the parse step matches the token, it must apply semantics to the token appropriate
+** to the present value of VM.state (compiling or interpreting), and return FICL_TRUE.
+** Otherwise it returns FICL_FALSE. See words.c: isNumber for an example
+**
+** Note: for the sake of efficiency, it's a good idea both to limit the number
+** of parse steps and to code each parse step so that it rejects tokens that
+** do not match as quickly as possible.
+*/
+
+typedef int (*FICL_PARSE_STEP)(FICL_VM *pVM, STRINGINFO si);
+
+/*
+** Appends a parse step function to the end of the parse list (see 
+** FICL_PARSE_STEP notes in ficl.h for details). Returns 0 if successful,
+** nonzero if there's no more room in the list. Each parse step is a word in 
+** the dictionary. Precompiled parse steps can use (PARSE-STEP) as their 
+** CFA - see parenParseStep in words.c.
+*/
+int  ficlAddParseStep(FICL_SYSTEM *pSys, FICL_WORD *pFW); /* ficl.c */
+void ficlAddPrecompiledParseStep(FICL_SYSTEM *pSys, char *name, FICL_PARSE_STEP pStep);
+void ficlListParseSteps(FICL_VM *pVM);
+
+/*
+** F I C L _ S Y S T E M
+** The top level data structure of the system - ficl_system ties a list of
+** virtual machines with their corresponding dictionaries. Ficl 3.0 will
+** support multiple Ficl systems, allowing multiple concurrent sessions 
+** to separate dictionaries with some constraints. 
+** The present model allows multiple sessions to one dictionary provided
+** you implement ficlLockDictionary() as specified in sysdep.h
+**
+** RESTRICTIONS: due to the use of static variables in words.c for compiling
+** comtrol structures faster, if you use multiple ficl systems these variables
+** will point into the most recently initialized dictionary - this is probably
+** not a problem provided the precompiled dictionaries are identical for 
+** all systems.
+*/
+typedef struct ficl_system 
+{
+    FICL_SYSTEM *link;
+    FICL_WORD *parseList[FICL_MAX_PARSE_STEPS];
+    FICL_VM *vmList;
+    FICL_DICT *dp;
+    FICL_DICT *envp;
+#ifdef FICL_WANT_LOCALS
+    FICL_DICT *localp;
+#endif
+    FICL_WORD *pInterp[3];
+} FICL_SYSTEM;
 
 /*
 ** External interface to FICL...
@@ -827,37 +943,51 @@ int        ficlBuild(char *name, FICL_CODE code, char flags);
 ** Builds the ANS CORE wordset into the dictionary - called by
 ** ficlInitSystem - no need to waste dict space by doing it again.
 */
-void       ficlCompileCore(FICL_DICT *dp);
-void       ficlCompileSearch(FICL_DICT *dp);
-void       ficlCompileSoftCore(FICL_VM *pVM);
-void       ficlCompileTools(FICL_DICT *dp);
+void       ficlCompileCore(FICL_SYSTEM *pSys);
+void       ficlCompilePrefix(FICL_SYSTEM *pSys);
+void       ficlCompileSearch(FICL_SYSTEM *pSys);
+void       ficlCompileSoftCore(FICL_SYSTEM *pSys);
+void       ficlCompileTools(FICL_SYSTEM *pSys);
+#if FICL_WANT_FLOAT
+void       ficlCompileFloat(FICL_SYSTEM *pSys);
+#endif
+#if FICL_PLATFORM_EXTEND
+void       ficlCompilePlatform(FICL_SYSTEM *pSys);
+#endif
 
 /*
 ** from words.c...
 */
 void       constantParen(FICL_VM *pVM);
 void       twoConstParen(FICL_VM *pVM);
+int        ficlParseNumber(FICL_VM *pVM, STRINGINFO si);
 void       ficlTick(FICL_VM *pVM);
+void       parseStepParen(FICL_VM *pVM);
+
+/*
+** From tools.c
+*/
+int        isAFiclWord(FICL_WORD *pFW);
 
 /* 
 ** The following supports SEE and the debugger.
 */
 typedef enum  
 {
-	BRANCH,
-	COLON, 
-	CONSTANT, 
-	CREATE,
-	DO,
-	DOES, 
-	IF,
-	LITERAL,
-	LOOP,
-	PLOOP,
-	PRIMITIVE,
-	QDO,
-	STRINGLIT,
-	USER, 
+    BRANCH,
+    COLON, 
+    CONSTANT, 
+    CREATE,
+    DO,
+    DOES, 
+    IF,
+    LITERAL,
+    LOOP,
+    PLOOP,
+    PRIMITIVE,
+    QDO,
+    STRINGLIT,
+    USER, 
     VARIABLE, 
 } WORDKIND;
 

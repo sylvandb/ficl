@@ -1,3 +1,4 @@
+\ #if (FICL_WANT_OOP)
 \ ** ficl/softwords/classes.fr
 \ ** F I C L   2 . 0   C L A S S E S
 \ john sadler  1 sep 98
@@ -103,7 +104,7 @@ object subclass c-ptr
     ;
 
     \ index the pointer in place
-    : index-ptr   { index 2this -- }
+    : index-ptr   { index 2:this -- }
         this --> get-ptr              ( addr )
         this --> @size  index *  +    ( addr' )
         this --> set-ptr
@@ -168,3 +169,4 @@ end-class
 
 
 previous definitions
+\ #endif

@@ -7,6 +7,35 @@
 ** be renamed!
 ** $Id$
 *******************************************************************/
+/*
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
+** 
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
+** 
+** The ficl software code is provided on an "as is"  basis without
+** warranty of any kind, including, without limitation, the implied
+** warranties of merchantability and fitness for a particular purpose
+** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
+** 
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release (yay!), please
+** send me email at the address above. 
+*/
 
 #include "ficl.h"
 #include "math64.h"
@@ -310,7 +339,7 @@ UNS16 m64UMod(DPUNS *pUD, UNS16 base)
 
 /**************************************************************************
 ** Contributed by
-** Michael A. Gauland	gaulandm@mdhost.cse.tek.com  
+** Michael A. Gauland   gaulandm@mdhost.cse.tek.com  
 **************************************************************************/
 #if PORTABLE_LONGMULDIV != 0
 /**************************************************************************
@@ -453,7 +482,7 @@ int m64Compare(DPUNS x, DPUNS y)
                         f i c l L o n g M u l
 ** Portable versions of ficlLongMul and ficlLongDiv in C
 ** Contributed by:
-** Michael A. Gauland	gaulandm@mdhost.cse.tek.com  
+** Michael A. Gauland   gaulandm@mdhost.cse.tek.com  
 **************************************************************************/
 DPUNS ficlLongMul(FICL_UNS x, FICL_UNS y)
 {
@@ -480,7 +509,7 @@ DPUNS ficlLongMul(FICL_UNS x, FICL_UNS y)
                         f i c l L o n g D i v
 ** Portable versions of ficlLongMul and ficlLongDiv in C
 ** Contributed by:
-** Michael A. Gauland	gaulandm@mdhost.cse.tek.com  
+** Michael A. Gauland   gaulandm@mdhost.cse.tek.com  
 **************************************************************************/
 UNSQR ficlLongDiv(DPUNS q, FICL_UNS y)
 {

@@ -6,28 +6,33 @@
 ** $Id$
 *******************************************************************/
 /*
-** N O T I C E -- DISCLAIMER OF WARRANTY
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** L I C E N S E  and  D I S C L A I M E R
 ** 
-** Ficl is freeware. Use it in any way that you like, with
-** the understanding that the code is not supported.
+** Ficl is free software; you can redistribute it and/or
+** modify it under the terms of the GNU Lesser General Public
+** License as published by the Free Software Foundation; either
+** version 2.1 of the License, or (at your option) any later version.
 ** 
-** Any third party may reproduce, distribute, or modify the ficl
-** software code or any derivative  works thereof without any 
-** compensation or license, provided that the author information
-** and this disclaimer text are retained in the source code files.
 ** The ficl software code is provided on an "as is"  basis without
 ** warranty of any kind, including, without limitation, the implied
 ** warranties of merchantability and fitness for a particular purpose
 ** and their equivalents under the laws of any jurisdiction.  
+** See the GNU Lesser General Public License for more details.
+** 
+** To view the GNU Lesser General Public License, visit this URL:
+** http://www.fsf.org/copyleft/lesser.html
+** 
+** Any third party may reproduce, distribute, or modify the ficl
+** software code or any derivative  works thereof without any 
+** compensation or license, provided that the author information
+** and this license text are retained in the source code files.
 ** 
 ** I am interested in hearing from anyone who uses ficl. If you have
 ** a problem, a success story, a defect, an enhancement request, or
 ** if you would like to contribute to the ficl release (yay!), please
 ** send me email at the address above. 
-**
-** NOTE: this file depends on sysdep.h for the definition
-** of PORTABLE_LONGMULDIV and several abstract types.
-**
 */
 
 #if !defined (__MATH64_H__)

@@ -12,37 +12,21 @@
 <h1>
 <b>Local Variables in Ficl</b></h1>
 
-<table BORDER=0 CELLSPACING=3 WIDTH="600" >
-<tr>
-<td><b>Forth Inspired Command Language&nbsp;</b></td>
 
-<td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
-</tr>
+<script language="javascript" src="ficlheader.js"></script>
 
-<tr>
-<td><b>Author: John Sadler (<a href="mailto:john_sadler@alum.mit.edu">john_sadler@alum.mit.edu</a>)</b></td>
-</tr>
-
-<tr>
-<td><b>Created: 19 July 1997&nbsp;</b></td>
-</tr>
-
-<tr>
-<td><b>Revision 2.04: 20 May 2000</b></td>
-</tr>
-</table>
 
 <table BORDER=0 CELLSPACING=3 COLS=1 WIDTH="675" >
 <tr>
 <td>
 <h2>
 <a NAME="locals"></a>Local Variables</h2>
-Locally scoped variables came late to Forth. Purists seem to feel that
-experienced Forth programmers can write supportable code using only anonymous
+Named locally scoped variables came late to Forth. Purists feel that experienced
+Forth programmers can (and should) write supportable code using only anonymous
 stack variables and good factoring, but they complain that novices use
 global variables too much. Local variables cost little in terms of code
 size and execution speed, and are very convenient for OO programming, where
-stack effects are more complex. I use them a lot.&nbsp;
+stack effects are more complex. I use them a lot (maybe I'm a weenie).&nbsp;
 <br><a href="http://www.taygeta.com/forth/dpans13.htm">Please refer to
 the Standard</a> for more information on local variables.
 <h2>
@@ -66,7 +50,7 @@ but they must appear in the order shown if they appear at all.&nbsp;
 one cell. Local variable names prefixed with the character '2' in the declaration
 are double-cell locals. They behave the same as single cell locals in all
 other respects. I use 2locals quite a bit in Ficl's OO classes, because
-objects in Ficl are require two cells on the stack. You can modify the
+objects in Ficl require two cells on the stack. You can modify the
 value of a double cell local with <tt><a href="http://www.taygeta.com/forth/dpans13.htm#13.6.1.2295">TO</a></tt>
 the same as you would a single cell local.
 <br>Following are some examples to illustrate usage (they are not intended

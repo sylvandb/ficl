@@ -24,15 +24,20 @@ hide
 : ?|    ( c-addr u -- c-addr u flag )
     2dup s" |"  compare 0= ;
 
-\ examine name - if it's a 2local (starts with '2'),
-\ nibble the first char (the '2') off the name and push true.
+\ examine name - if it's a 2local (starts with "2:"),
+\ nibble the prefix (the "2:") off the name and push true.
 \ Otherwise push false
+\ Problem if the local is named "2:" - we fall off the end...
 : ?2loc ( c-addr u -- c-addr u flag )
-    over c@ [char] 2 = 
+    over dup c@ [char] 2 = 
+	swap 1+  c@ [char] : = and
     if 
-        1- swap char+ swap  \ dcs/jws: nibble the '2'
+        2 - swap char+ char+ swap  \ dcs/jws: nibble the '2:'
         true 
-    else false endif ;
+    else 
+	    false 
+    endif 
+;
 
 : ?delim   ( c-addr u -- state | c-addr u 0 )
     ?|  if  2drop 1 exit endif
