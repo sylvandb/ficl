@@ -58,6 +58,7 @@
 	#ifndef alloca
 	    #define alloca(x)	_alloca(x)
 	#endif /* alloca */
+    #define fstat       _fstat
 	#define stat		_stat
 	#define getcwd		_getcwd
 	#define chdir		_chdir
