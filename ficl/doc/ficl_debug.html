@@ -1,0 +1,107 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="john sadler">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
+   <title>FIcl Debugger</title>
+</head>
+<body>
+<link REL="SHORTCUT ICON" href="ficl.ico">
+<h1>
+<b>Ficl Debugger</b></h1>
+
+<table BORDER=0 CELLSPACING=3 WIDTH="640" >
+<tr>
+<td><b>Forth Inspired Command Language&nbsp;</b></td>
+
+<td ROWSPAN="4"><img SRC="ficl_logo.jpg" height=64 width=64></td>
+
+<td ROWSPAN="4"><a href="http://www.links2go.net/topic/Forth"><img SRC="skey.gif" ALT="Key Resource" BORDER=0 height=81 width=81></a></td>
+</tr>
+
+<tr>
+<td><b>Author: John Sadler (<a href="mailto:john_sadler@alum.mit.edu">john_sadler@alum.mit.edu</a>)</b></td>
+</tr>
+
+<tr>
+<td><b>Created: 19 July 1997&nbsp;</b></td>
+</tr>
+
+<tr>
+<td><b>Revision 2.05: August 2000</b></td>
+</tr>
+</table>
+
+<br>&nbsp;
+<table COLS=1 WIDTH="650" >
+<tr>
+<td>Ficl release 2.05 includes a simple step debugger for colon definitions
+and does> words. If you use it and can suggest improvements (or better
+yet if you write some), please let me know.
+<h2>
+Using the debugger</h2>
+To debug a word, set up the stack with any parameters the word requires,
+then type:
+<br>debug &lt;your word here>
+<br>If the word is unnamed, or all you have is an xt, you can instead use:
+<br>debug-xt&nbsp; ( xt -- )
+<p>The debugger invokes <tt>see</tt> on the word, printing a crude source
+listing, then stops at the first instruction of the definition. There are
+four (case insensitive) commands you can use from here onwards:
+<dl>
+<dt>
+I (step in)</dt>
+
+<dd>
+If the next instruction is a colon defintion or does> word, steps into
+that word's code. If the word is a primitive, simply executes the word.</dd>
+
+<dt>
+O (step over)</dt>
+
+<dd>
+Executes the next instruction in its entirety</dd>
+
+<dt>
+G&nbsp; (go)</dt>
+
+<dd>
+Run the word to completion and exit the debugger</dd>
+
+<dt>
+Q (quit)</dt>
+
+<dd>
+Abort the word and exit the debugger, clearing the stack</dd>
+</dl>
+
+<h2>
+The on-step event&nbsp;</h2>
+If there is a defined word named on-step when the debugger starts, that
+word will be executed before every step. As a guideline, this word should
+have no side effects. Its intended use is to display the stack, but you
+may have some better ideas. Please let me know.&nbsp;
+<br><b><tt>: on-step&nbsp; ." Stack: " .s cr ;</tt></b>
+<br>&nbsp;
+<h2>
+Debugger internals</h2>
+The debugger words are mostly located in source file tools.c. There is
+one supporting word (debug) in softcore.fr as well. There are two main
+words that make the debugger go: debug-xt and step-break. Debug-xt takes
+the xt of a word to debug (as returned by <tt>'</tt>, for example) checks
+to see if it is debuggable (not a primitive), sets a breakpoint at its
+first instruction, and runs <tt>see</tt> on it. To set a breakpoint, debug-xt
+replaces the instruction at the breakpoint with the xt of step-break, and
+stores the original instruction and its address in a static breakpoint
+record. To clear the breakpoint, step-break simply replaces the original
+instruction and adjusts the target virtual machine's instruction pointer
+to run it.&nbsp;
+<br>Step-break is responsible for processing debugger commands and setting
+breakpoints at subsequent instructions.&nbsp;
+<br>&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>
