@@ -4,42 +4,8 @@
 ** ANS Forth SEARCH and SEARCH-EXT word-set written in C
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 6 June 2000
-** $Id$
+** $Header$
 *******************************************************************/
-/*
-** Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
-** All rights reserved.
-**
-** Get the latest Ficl release at http://ficl.sourceforge.net
-**
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please
-** contact me by email at the address above.
-**
-** L I C E N S E  and  D I S C L A I M E R
-** 
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions
-** are met:
-** 1. Redistributions of source code must retain the above copyright
-**    notice, this list of conditions and the following disclaimer.
-** 2. Redistributions in binary form must reproduce the above copyright
-**    notice, this list of conditions and the following disclaimer in the
-**    documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
-** ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-** FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-** DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-** OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-** HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-** SUCH DAMAGE.
-*/
 
 #include <string.h>
 #include "ficl.h"
@@ -55,7 +21,7 @@
 **************************************************************************/
 static void definitions(FICL_VM *pVM)
 {
-    FICL_DICT *pDict = vmGetDict(pVM);
+    FICL_DICT *pDict = ficlGetDict();
 
     assert(pDict);
     if (pDict->nLists < 1)
@@ -77,7 +43,7 @@ static void definitions(FICL_VM *pVM)
 **************************************************************************/
 static void forthWordlist(FICL_VM *pVM)
 {
-    FICL_HASH *pHash = vmGetDict(pVM)->pForthWords;
+    FICL_HASH *pHash = ficlGetDict()->pForthWords;
     stackPushPtr(pVM->pStack, pHash);
     return;
 }
@@ -91,7 +57,7 @@ static void forthWordlist(FICL_VM *pVM)
 static void getCurrent(FICL_VM *pVM)
 {
     ficlLockDictionary(TRUE);
-    stackPushPtr(pVM->pStack, vmGetDict(pVM)->pCompile);
+    stackPushPtr(pVM->pStack, ficlGetDict()->pCompile);
     ficlLockDictionary(FALSE);
     return;
 }
@@ -107,7 +73,7 @@ static void getCurrent(FICL_VM *pVM)
 **************************************************************************/
 static void getOrder(FICL_VM *pVM)
 {
-    FICL_DICT *pDict = vmGetDict(pVM);
+    FICL_DICT *pDict = ficlGetDict();
     int nLists = pDict->nLists;
     int i;
 
@@ -168,7 +134,7 @@ static void searchWordlist(FICL_VM *pVM)
 static void setCurrent(FICL_VM *pVM)
 {
     FICL_HASH *pHash = stackPopPtr(pVM->pStack);
-    FICL_DICT *pDict = vmGetDict(pVM);
+    FICL_DICT *pDict = ficlGetDict();
     ficlLockDictionary(TRUE);
     pDict->pCompile = pHash;
     ficlLockDictionary(FALSE);
@@ -191,7 +157,7 @@ static void setOrder(FICL_VM *pVM)
 {
     int i;
     int nLists = stackPopINT(pVM->pStack);
-    FICL_DICT *dp = vmGetDict(pVM);
+    FICL_DICT *dp = ficlGetDict();
 
     if (nLists > FICL_DEFAULT_VOCS)
     {
@@ -219,7 +185,7 @@ static void setOrder(FICL_VM *pVM)
 
 
 /**************************************************************************
-                        f i c l - w o r d l i s t
+                        w o r d l i s t
 ** SEARCH ( -- wid )
 ** Create a new empty word list, returning its word list identifier wid.
 ** The new word list may be returned from a pool of preallocated word
@@ -233,9 +199,9 @@ static void setOrder(FICL_VM *pVM)
 **    hash entries in the wordlist. Ficl 2.02 and later define WORDLIST as
 **    : wordlist 1 ficl-wordlist ;
 **************************************************************************/
-static void ficlWordlist(FICL_VM *pVM)
+static void wordlist(FICL_VM *pVM)
 {
-    FICL_DICT *dp = vmGetDict(pVM);
+    FICL_DICT *dp = ficlGetDict();
     FICL_HASH *pHash;
     FICL_UNS nBuckets;
     
@@ -243,7 +209,15 @@ static void ficlWordlist(FICL_VM *pVM)
     vmCheckStack(pVM, 1, 1);
 #endif
     nBuckets = stackPopUNS(pVM->pStack);
-    pHash = dictCreateWordlist(dp, nBuckets);
+
+    dictAlign(dp);
+    pHash    = (FICL_HASH *)dp->here;
+    dictAllot(dp, sizeof (FICL_HASH) 
+        + (nBuckets-1) * sizeof (FICL_WORD *));
+
+    pHash->size = nBuckets;
+    hashReset(pHash);
+
     stackPushPtr(pVM->pStack, pHash);
     return;
 }
@@ -256,7 +230,7 @@ static void ficlWordlist(FICL_VM *pVM)
 **************************************************************************/
 static void searchPop(FICL_VM *pVM)
 {
-    FICL_DICT *dp = vmGetDict(pVM);
+    FICL_DICT *dp = ficlGetDict();
     int nLists;
 
     ficlLockDictionary(TRUE);
@@ -278,7 +252,7 @@ static void searchPop(FICL_VM *pVM)
 **************************************************************************/
 static void searchPush(FICL_VM *pVM)
 {
-    FICL_DICT *dp = vmGetDict(pVM);
+    FICL_DICT *dp = ficlGetDict();
 
     ficlLockDictionary(TRUE);
     if (dp->nLists > FICL_DEFAULT_VOCS)
@@ -299,15 +273,15 @@ static void searchPush(FICL_VM *pVM)
 static void widGetName(FICL_VM *pVM)
 {
     FICL_HASH *pHash = vmPop(pVM).p;
-    char *cp = pHash->name;
-    FICL_INT len = 0;
-    
-    if (cp)
-        len = strlen(cp);
+	char *cp = pHash->name;
+	int len = 0;
+	
+	if (cp)
+		len = strlen(cp);
 
-    vmPush(pVM, LVALUEtoCELL(cp));
-    vmPush(pVM, LVALUEtoCELL(len));
-    return;
+	vmPush(pVM, LVALUEtoCELL(cp));
+	vmPush(pVM, LVALUEtoCELL(len));
+	return;
 }
 
 /**************************************************************************
@@ -317,10 +291,10 @@ static void widGetName(FICL_VM *pVM)
 **************************************************************************/
 static void widSetName(FICL_VM *pVM)
 {
-    char *cp = (char *)vmPop(pVM).p;
-    FICL_HASH *pHash = vmPop(pVM).p;
-    pHash->name = cp;
-    return;
+	char *cp = (char *)vmPop(pVM).p;
+	FICL_HASH *pHash = vmPop(pVM).p;
+	pHash->name = cp;
+	return;
 }
 
 
@@ -350,9 +324,8 @@ static void setParentWid(FICL_VM *pVM)
 ** Builds the primitive wordset and the environment-query namespace.
 **************************************************************************/
 
-void ficlCompileSearch(FICL_SYSTEM *pSys)
+void ficlCompileSearch(FICL_DICT *dp)
 {
-    FICL_DICT *dp = pSys->dp;
     assert (dp);
 
     /*
@@ -372,18 +345,17 @@ void ficlCompileSearch(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "set-current",  
                                     setCurrent,     FW_DEFAULT);
     dictAppendWord(dp, "set-order", setOrder,       FW_DEFAULT);
-    dictAppendWord(dp, "ficl-wordlist", 
-                                    ficlWordlist,   FW_DEFAULT);
+    dictAppendWord(dp, "ficl-wordlist", wordlist,   FW_DEFAULT);
+    dictAppendWord(dp, "wid-get-name", widGetName,  FW_DEFAULT);
+    dictAppendWord(dp, "wid-set-name", widSetName,  FW_DEFAULT);
 
     /*
     ** Set SEARCH environment query values
     */
-    ficlSetEnv(pSys, "search-order",      FICL_TRUE);
-    ficlSetEnv(pSys, "search-order-ext",  FICL_TRUE);
-    ficlSetEnv(pSys, "wordlists",         FICL_DEFAULT_VOCS);
+    ficlSetEnv("search-order",      FICL_TRUE);
+    ficlSetEnv("search-order-ext",  FICL_TRUE);
+    ficlSetEnv("wordlists",         FICL_DEFAULT_VOCS);
 
-    dictAppendWord(dp, "wid-get-name", widGetName,  FW_DEFAULT);
-    dictAppendWord(dp, "wid-set-name", widSetName,  FW_DEFAULT);
     dictAppendWord(dp, "wid-set-super", 
                                     setParentWid,   FW_DEFAULT);
     return;

@@ -12,11 +12,6 @@
 **
 ** Get the latest Ficl release at http://ficl.sourceforge.net
 **
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please
-** contact me by email at the address above.
-**
 ** L I C E N S E  and  D I S C L A I M E R
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -39,6 +34,13 @@
 ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 ** SUCH DAMAGE.
+**
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release, please send
+** contact me by email at the address above.
+**
+** $Id$
 */
 
 #include <string.h>
@@ -72,7 +74,7 @@ int ficlParsePrefix(FICL_VM *pVM, STRINGINFO si)
 {
     int i;
     FICL_HASH *pHash;
-    FICL_WORD *pFW = ficlLookup(pVM->pSys, list_name);
+    FICL_WORD *pFW = ficlLookup(list_name);
 
     assert(pFW);
     pHash = (FICL_HASH *)(pFW->param[0].p);
@@ -92,8 +94,7 @@ int ficlParsePrefix(FICL_VM *pVM, STRINGINFO si)
             */
             if (!strincmp(SI_PTR(si), pFW->name, (FICL_UNS)n))
             {
-                /* (sadler) fixed off-by-one error when the token has no trailing space in the TIB */
-				vmSetTibIndex(pVM, si.cp + n - pVM->tib.cp );
+                vmSetTibIndex(pVM, vmGetTibIndex(pVM) - 1 - SI_COUNT(si) + n);
                 vmExecute(pVM, pFW);
 
                 return FICL_TRUE;
@@ -115,7 +116,7 @@ static void tempBase(FICL_VM *pVM, int base)
     if (!ficlParseNumber(pVM, si)) 
     {
         int i = SI_COUNT(si);
-        vmThrowErr(pVM, "%.*s not recognized", i, SI_PTR(si));
+        vmThrowErr(pVM, "0x%.*s is not a valid hex value", i, SI_PTR(si));
     }
 
     pVM->base = oldbase;
@@ -165,10 +166,6 @@ void ficlCompilePrefix(FICL_SYSTEM *pSys)
     pHash->name = list_name;
     dictAppendWord(dp, list_name, constantParen, FW_DEFAULT);
     dictAppendCell(dp, LVALUEtoCELL(pHash));
-
-	/*
-	** Put __tempbase in the forth-wordlist
-	*/
     dictAppendWord(dp, "__tempbase", fTempBase, FW_DEFAULT);
 
     /*
@@ -179,7 +176,7 @@ void ficlCompilePrefix(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "0x", prefixHex, FW_DEFAULT);
     dictAppendWord(dp, "0d", prefixTen, FW_DEFAULT);
 #if (FICL_EXTENDED_PREFIX)
-    pFW = ficlLookup(pSys, "\\");
+    pFW = ficlLookup("\\");
     if (pFW)
     {
         dictAppendWord(dp, "//", pFW->code, FW_DEFAULT);
@@ -187,5 +184,6 @@ void ficlCompilePrefix(FICL_SYSTEM *pSys)
 #endif
     dp->pCompile = pPrevCompile;
 
+    ficlAddPrecompiledParseStep(pSys, "prefix?", ficlParsePrefix);
     return;
 }
