@@ -20,8 +20,8 @@ object --> sub c-example
     ;
 
     : set-name  { c-addr u 2this -- }
-        u       2this --> .length --> set
-        c-addr  2this --> .name  u move
+        u       this --> .length --> set
+        c-addr  this --> .name  u move
     ;
 
     : ?  ( inst class ) c-example => get-name type cr ;
@@ -48,15 +48,15 @@ object subclass c-led
     c-byte obj: .state
 
     : on   { led# 2this -- }
-        2this --> .state --> get
+        this --> .state --> get
         1 led# lshift or dup !oreg
-        2this --> .state --> set
+        this --> .state --> set
     ;
 
     : off   { led# 2this -- }
-        2this --> .state --> get
+        this --> .state --> get
         1 led# lshift invert and dup !oreg
-        2this --> .state --> set
+        this --> .state --> set
     ;
 
 end-class

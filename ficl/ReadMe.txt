@@ -1,6 +1,12 @@
 Coming up:
 Web server scripting extension (GoAhead port)
 
+"Private" flag for methods?
+method: defining word for public methods
+my=>
+catch a method invocation
+2value 2variable 
+
 ficlwin Debugger pane - step, stack trace, breakpoint
 Design:
 0. Debug pane or window - step-into step-over go
@@ -9,15 +15,21 @@ Design:
 3. GO runs until breakpoint or leaves debug mode if no breaks
 4. BREAK stops debug vm at next step
 Requires a debug VM that checks for breaks, step mode, etc.
+How to get stack parameters to execution vm, or get input text to debug vm?
 
-rel 2.05
+>>> rel 2.05
 Alpha patches from the freeBSD team incorporated
 Split SEARCH and SEARCH EXT words form words.c to search.c
+ABORT" now complies with the ANS (-2 THROWs)
+2LOCALS in jhlocal syntax now lose the first 2 in their names.
+
+ANS DOUBLE words: 2r@ 2r> 2>r
+
 ficl words
 - wid-get-name   given a wid, returns the address and count of its name. If no name, count is 0
 - wid-set-name   set optional wid name pointer to the \0 terminated string address specified.
 - last-word  returns the xt of the word being defined or most recently defined.
-- i@ and i! operate on quadbyte quantities for 64 bit friendliness
+- q@ and q! operate on quadbyte quantities for 64 bit friendliness
 softcore.fr words
 - ORDER now lists wordlists by name
 - ficl-named-wordlist

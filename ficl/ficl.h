@@ -3,7 +3,7 @@
 ** Forth Inspired Command Language
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 19 July 1997
-** 
+** $Header$
 *******************************************************************/
 /*
 ** N O T I C E -- DISCLAIMER OF WARRANTY
@@ -487,7 +487,6 @@ int wordIsCompileOnly(FICL_WORD *pFW);
 #define FW_IMMEDIATE    1   /* execute me even if compiling */
 #define FW_COMPILE      2   /* error if executed when not compiling */
 #define FW_SMUDGE       4   /* definition in progress - hide me */
-#define FW_CLASS        8   /* Word defines a class */
 
 #define FW_COMPIMMED    (FW_IMMEDIATE | FW_COMPILE)
 #define FW_DEFAULT      0

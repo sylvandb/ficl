@@ -3,7 +3,7 @@
 ** Forth Inspired Command Language - dictionary methods
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 19 July 1997
-** 
+** $Header$
 *******************************************************************/
 /*
 ** This file implements the dictionary -- FICL's model of 

@@ -345,8 +345,8 @@ previous
 \ end-class    ( done with c-akbar )
 \
 : resume-class   { 2this -- old-wid addr[size] size }
-    2this --> .wid @ ficl-set-current  ( old-wid )
-    2this --> .size dup @   ( old-wid addr[size] size )
+    this --> .wid @ ficl-set-current  ( old-wid )
+    this --> .size dup @   ( old-wid addr[size] size )
     instance-vars >search
 ;
 

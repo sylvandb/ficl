@@ -4,7 +4,7 @@
 ** ANS Forth CORE word-set written in C
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 19 July 1997
-** 
+** $Header$
 *******************************************************************/
 
 #include <stdlib.h>
@@ -1853,6 +1853,36 @@ static void fromRStack(FICL_VM *pVM)
 static void fetchRStack(FICL_VM *pVM)
 {
     stackPush(pVM->pStack, stackGetTop(pVM->rStack));
+    return;
+}
+
+
+static void twoToR(FICL_VM *pVM)
+{
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM, 2, 0);
+#endif
+    stackRoll(pVM->pStack, 1);
+    stackPush(pVM->rStack, stackPop(pVM->pStack));
+    stackPush(pVM->rStack, stackPop(pVM->pStack));
+    return;
+}
+
+static void twoRFrom(FICL_VM *pVM)
+{
+#if FICL_ROBUST > 1
+    vmCheckStack(pVM, 0, 2);
+#endif
+    stackPush(pVM->pStack, stackPop(pVM->rStack));
+    stackPush(pVM->pStack, stackPop(pVM->rStack));
+    stackRoll(pVM->pStack, 1);
+    return;
+}
+
+static void twoRFetch(FICL_VM *pVM)
+{
+    stackPush(pVM->pStack, stackFetch(pVM->rStack, 1));
+    stackPush(pVM->pStack, stackFetch(pVM->rStack, 0));
     return;
 }
 
@@ -4190,7 +4220,7 @@ void ficlCompileCore(FICL_DICT *dp)
     dictAppendWord(dp, ">body",     toBody,         FW_DEFAULT);
     dictAppendWord(dp, ">in",       toIn,           FW_DEFAULT);
     dictAppendWord(dp, ">number",   toNumber,       FW_DEFAULT);
-    dictAppendWord(dp, ">r",        toRStack,       FW_DEFAULT);
+    dictAppendWord(dp, ">r",        toRStack,       FW_COMPILE);
     dictAppendWord(dp, "?dup",      questionDup,    FW_DEFAULT);
     dictAppendWord(dp, "@",         fetch,          FW_DEFAULT);
     dictAppendWord(dp, "abort",     ficlAbort,      FW_DEFAULT);
@@ -4251,8 +4281,8 @@ void ficlCompileCore(FICL_DICT *dp)
     dictAppendWord(dp, "over",      over,           FW_DEFAULT);
     dictAppendWord(dp, "postpone",  postponeCoIm,   FW_COMPIMMED);
     dictAppendWord(dp, "quit",      quit,           FW_DEFAULT);
-    dictAppendWord(dp, "r>",        fromRStack,     FW_DEFAULT);
-    dictAppendWord(dp, "r@",        fetchRStack,    FW_DEFAULT);
+    dictAppendWord(dp, "r>",        fromRStack,     FW_COMPILE);
+    dictAppendWord(dp, "r@",        fetchRStack,    FW_COMPILE);
     dictAppendWord(dp, "recurse",   recurseCoIm,    FW_COMPIMMED);
     dictAppendWord(dp, "repeat",    repeatCoIm,     FW_COMPIMMED);
     dictAppendWord(dp, "rot",       rot,            FW_DEFAULT);
@@ -4287,6 +4317,9 @@ void ficlCompileCore(FICL_DICT *dp)
     */
     dictAppendWord(dp, ".(",        dotParen,       FW_DEFAULT);
     dictAppendWord(dp, ":noname",   colonNoName,    FW_DEFAULT);
+    dictAppendWord(dp, "2>r",       twoToR,         FW_COMPILE);
+    dictAppendWord(dp, "2r>",       twoRFrom,       FW_COMPILE);
+    dictAppendWord(dp, "2r@",       twoRFetch,      FW_COMPILE);
     dictAppendWord(dp, "?do",       qDoCoIm,        FW_COMPIMMED);
     dictAppendWord(dp, "again",     againCoIm,      FW_COMPIMMED);
     dictAppendWord(dp, "parse",     parse,          FW_DEFAULT);
@@ -4331,7 +4364,7 @@ void ficlCompileCore(FICL_DICT *dp)
     dictAppendWord(dp, "throw",     ficlThrow,      FW_DEFAULT);
 
     ficlSetEnv("exception",         FICL_TRUE);
-    ficlSetEnv("exception-ext",     FICL_FALSE); /* abort" does not comply yet */
+    ficlSetEnv("exception-ext",     FICL_TRUE);
 
     /*
     ** LOCAL and LOCAL EXT
@@ -4418,8 +4451,8 @@ void ficlCompileCore(FICL_DICT *dp)
 	dictAppendWord(dp, "number?",   ficlIsNum,      FW_DEFAULT);
     dictAppendWord(dp, "parse-word",parseNoCopy,    FW_DEFAULT);
     dictAppendWord(dp, "sliteral",  sLiteralCoIm,   FW_COMPIMMED); /* STRING */
-    dictAppendWord(dp, "i@",        quadFetch,      FW_DEFAULT);
-    dictAppendWord(dp, "i!",        quadStore,      FW_DEFAULT);
+    dictAppendWord(dp, "q@",        quadFetch,      FW_DEFAULT);
+    dictAppendWord(dp, "q!",        quadStore,      FW_DEFAULT);
     dictAppendWord(dp, "w@",        wFetch,         FW_DEFAULT);
     dictAppendWord(dp, "w!",        wStore,         FW_DEFAULT);
     dictAppendWord(dp, "x.",        hexDot,         FW_DEFAULT);

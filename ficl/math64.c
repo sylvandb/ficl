@@ -5,6 +5,7 @@
 ** Created: 25 January 1998
 ** Rev 2.03: Support for 128 bit DP math. This file really ouught to
 ** be renamed!
+** $Header$
 *******************************************************************/
 
 #include "ficl.h"

@@ -1,6 +1,6 @@
 /*
 ** stub main for testing FICL under Win32
-** 
+** $Header$
 */
 
 #include <stdlib.h>

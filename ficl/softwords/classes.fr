@@ -36,8 +36,8 @@ end-class
 object subclass c-4byte
 	4 chars: .payload
 
-	: get  drop i@ ;
-	: set  drop i! ;
+	: get  drop q@ ;
+	: set  drop q! ;
 end-class
 
 
@@ -103,11 +103,10 @@ object subclass c-ptr
     ;
 
     \ index the pointer in place
-    : index-ptr   ( index inst class -- )
-        locals| class inst index |
-        inst class  c-ptr => get-ptr        ( addr )
-        inst class --> @size  index *  +    ( addr' )
-        inst class  c-ptr => set-ptr
+    : index-ptr   { index 2this -- }
+        this --> get-ptr              ( addr )
+        this --> @size  index *  +    ( addr' )
+        this --> set-ptr
     ;
 
 end-class
@@ -133,10 +132,10 @@ c-ptr subclass c-4bytePtr
     : @size   2drop  4  ;
     \ fetch and store through the pointer
 	: get   ( inst class -- value )
-        c-ptr => get-ptr i@  
+        c-ptr => get-ptr q@  
     ;
 	: set   ( value inst class -- )
-        c-ptr => get-ptr i!  
+        c-ptr => get-ptr q!  
     ;
  end-class
  

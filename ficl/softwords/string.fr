@@ -30,8 +30,8 @@ object subclass c-string
 
     : get-buf   ( 2this -- ptr )  c-string => .buf  c-ptr => get-ptr ;
     : set-buf   { ptr len 2this -- }  
-        ptr 2this c-string => .buf  c-ptr => set-ptr 
-        len 2this c-string => set-buflen 
+        ptr this c-string => .buf  c-ptr => set-ptr 
+        len this c-string => set-buflen 
     ;
 
     \ set buffer to null and buflen to zero
@@ -42,11 +42,11 @@ object subclass c-string
 
     \ free the buffer if there is one, set buf pointer to null
     : free-buf   { 2this -- }
-        2this c-string => get-buf 
+        this c-string => get-buf 
         ?dup if 
             free 
 			abort" c-string free failed"
-			2this  c-string => clr-buf
+			this  c-string => clr-buf
         endif
     ;
 
@@ -54,52 +54,52 @@ object subclass c-string
     : size-buf  { size 2this -- }
         size 0< abort" need positive size for size-buf"
         size 0= if 
-            2this --> free-buf exit
+            this --> free-buf exit
         endif
 
         \ force buflen to be a positive multiple of min-buf chars
         c-string => min-buf size over / 1+ * chars to size
 
         \ if buffer is null, allocate one, else resize it
-        2this --> get-buflen  0= 
+        this --> get-buflen  0= 
         if
             size allocate 
             abort" out of memory"
-            size 2this --> set-buf
-            size 2this --> set-buflen
+            size this --> set-buf
+            size this --> set-buflen
             exit
         endif
 
-        size 2this --> get-buflen > if
-            2this --> get-buf size resize
+        size this --> get-buflen > if
+            this --> get-buf size resize
             abort" out of memory"
-            size 2this --> set-buf
+            size this --> set-buf
         endif
     ;
 
     : set   { c-addr u 2this -- }
-        u 2this --> size-buf
-        u 2this --> set-count
-        c-addr 2this --> get-buf  u move  
+        u this --> size-buf
+        u this --> set-count
+        c-addr this --> get-buf  u move  
     ;
 
     : get   { 2this -- c-addr u }
-        2this --> get-buf
-        2this --> get-count
+        this --> get-buf
+        this --> get-count
     ;
 
     \ append string to existing one
     : cat   { c-addr u 2this -- }
-        2this --> get-count u +  dup >r
-        2this --> size-buf
-        c-addr  2this --> get-buf 2this --> get-count +  u move
-        r> 2this --> set-count
+        this --> get-count u +  dup >r
+        this --> size-buf
+        c-addr  this --> get-buf this --> get-count +  u move
+        r> this --> set-count
     ;
 
     : type   { 2this -- }
-	    2this --> ?empty if ." (empty) " exit endif
-        2this --> .buf --> get-ptr 
-        2this --> .count --> get 
+	    this --> ?empty if ." (empty) " exit endif
+        this --> .buf --> get-ptr 
+        this --> .count --> get 
         type  
     ;
 
@@ -123,8 +123,8 @@ c-string subclass c-hashstring
     c-2byte obj: .hashcode
 
     : set-hashcode   { 2this -- }
-        2this  --> super --> hashcode 
-        2this  --> .hashcode --> set
+        this  --> super --> hashcode 
+        this  --> .hashcode --> set
     ;
 
     : get-hashcode   ( 2this -- hashcode )
