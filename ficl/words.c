@@ -4601,7 +4601,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "/mod",      slashMod,       FW_DEFAULT);
     dictAppendWord(dp, "0<",        zeroLess,       FW_DEFAULT);
     dictAppendWord(dp, "0=",        zeroEquals,     FW_DEFAULT);
-    dictAppendWord(dp, "0>",        zeroGreater,    FW_DEFAULT);
     dictAppendWord(dp, "1+",        onePlus,        FW_DEFAULT);
     dictAppendWord(dp, "1-",        oneMinus,       FW_DEFAULT);
     dictAppendWord(dp, "2!",        twoStore,       FW_DEFAULT);
@@ -4633,7 +4632,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "base",      base,           FW_DEFAULT);
     dictAppendWord(dp, "begin",     beginCoIm,      FW_COMPIMMED);
     dictAppendWord(dp, "c!",        cStore,         FW_DEFAULT);
-    dictAppendWord(dp, "c\"",       cstringQuoteIm, FW_IMMEDIATE);
     dictAppendWord(dp, "c,",        cComma,         FW_DEFAULT);
     dictAppendWord(dp, "c@",        cFetch,         FW_DEFAULT);
     dictAppendWord(dp, "cell+",     cellPlus,       FW_DEFAULT);
@@ -4661,7 +4659,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "find",      cFind,          FW_DEFAULT);
     dictAppendWord(dp, "fm/mod",    fmSlashMod,     FW_DEFAULT);
     dictAppendWord(dp, "here",      here,           FW_DEFAULT);
-    dictAppendWord(dp, "hex",       hex,            FW_DEFAULT);
     dictAppendWord(dp, "hold",      hold,           FW_DEFAULT);
     dictAppendWord(dp, "i",         loopICo,        FW_COMPILE);
     dictAppendWord(dp, "if",        ifCoIm,         FW_COMPIMMED);
@@ -4681,7 +4678,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "negate",    negate,         FW_DEFAULT);
     dictAppendWord(dp, "or",        bitwiseOr,      FW_DEFAULT);
     dictAppendWord(dp, "over",      over,           FW_DEFAULT);
-    dictAppendWord(dp, "pad",       pad,            FW_DEFAULT);
     dictAppendWord(dp, "postpone",  postponeCoIm,   FW_COMPIMMED);
     dictAppendWord(dp, "quit",      quit,           FW_DEFAULT);
     dictAppendWord(dp, "r>",        fromRStack,     FW_COMPILE);
@@ -4717,15 +4713,23 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     ** CORE EXT word set...
     ** see softcore.fr for other definitions
     */
+    /* "#tib" */
     dictAppendWord(dp, ".(",        dotParen,       FW_IMMEDIATE);
-    dictAppendWord(dp, ":noname",   colonNoName,    FW_DEFAULT);
+    /* ".r" */
+    dictAppendWord(dp, "0>",        zeroGreater,    FW_DEFAULT);
     dictAppendWord(dp, "2>r",       twoToR,         FW_COMPILE);
     dictAppendWord(dp, "2r>",       twoRFrom,       FW_COMPILE);
     dictAppendWord(dp, "2r@",       twoRFetch,      FW_COMPILE);
+    dictAppendWord(dp, ":noname",   colonNoName,    FW_DEFAULT);
     dictAppendWord(dp, "?do",       qDoCoIm,        FW_COMPIMMED);
     dictAppendWord(dp, "again",     againCoIm,      FW_COMPIMMED);
+    dictAppendWord(dp, "c\"",       cstringQuoteIm, FW_IMMEDIATE);
+    /* case of endof endcase */
+    dictAppendWord(dp, "hex",       hex,            FW_DEFAULT);
+    dictAppendWord(dp, "pad",       pad,            FW_DEFAULT);
     dictAppendWord(dp, "parse",     parse,          FW_DEFAULT);
     dictAppendWord(dp, "pick",      pick,           FW_DEFAULT);
+    /* query restore-input save-input tib u.r u> unused [compile] */
     dictAppendWord(dp, "roll",      roll,           FW_DEFAULT);
     dictAppendWord(dp, "refill",    refill,         FW_DEFAULT);
     dictAppendWord(dp, "source-id", sourceid,       FW_DEFAULT);
@@ -4814,7 +4818,6 @@ void ficlCompileCore(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "resize",    ansResize,      FW_DEFAULT);
     
     ficlSetEnv(pSys, "memory-alloc",      FICL_TRUE);
-    ficlSetEnv(pSys, "memory-alloc-ext",  FICL_FALSE);
 
     /*
     ** optional SEARCH-ORDER word set 

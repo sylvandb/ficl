@@ -93,6 +93,15 @@ SOURCE=.\dict.c
 # Begin Source File
 
 SOURCE=.\ficl.c
+
+!IF  "$(CFG)" == "ficl - Win32 Release"
+
+# ADD CPP /FAcs
+
+!ELSEIF  "$(CFG)" == "ficl - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -241,6 +250,10 @@ SOURCE=.\doc\ficl.html
 # End Source File
 # Begin Source File
 
+SOURCE=.\doc\ficl_ans.html
+# End Source File
+# Begin Source File
+
 SOURCE=.\doc\ficl_debug.html
 # End Source File
 # Begin Source File
@@ -282,7 +295,7 @@ SOURCE=.\doc\primer.txt
 # End Group
 # Begin Source File
 
-SOURCE=..\ReadMe.txt
+SOURCE=.\ReadMe.txt
 # End Source File
 # End Target
 # End Project

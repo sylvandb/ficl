@@ -92,7 +92,7 @@ static void vmSetBreak(FICL_VM *pVM, FICL_BREAKPOINT *pBP)
 **************************************************************************/
 static void debugPrompt(FICL_VM *pVM)
 {
-        vmTextOut(pVM, FICL_PROMPT, 0);
+        vmTextOut(pVM, "dbg> ", 0);
 }
 
 
@@ -126,11 +126,13 @@ int isAFiclWord(FICL_DICT *pd, FICL_WORD *pFW)
 }
 
 
+#if 0
 static int isPrimitive(FICL_WORD *pFW)
 {
     WORDKIND wk = ficlWordClassify(pFW);
     return ((wk != COLON) && (wk != DOES));
 }
+#endif
 
 
 /**************************************************************************
@@ -178,7 +180,8 @@ static FICL_WORD *findEnclosingWord(FICL_VM *pVM, CELL *cp)
 */
 static void seeColon(FICL_VM *pVM, CELL *pc)
 {
-	char *cp = pVM->pad + 1;
+	char *cp;
+    CELL *param0 = pc;
     FICL_DICT *pd = vmGetDict(pVM);
 	FICL_WORD *pSemiParen = ficlLookup(pVM->pSys, "(;)");
     assert(pSemiParen);
@@ -187,15 +190,17 @@ static void seeColon(FICL_VM *pVM, CELL *pc)
     {
         FICL_WORD *pFW = (FICL_WORD *)(pc->p);
 
+        cp = pVM->pad;
+		if ((void *)pc == (void *)pVM->ip)
+			*cp++ = '>';
+		else
+			*cp++ = ' ';
+        cp += sprintf(cp, "%3d   ", pc-param0);
+        
         if (isAFiclWord(pd, pFW))
         {
             WORDKIND kind = ficlWordClassify(pFW);
             CELL c;
-
-			if ((void *)pc == (void *)pVM->ip)
-				cp[-1] = '>';
-			else
-				cp[-1] = ' ';
 
             switch (kind)
             {
@@ -204,66 +209,66 @@ static void seeColon(FICL_VM *pVM, CELL *pc)
                 if (isAFiclWord(pd, c.p))
                 {
                     FICL_WORD *pLit = (FICL_WORD *)c.p;
-                    sprintf(cp, "    literal %.*s (%#lx)", 
+                    sprintf(cp, "%.*s ( %#lx literal )", 
                         pLit->nName, pLit->name, c.u);
                 }
                 else
-                    sprintf(cp, "    literal %ld (%#lx)", c.i, c.u);
+                    sprintf(cp, "literal %ld (%#lx)", c.i, c.u);
                 break;
             case STRINGLIT:
                 {
                     FICL_STRING *sp = (FICL_STRING *)(void *)++pc;
                     pc = (CELL *)alignPtr(sp->text + sp->count + 1) - 1;
-                    sprintf(cp, "    s\" %.*s\"", sp->count, sp->text);
+                    sprintf(cp, "s\" %.*s\"", sp->count, sp->text);
                 }
                 break;
             case CSTRINGLIT:
                 {
                     FICL_STRING *sp = (FICL_STRING *)(void *)++pc;
                     pc = (CELL *)alignPtr(sp->text + sp->count + 1) - 1;
-                    sprintf(cp, "    c\" %.*s\"", sp->count, sp->text);
+                    sprintf(cp, "c\" %.*s\"", sp->count, sp->text);
                 }
                 break;
             case IF:
                 c = *++pc;
                 if (c.i > 0)
-                    sprintf(cp, "    if / while (branch rel %ld)", c.i);
+                    sprintf(cp, "if / while (branch %d)", pc+c.i-param0);
                 else
-                    sprintf(cp, "    until (branch rel %ld)", c.i);
-                break;
+                    sprintf(cp, "until (branch %d)",      pc+c.i-param0);
+                break;                                                           
             case BRANCH:
                 c = *++pc;
                 if (c.i > 0)
-                    sprintf(cp, "    else (branch rel %ld)", c.i);
+                    sprintf(cp, "else (branch %d)",       pc+c.i-param0);
                 else
-                    sprintf(cp, "    repeat (branch rel %ld)", c.i);
+                    sprintf(cp, "repeat (branch %d)",     pc+c.i-param0);
                 break;
 
             case QDO:
                 c = *++pc;
-                sprintf(cp, "    ?do (leave abs %#lx)", c.u);
+                sprintf(cp, "?do (leave %d)",  (CELL *)c.p-param0);
                 break;
             case DO:
                 c = *++pc;
-                sprintf(cp, "    do (leave abs %#lx)", c.u);
+                sprintf(cp, "do (leave %d)", (CELL *)c.p-param0);
                 break;
             case LOOP:
                 c = *++pc;
-                sprintf(cp, "    loop (branch rel %#ld)", c.i);
+                sprintf(cp, "loop (branch %d)", pc+c.i-param0);
                 break;
             case PLOOP:
                 c = *++pc;
-                sprintf(cp, "    +loop (branch rel %#ld)", c.i);
+                sprintf(cp, "+loop (branch %d)", pc+c.i-param0);
                 break;
             default:
-                sprintf(cp, "    %.*s", pFW->nName, pFW->name);
+                sprintf(cp, "%.*s", pFW->nName, pFW->name);
                 break;
             }
  
         }
         else /* probably not a word - punt and print value */
         {
-            sprintf(cp, "    %ld (%#lx)", pc->i, pc->u);
+            sprintf(cp, "%ld ( %#lx )", pc->i, pc->u);
         }
 
 		vmTextOut(pVM, pVM->pad, 1);
@@ -494,10 +499,12 @@ void stepBreak(FICL_VM *pVM)
         */
         pFW = pVM->pSys->bpStep.origXT;
         sprintf(pVM->pad, "next: %.*s", pFW->nName, pFW->name);
+#if 0
         if (isPrimitive(pFW))
         {
-            strcat(pVM->pad, " primitive");
+            strcat(pVM->pad, " ( primitive )");
         }
+#endif
 
         vmTextOut(pVM, pVM->pad, 1);
         debugPrompt(pVM);

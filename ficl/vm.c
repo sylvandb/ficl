@@ -159,6 +159,7 @@ void vmInnerLoop(FICL_VM *pVM)
 #endif
 
 
+
 /**************************************************************************
                         v m G e t D i c t
 ** Returns the address dictionary for this VM's system

@@ -122,10 +122,7 @@
 ** T o   D o   L i s t
 **
 ** 1. Unimplemented system dependent CORE word: key
-** 2. Kludged CORE word: ACCEPT 
-** 3. Dictionary locking is full of holes - only one vm at a time
-**    can alter the dict. 
-** 4. Ficl uses the pad in CORE words - this violates the standard,
+** 2. Ficl uses the PAD in some CORE words - this violates the standard,
 **    but it's cleaner for a multithreaded system. I'll have to make a
 **    second pad for reference by the word PAD to fix this.
 **
@@ -151,7 +148,7 @@
 ** - Make the main hash table a bigger prime (HASHSIZE)
 ** - FORGET about twiddling the hash function - my experience is
 **   that that is a waste of time.
-** - eliminate the need to pass the pVM parameter on the stack
+** - Eliminate the need to pass the pVM parameter on the stack
 **   by dedicating a register to it. Most words need access to the
 **   vm, but the parameter passing overhead can be reduced. One way
 **   requires that the host OS have a task switch callout. Create
@@ -257,7 +254,8 @@ typedef struct ficl_system_info FICL_SYSTEM_INFO;
 /*
 ** A CELL is the main storage type. It must be large enough
 ** to contain a pointer or a scalar. In order to accommodate 
-** 32 bit and 64 bit processors, use abstract types for i and u.
+** 32 bit and 64 bit processors, use abstract types for int, 
+** unsigned, and float.
 */
 typedef union _cell
 {
@@ -474,11 +472,10 @@ typedef void (*OUTFUNC)(FICL_VM *pVM, char *text, int fNewline);
 struct vm
 {
     FICL_SYSTEM    *pSys;       /* Which system this VM belongs to  */
-    void           *context;    /* Not used by FICL--use this for your own data  */
     FICL_VM        *link;       /* Ficl keeps a VM list for simple teardown */
     jmp_buf        *pState;     /* crude exception mechanism...     */
     OUTFUNC         textOut;    /* Output callback - see sysdep.c   */
-    void *          pExtend;    /* vm extension pointer             */
+    void *          pExtend;    /* vm extension pointer for app use - initialized from FICL_SYSTEM */
     short           fRestart;   /* Set TRUE to restart runningWord  */
     IPTYPE          ip;         /* instruction pointer              */
     FICL_WORD      *runningWord;/* address of currently running word (often just *(ip-1) ) */
@@ -601,7 +598,7 @@ void        vmThrowErr     (FICL_VM *pVM, char *fmt, ...);
 #define M_VM_STEP(pVM) \
         FICL_WORD *tempFW = *(pVM)->ip++; \
         (pVM)->runningWord = tempFW; \
-        tempFW->code(pVM); \
+        tempFW->code(pVM); 
 
 #define M_INNER_LOOP(pVM) \
     for (;;)  { M_VM_STEP(pVM) }
@@ -834,11 +831,13 @@ typedef struct FICL_BREAKPOINT
 ** to separate dictionaries with some constraints. 
 ** The present model allows multiple sessions to one dictionary provided
 ** you implement ficlLockDictionary() as specified in sysdep.h
+** Note: the pExtend pointer is there to provide context for applications. It is copied
+** to each VM's pExtend field as that VM is created.
 */
 struct ficl_system 
 {
     FICL_SYSTEM *link;
-    void *context;    /* Not used by FICL--use this for your own data  */
+    void *pExtend;      /* Initializes VM's pExtend pointer (for application use) */
     FICL_VM *vmList;
     FICL_DICT *dp;
     FICL_DICT *envp;
@@ -886,10 +885,11 @@ struct ficl_system
 
 struct ficl_system_info
 {
-	int size;
-	int nDictCells;
-	OUTFUNC textOut;
-	void *context;
+	int size;           /* structure size tag for versioning */
+	int nDictCells;     /* Size of system's Dictionary */
+	OUTFUNC textOut;    /* default textOut function */
+	void *pExtend;      /* Initializes VM's pExtend pointer - for application use */
+    int nEnvCells;      /* Size of Environment dictionary */
 };
 
 

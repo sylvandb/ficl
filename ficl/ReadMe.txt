@@ -1,4 +1,18 @@
-rel 3.01 -- 2001
+debugger vocabulary - use ficlexec to do debug commands
+SYSTEM extension redirects STDOUT to window in ficlwin
+File regression suite
+
+Consolidated context and pExtend pointers of FICL_SYSTEM - VM's pExtend pointer
+  is initialized from the copy in FICL_SYSTEM upon VM creation.
+Ficlwin character handling is more robust
+SEE improvements - SEE (and consequently DEBUG) have improved source listings
+  with instruction offsets
+Corrected various bugs in docs. 
+Added ficl-ized version of JV Noble's Forth Primer
+Ficlwin uses multi-system constructs (see ficlthread.c)
+MEMORY-EXT environment variable removed (there is no such wordset)
+
+rel 3.01 -- October 2001
 
 Major contribs by Larry Hastings (larry@hastings.org)
 - FILE wordset

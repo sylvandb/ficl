@@ -991,33 +991,49 @@ void ficlCompileFloat(FICL_SYSTEM *pSys)
     assert(dp);
 
 #if FICL_WANT_FLOAT
+    dictAppendWord(dp, ">float",    ToF,            FW_DEFAULT);
+    /* d>f */
     dictAppendWord(dp, "f!",        Fstore,         FW_DEFAULT);
-    dictAppendWord(dp, "f?dup",     FquestionDup,   FW_DEFAULT);
-    dictAppendWord(dp, "f@",        Ffetch,         FW_DEFAULT);
-    dictAppendWord(dp, "f=",        FisEqual,       FW_DEFAULT);
-    dictAppendWord(dp, "f<",        FisLess,        FW_DEFAULT);
-    dictAppendWord(dp, "f>",        FisGreater,     FW_DEFAULT);
-    dictAppendWord(dp, "f0=",       FzeroEquals,    FW_DEFAULT);
-    dictAppendWord(dp, "f0<",       FzeroLess,      FW_DEFAULT);
-    dictAppendWord(dp, "f0>",       FzeroGreater,   FW_DEFAULT);
-    dictAppendWord(dp, "f2drop",    FtwoDrop,       FW_DEFAULT);
-    dictAppendWord(dp, "f2dup",     FtwoDup,        FW_DEFAULT);
-    dictAppendWord(dp, "f2over",    FtwoOver,       FW_DEFAULT);
-    dictAppendWord(dp, "f2swap",    FtwoSwap,       FW_DEFAULT);
-    dictAppendWord(dp, "f+",        Fadd,           FW_DEFAULT);
-    dictAppendWord(dp, "f+!",       FplusStore,     FW_DEFAULT);
-    dictAppendWord(dp, "f-",        Fsub,           FW_DEFAULT);
     dictAppendWord(dp, "f*",        Fmul,           FW_DEFAULT);
+    dictAppendWord(dp, "f+",        Fadd,           FW_DEFAULT);
+    dictAppendWord(dp, "f-",        Fsub,           FW_DEFAULT);
     dictAppendWord(dp, "f/",        Fdiv,           FW_DEFAULT);
-    dictAppendWord(dp, "f+i",       Faddi,          FW_DEFAULT);
-    dictAppendWord(dp, "f-i",       Fsubi,          FW_DEFAULT);
-    dictAppendWord(dp, "f*i",       Fmuli,          FW_DEFAULT);
-    dictAppendWord(dp, "f/i",       Fdivi,          FW_DEFAULT);
+    dictAppendWord(dp, "f0<",       FzeroLess,      FW_DEFAULT);
+    dictAppendWord(dp, "f0=",       FzeroEquals,    FW_DEFAULT);
+    dictAppendWord(dp, "f<",        FisLess,        FW_DEFAULT);
+ /* 
+    f>d 
+ */
+    dictAppendWord(dp, "f@",        Ffetch,         FW_DEFAULT);
+ /* 
+    falign 
+    faligned 
+ */
     dictAppendWord(dp, "fconstant", Fconstant,      FW_DEFAULT);
     dictAppendWord(dp, "fdepth",    Fdepth,         FW_DEFAULT);
     dictAppendWord(dp, "fdrop",     Fdrop,          FW_DEFAULT);
     dictAppendWord(dp, "fdup",      Fdup,           FW_DEFAULT);
     dictAppendWord(dp, "fliteral",  fliteralIm,     FW_IMMEDIATE);
+/*
+    float+
+    floats
+    floor
+    fmax
+    fmin
+*/
+    dictAppendWord(dp, "f?dup",     FquestionDup,   FW_DEFAULT);
+    dictAppendWord(dp, "f=",        FisEqual,       FW_DEFAULT);
+    dictAppendWord(dp, "f>",        FisGreater,     FW_DEFAULT);
+    dictAppendWord(dp, "f0>",       FzeroGreater,   FW_DEFAULT);
+    dictAppendWord(dp, "f2drop",    FtwoDrop,       FW_DEFAULT);
+    dictAppendWord(dp, "f2dup",     FtwoDup,        FW_DEFAULT);
+    dictAppendWord(dp, "f2over",    FtwoOver,       FW_DEFAULT);
+    dictAppendWord(dp, "f2swap",    FtwoSwap,       FW_DEFAULT);
+    dictAppendWord(dp, "f+!",       FplusStore,     FW_DEFAULT);
+    dictAppendWord(dp, "f+i",       Faddi,          FW_DEFAULT);
+    dictAppendWord(dp, "f-i",       Fsubi,          FW_DEFAULT);
+    dictAppendWord(dp, "f*i",       Fmuli,          FW_DEFAULT);
+    dictAppendWord(dp, "f/i",       Fdivi,          FW_DEFAULT);
     dictAppendWord(dp, "int>float", itof,           FW_DEFAULT);
     dictAppendWord(dp, "float>int", Ftoi,           FW_DEFAULT);
     dictAppendWord(dp, "f.",        FDot,           FW_DEFAULT);
@@ -1032,8 +1048,7 @@ void ficlCompileFloat(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "i-f",       isubf,          FW_DEFAULT);
     dictAppendWord(dp, "i/f",       idivf,          FW_DEFAULT);
 
-    dictAppendWord(dp, "f>",        FFrom,          FW_DEFAULT);
-    dictAppendWord(dp, ">f",        ToF,            FW_DEFAULT);
+    dictAppendWord(dp, "float>",    FFrom,          FW_DEFAULT);
 
     dictAppendWord(dp, "f-roll",    FminusRoll,     FW_DEFAULT);
     dictAppendWord(dp, "f-rot",     Fminusrot,      FW_DEFAULT);

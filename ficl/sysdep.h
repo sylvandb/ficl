@@ -54,24 +54,24 @@
 #include <assert.h>
 
 #if defined(_WIN32)
-	#include <stdio.h>
-	#ifndef alloca
-	    #define alloca(x)	_alloca(x)
-	#endif /* alloca */
+    #include <stdio.h>
+    #ifndef alloca
+        #define alloca(x)   _alloca(x)
+    #endif /* alloca */
     #define fstat       _fstat
-	#define stat		_stat
-	#define getcwd		_getcwd
-	#define chdir		_chdir
-	#define unlink		_unlink
-	#define fileno		_fileno
+    #define stat        _stat
+    #define getcwd      _getcwd
+    #define chdir       _chdir
+    #define unlink      _unlink
+    #define fileno      _fileno
 
-	#define FICL_HAVE_FTRUNCATE 1
-	extern int ftruncate(int fileno, size_t size);
+    #define FICL_HAVE_FTRUNCATE 1
+    extern int ftruncate(int fileno, size_t size);
 #elif defined(linux)
-	#define FICL_HAVE_FTRUNCATE	1
+    #define FICL_HAVE_FTRUNCATE 1
 #endif /* platform */
 
-#if !defined IGNORE		/* Macro to silence unused param warnings */
+#if !defined IGNORE     /* Macro to silence unused param warnings */
 #define IGNORE(x) &x
 #endif
 

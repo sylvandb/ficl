@@ -62,9 +62,9 @@
 
 /*
 ** System statics
-** The system builds a global dictionary during its start
-** sequence. This is shared by all interpreter instances.
-** Therefore only one instance can update the dictionary
+** Each FICL_SYSTEM builds a global dictionary during its start
+** sequence. This is shared by all virtual machines of that system.
+** Therefore only one VM can update the dictionary
 ** at a time. The system imports a locking function that
 ** you can override in order to control update access to
 ** the dictionary. The function is stubbed out by default,
@@ -72,7 +72,6 @@
 ** and supply your own version of ficlLockDictionary.
 */
 static int defaultStack = FICL_DEFAULT_STACK;
-static int defaultDict  = FICL_DEFAULT_DICT;
 
 
 static void ficlSetVersionEnv(FICL_SYSTEM *pSys);
@@ -91,23 +90,31 @@ static void ficlSetVersionEnv(FICL_SYSTEM *pSys);
 **************************************************************************/
 FICL_SYSTEM *ficlInitSystemEx(FICL_SYSTEM_INFO *fsi)
 {
-	int nDictCells = fsi->nDictCells;
+    int nDictCells;
+    int nEnvCells;
     FICL_SYSTEM *pSys = ficlMalloc(sizeof (FICL_SYSTEM));
+
     assert(pSys);
+    assert(fsi->size == sizeof (FICL_SYSTEM_INFO));
 
     memset(pSys, 0, sizeof (FICL_SYSTEM));
 
+    nDictCells = fsi->nDictCells;
     if (nDictCells <= 0)
-        nDictCells = defaultDict;
+        nDictCells = FICL_DEFAULT_DICT;
+
+    nEnvCells = fsi->nEnvCells;
+    if (nEnvCells <= 0)
+        nEnvCells = FICL_DEFAULT_DICT;
 
     pSys->dp = dictCreateHashed((unsigned)nDictCells, HASHSIZE);
     pSys->dp->pForthWords->name = "forth-wordlist";
 
-    pSys->envp = dictCreate((unsigned)FICL_DEFAULT_ENV);
+    pSys->envp = dictCreate((unsigned)nEnvCells);
     pSys->envp->pForthWords->name = "environment";
 
-	pSys->textOut = fsi->textOut;
-	pSys->context = fsi->context;
+    pSys->textOut = fsi->textOut;
+    pSys->pExtend = fsi->pExtend;
 
 #if FICL_WANT_LOCALS
     /*
@@ -148,11 +155,11 @@ FICL_SYSTEM *ficlInitSystemEx(FICL_SYSTEM_INFO *fsi)
 
     /*
     ** Now create a temporary VM to compile the softwords. Since all VMs are
-	** linked into the vmList of FICL_SYSTEM, we don't have to pass the VM
-	** to ficlCompileSoftCore -- it just hijacks whatever it finds in the VM list.
-	** ficl 2.05: vmCreate no longer depends on the presence of INTERPRET in the
-	** dictionary, so a VM can be created before the dictionary is built. It just
-	** can't do much...
+    ** linked into the vmList of FICL_SYSTEM, we don't have to pass the VM
+    ** to ficlCompileSoftCore -- it just hijacks whatever it finds in the VM list.
+    ** ficl 2.05: vmCreate no longer depends on the presence of INTERPRET in the
+    ** dictionary, so a VM can be created before the dictionary is built. It just
+    ** can't do much...
     */
     ficlNewVM(pSys);
     ficlCompileSoftCore(pSys);
@@ -165,10 +172,10 @@ FICL_SYSTEM *ficlInitSystemEx(FICL_SYSTEM_INFO *fsi)
 
 FICL_SYSTEM *ficlInitSystem(int nDictCells)
 {
-	FICL_SYSTEM_INFO fsi;
-	ficlInitInfo(&fsi);
-	fsi.nDictCells = nDictCells;
-	return ficlInitSystemEx(&fsi);
+    FICL_SYSTEM_INFO fsi;
+    ficlInitInfo(&fsi);
+    fsi.nDictCells = nDictCells;
+    return ficlInitSystemEx(&fsi);
 }
 
 
@@ -243,7 +250,8 @@ FICL_VM *ficlNewVM(FICL_SYSTEM *pSys)
     FICL_VM *pVM = vmCreate(NULL, defaultStack, defaultStack);
     pVM->link = pSys->vmList;
     pVM->pSys = pSys;
-	vmSetTextOut(pVM, pSys->textOut);
+    pVM->pExtend = pSys->pExtend;
+    vmSetTextOut(pVM, pSys->textOut);
 
     pSys->vmList = pVM;
     return pVM;
@@ -259,7 +267,7 @@ FICL_VM *ficlNewVM(FICL_SYSTEM *pSys)
 **************************************************************************/
 void ficlFreeVM(FICL_VM *pVM)
 {
-	FICL_SYSTEM *pSys = pVM->pSys;
+    FICL_SYSTEM *pSys = pVM->pSys;
     FICL_VM *pList = pSys->vmList;
 
     assert(pVM != 0);
@@ -316,7 +324,7 @@ int ficlBuild(FICL_SYSTEM *pSys, char *name, FICL_CODE code, char flags)
 /**************************************************************************
                     f i c l E v a l u a t e
 ** Wrapper for ficlExec() which sets SOURCE-ID to -1.
-*/
+**************************************************************************/
 int ficlEvaluate(FICL_VM *pVM, char *pText)
 {
     int returnValue;
@@ -353,7 +361,7 @@ int ficlExec(FICL_VM *pVM, char *pText)
 
 int ficlExecC(FICL_VM *pVM, char *pText, FICL_INT size)
 {
-	FICL_SYSTEM *pSys = pVM->pSys;
+    FICL_SYSTEM *pSys = pVM->pSys;
     FICL_DICT   *dp   = pSys->dp;
 
     int        except;
