@@ -12,6 +12,11 @@
 **
 ** Get the latest Ficl release at http://ficl.sourceforge.net
 **
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release, please
+** contact me by email at the address above.
+**
 ** L I C E N S E  and  D I S C L A I M E R
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -34,13 +39,6 @@
 ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 ** SUCH DAMAGE.
-**
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please send
-** contact me by email at the address above.
-**
-** $Id$
 */
 
 #include <stdlib.h>
@@ -771,7 +769,7 @@ static void FisGreater(FICL_VM *pVM)
 ** Move float to param stack (assumes they both fit in a single CELL)
 ** f>s 
 *******************************************************************/
-static void FtoS(FICL_VM *pVM)
+static void FFrom(FICL_VM *pVM)
 {
     CELL c;
 
@@ -782,6 +780,20 @@ static void FtoS(FICL_VM *pVM)
 
     c = stackPop(pVM->fStack);
     stackPush(pVM->pStack, c);
+    return;
+}
+
+static void ToF(FICL_VM *pVM)
+{
+    CELL c;
+
+#if FICL_ROBUST > 1
+    vmCheckFStack(pVM, 0, 1);
+    vmCheckStack(pVM, 1, 0);
+#endif
+
+    c = stackPop(pVM->pStack);
+    stackPush(pVM->fStack, c);
     return;
 }
 
@@ -1012,7 +1024,8 @@ void ficlCompileFloat(FICL_SYSTEM *pSys)
     dictAppendWord(dp, "i-f",       isubf,          FW_DEFAULT);
     dictAppendWord(dp, "i/f",       idivf,          FW_DEFAULT);
 
-    dictAppendWord(dp, "f>s",       FtoS,           FW_DEFAULT);
+    dictAppendWord(dp, "f>",        FFrom,          FW_DEFAULT);
+    dictAppendWord(dp, ">f",        ToF,            FW_DEFAULT);
 
     dictAppendWord(dp, "f-roll",    FminusRoll,     FW_DEFAULT);
     dictAppendWord(dp, "f-rot",     Fminusrot,      FW_DEFAULT);
