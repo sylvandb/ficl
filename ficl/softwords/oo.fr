@@ -250,7 +250,7 @@ instance-vars dup >search ficl-set-current
     current-class @ 8 + dup @ dup 1+ rot !  \ Kludge fix to get to .vtCount before it's defined.
     create , ,                              \ ( paramcnt index -- )
     does>                                   \ ( inst class pfa -- ptr-inst ptr-class )
-    nip 2@ vcall f>s                        \ ( params offset inst class offset -- f: r )
+    nip 2@ vcall f>                         \ ( params offset inst class offset -- f: r )
 ;
 \ #endif
 
