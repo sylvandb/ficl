@@ -1,4 +1,4 @@
-OBJECTS= dict.o ficl.o math64.o softcore.o stack.o sysdep.o vm.o words.o
+OBJECTS= dict.o ficl.o fileaccess.o float.o math64.o prefix.o search.o softcore.o stack.o sysdep.o tools.o unix.o vm.o words.o
 HEADERS= ficl.h math64.h sysdep.h
 #
 # Flags for shared library
