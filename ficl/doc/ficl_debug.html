@@ -3,6 +3,11 @@
 <head>
    <meta name="Author" content="john sadler">
    <title>Ficl Debugger</title>
+    <LINK media="screen" href="ficlstyle.css" type="text/css" rel="stylesheet">
+<STYLE type="text/css">
+    
+</STYLE>
+
 </head>
 <body>
 <link REL="SHORTCUT ICON" href="ficl.ico">
@@ -20,10 +25,12 @@ yet if you write some), please let me know.</p>
 To debug a word, set up the stack with any parameters the word requires,
 then type:
 
-<b><pre>debug &lt;your word here></pre></b>
+<pre>
+debug &lt;your word here>
+</pre>
 
 <p>If the word is unnamed, or all you have is an xt, you can instead use:</p>
-<b><code>debug-xt   ( xt -- )</code></b>
+<pre>debug-xt   ( xt -- )</pre>
 <p>The debugger invokes <tt>see</tt> on the word, printing a crude source
 listing, then stops at the first instruction of the definition. There are
 four (case insensitive) commands you can use from here onwards:</p>
@@ -63,7 +70,7 @@ word will be executed before every step. As a guideline, this word should
 have no side effects. Its intended use is to display the stacks and any other
 VM state you're interested in, but you
 may have some better ideas. If so, please let me know. The default on-step is:<p>
-<b><code>: on-step  ." S: " .s cr ;</code></b>
+<pre>: on-step  ." S: " .s cr ;</pre>
 
 <h3>Other useful words for debugging and on-step</h3>
 <dl>
