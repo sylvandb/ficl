@@ -1,0 +1,86 @@
+\ ** ficl/softwords/classes.fr
+\ ** F I C L   2 . 0   C L A S S E S
+\ john sadler  1 sep 98
+\ Needs oop.fr
+
+.( loading ficl utility classes ) cr
+
+\ REF subclass holds a pointer to an object. It's
+\ mainly for aggregation to help in making data structures.
+\
+object subclass c-ref
+    cell: .class
+    cell: .instance
+
+	: get   ( inst class -- refinst refclass )
+		drop 2@ ;
+	: set   ( refinst refclass inst class -- )
+		drop 2! ;
+end-class
+
+object subclass c-byte
+	char: .payload
+
+	: get  drop c@ ;
+	: set  drop c! ;
+end-class
+
+object subclass c-2byte
+	2 chars: .payload
+
+	: get  drop w@ ;
+	: set  drop w! ;
+end-class
+
+object subclass c-4byte
+	cell: .payload
+
+	: get  drop @ ;
+	: set  drop ! ;
+end-class
+
+
+\ ** C - C E L L P T R   C L A S S
+\ Models a pointer to cell. 
+\ This class is simple enough that its methods could easily
+\ be written in straight Forth, but this implementation is OO
+\ so that I'm practicing what I preach. Also, it would be 
+\ safe in this case to use early binding, but it's more 
+\ maintainable not to.
+object subclass c-cellPtr
+    c-4byte obj: .addr
+
+    \ get the value of the pointer
+    : get-ptr   ( inst class -- addr )
+        --> .addr --> get  ;
+
+    \ set the pointer to address supplied
+    : set-ptr   ( addr inst class -- )
+        --> .addr --> set  ;
+
+    \ fetch and store through the pointer
+	: get   ( inst class -- cell )
+        --> get-ptr @ ;
+	: set   ( cell inst class -- )
+        --> get-ptr !  ;
+
+    \ increment the pointer in-place
+    : inc-ptr   ( inst class -- )
+        0 locals| ptr |
+        --> .addr                   \ ( a-inst a-class )
+        2dup --> get  to ptr        \ ( a-inst a-class )
+        2dup --> size ptr swap +    \ ( a-inst a-class ptr' )
+        rot rot --> set
+    ;
+
+    \ Decrement the pointer in-place
+    : dec-ptr    ( inst class -- )
+        0 locals| ptr |
+        --> .addr                   \ ( a-inst a-class )
+        2dup --> get  to ptr        \ ( a-inst a-class )
+        2dup --> size ptr swap -    \ ( a-inst a-class ptr' )
+        rot rot --> set
+    ;
+end-class
+
+
