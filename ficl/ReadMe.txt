@@ -1,5 +1,4 @@
 Coming up:
-Rewrite exception words using inner loop function
 Web server scripting extension (GoAhead port)
 
 ficlwin Debugger pane - step, stack trace, breakpoint
@@ -10,6 +9,23 @@ Design:
 3. GO runs until breakpoint or leaves debug mode if no breaks
 4. BREAK stops debug vm at next step
 Requires a debug VM that checks for breaks, step mode, etc.
+
+rel 2.05
+Alpha patches from the freeBSD team incorporated
+Split SEARCH and SEARCH EXT words form words.c to search.c
+ficl words
+- wid-get-name   given a wid, returns the address and count of its name. If no name, count is 0
+- wid-set-name   set optional wid name pointer to the \0 terminated string address specified.
+- last-word  returns the xt of the word being defined or most recently defined.
+- i@ and i! operate on quadbyte quantities for 64 bit friendliness
+softcore.fr words
+- ORDER now lists wordlists by name
+- ficl-named-wordlist
+- brand-wordlist
+New OO stuff
+- metaclass method resume-class and instance word suspend-class to create
+  mutually referring classes. Example in string.fr
+
 
 rel 2.04 -- May 2000
 ficlwin:

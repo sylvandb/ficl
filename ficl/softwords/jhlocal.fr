@@ -11,6 +11,9 @@
 \           2 = found --
 \           3 = found }
 \           4 = end of line
+\
+\ revised 2 June 2000 - { | a -- } now works correctly
+.( loading Johns-Hopkins locals ) cr
 hide
 0 constant zero
 
@@ -49,7 +52,7 @@ set-current
     repeat
 
     \ now unstack the locals
-    0 do 
+    0 ?do 
 	    ?2loc if (2local) else (local) endif 
 	loop   \ ( )
 

@@ -47,6 +47,7 @@ object subclass c-wordlist
 	c-wordlist ref: .parent
 	c-4byte    obj: .size
 	c-word     ref: .hash
+    c-ptr      obj: .name
 
     : ?
         2drop ." ficl wordlist " cr ;
@@ -56,7 +57,7 @@ object subclass c-wordlist
 	: words   --> push  words previous ;
 end-class
 
-: named-wid  wordlist postpone c-wordlist  metaclass => ref ;
+\ : named-wid  wordlist postpone c-wordlist  metaclass => ref ;
 
 
 \ ** C - F I C L S T A C K

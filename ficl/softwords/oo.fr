@@ -3,7 +3,7 @@
 \ ** john sadler aug 1998
 
 .( loading ficl O-O extensions ) cr
-7 ficl-vocabulary oop
+17 ficl-vocabulary oop
 also oop definitions
 
 \ Design goals:
@@ -125,9 +125,9 @@ user current-class
 \ prior state. Note that these words are hidden in their own
 \ wordlist to prevent accidental use outside a SUB END-CLASS pair.
 \
-wordlist 
-dup constant instance-vars
-dup >search ficl-set-current
+1 ficl-named-wordlist instance-vars
+instance-vars @ constant instance-vars
+instance-vars dup >search ficl-set-current
 : do-instance-var
     does>   ( instance class addr[offset] -- addr[field] )
 		nip @ +
@@ -206,6 +206,11 @@ dup >search ficl-set-current
 	search> drop		\ pop struct builder wordlist
 ;
 
+\ See resume-class (a metaclass method) below for usage
+\ This is equivalent to end-class for now, but that will change
+\ when we support vtable bindings.
+: suspend-class  ( old-wid addr[size] size -- )   end-class ;
+
 set-current previous
 \ E N D   I N S T A N C E   V A R I A B L E S
 
@@ -243,7 +248,9 @@ set-current previous
 	3 cells ,	\ instance size 
 	ficl-set-current
 	does> dup
-;  execute metaclass
+;  execute metaclass 
+\ now brand OBJECT's wordlist (so that ORDER can display it by name)
+metaclass drop cell+ @ brand-wordlist
 
 metaclass drop current-class !
 do-do-instance
@@ -324,13 +331,38 @@ previous
     does> 2@ 
 ;
 
+\ suspend-class and resume-class help to build mutually referent classes.
+\ Example: 
+\ object subclass c-akbar
+\ suspend-class   ( put akbar on hold while we define jeff )
+\ object subclass c-jeff
+\     c-akbar ref: .akbar
+\     ( and whatever else comprises this class )
+\ end-class    ( done with c-jeff )
+\ c-akbar --> resume-class
+\     c-jeff ref: .jeff
+\     ( and whatever else goes in c-akbar )
+\ end-class    ( done with c-akbar )
+\
+: resume-class   { 2this -- old-wid addr[size] size }
+    2this --> .wid @ ficl-set-current  ( old-wid )
+    2this --> .size dup @   ( old-wid addr[size] size )
+    instance-vars >search
+;
+
 \ create a subclass
+\ This method leaves the stack and search order ready for instance variable
+\ building. Pushes the instance-vars wordlist onto the search order,
+\ and sets the compilation wordlist to be the private wordlist of the
+\ new class. The class's wordlist is deliberately NOT in the search order -
+\ to prevent methods from getting used with wrong data.
 : sub   ( class metaclass "name" -- old-wid addr[size] size )
     wordlist
 	locals| wid meta parent |
 	parent meta metaclass => get-wid
-	wid wid-set-super
-	create  immediate  
+	wid wid-set-super       \ set superclass
+	create  immediate       \ get the  subclass name
+    wid brand-wordlist      \ label the subclass wordlist
 	here current-class !	\ prep for do-do-instance
 	parent ,	\ save parent class
 	wid    ,	\ save wid
@@ -338,7 +370,7 @@ previous
 	metaclass => .do-instance
 	wid ficl-set-current -rot
 	do-do-instance
-	instance-vars >search	\ push struct builder wordlist
+	instance-vars >search \ push struct builder wordlist
 ;
 
 \ OFFSET-OF returns the offset of an instance variable
@@ -402,6 +434,8 @@ constant meta
 	ficl-set-current
 	does> meta
 ;  execute object
+\ now brand OBJECT's wordlist (so that ORDER can display it by name)
+object drop cell+ @ brand-wordlist
 
 object drop current-class ! 
 do-do-instance

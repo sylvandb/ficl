@@ -217,7 +217,7 @@ struct ficl_dict;
 /* 
 ** the Good Stuff starts here...
 */
-#define FICL_VER    "2.04"
+#define FICL_VER    "2.05"
 #if !defined (FICL_PROMPT)
 #define FICL_PROMPT "ok> "
 #endif
@@ -279,13 +279,13 @@ typedef struct _ficl_string
 
 typedef struct 
 {
-    UNS32 count;
+    FICL_UNS count;
     char *cp;
 } STRINGINFO;
 
 #define SI_COUNT(si) (si.count)
 #define SI_PTR(si)   (si.cp)
-#define SI_SETLEN(si, len) (si.count = (UNS32)(len))
+#define SI_SETLEN(si, len) (si.count = (FICL_UNS)(len))
 #define SI_SETPTR(si, ptr) (si.cp = (char *)(ptr))
 /* 
 ** Init a STRINGINFO from a pointer to NULL-terminated string
@@ -314,7 +314,7 @@ typedef struct
 */
 typedef struct
 {
-    INT32 index;
+    FICL_INT index;
     char *end;
     char *cp;
 } TIB;
@@ -423,8 +423,8 @@ typedef struct vm
     IPTYPE          ip;         /* instruction pointer              */
     struct ficl_word 
                    *runningWord;/* address of currently running word (often just *(ip-1) ) */
-    UNS32           state;      /* compiling or interpreting        */
-    UNS32           base;       /* number conversion base           */
+    FICL_UNS        state;      /* compiling or interpreting        */
+    FICL_UNS        base;       /* number conversion base           */
     FICL_STACK     *pStack;     /* param stack                      */
     FICL_STACK     *rStack;     /* return stack                     */
     CELL            sourceID;   /* -1 if string, 0 if normal input  */
@@ -570,7 +570,7 @@ void        vmCheckStack(FICL_VM *pVM, int popCells, int pushCells);
 ** PopTib restores the TIB state given a saved TIB from PushTib
 ** GetInBuf returns a pointer to the next unused char of the TIB
 */
-void        vmPushTib(FICL_VM *pVM, char *text, INT32 nChars, TIB *pSaveTib);
+void        vmPushTib(FICL_VM *pVM, char *text, FICL_INT nChars, TIB *pSaveTib);
 void        vmPopTib(FICL_VM *pVM, TIB *pTib);
 #define     vmGetInBuf(pVM) ((pVM)->tib.cp + (pVM)->tib.index)
 #define     vmGetInBufLen(pVM) ((pVM)->tib.end - (pVM)->tib.cp)
@@ -617,7 +617,8 @@ int         strincmp(char *cp1, char *cp2, FICL_COUNT count);
 
 typedef struct ficl_hash 
 {
-    struct ficl_hash *link;  /* eventual inheritance support */
+    struct ficl_hash *link;  /* link to parent class wordlist for OO */
+	char      *name;         /* optional pointer to \0 terminated wordlist name */
     unsigned   size;
     FICL_WORD *table[1];
 } FICL_HASH;
@@ -757,7 +758,7 @@ void       ficlTermSystem(void);
 **      Successful creation and init of the VM by ficlNewVM (or equiv)
 */
 int        ficlExec (FICL_VM *pVM, char *pText);
-int        ficlExecC(FICL_VM *pVM, char *pText, INT32 nChars);
+int        ficlExecC(FICL_VM *pVM, char *pText, FICL_INT nChars);
 int        ficlExecXT(FICL_VM *pVM, FICL_WORD *pWord);
 
 /*
@@ -798,8 +799,8 @@ FICL_WORD *ficlLookup(char *name);
 */
 FICL_DICT *ficlGetDict(void);
 FICL_DICT *ficlGetEnv(void);
-void       ficlSetEnv(char *name, UNS32 value);
-void       ficlSetEnvD(char *name, UNS32 hi, UNS32 lo);
+void       ficlSetEnv(char *name, FICL_UNS value);
+void       ficlSetEnvD(char *name, FICL_UNS hi, UNS32 lo);
 #if FICL_WANT_LOCALS
 FICL_DICT *ficlGetLoc(void);
 #endif
@@ -827,6 +828,7 @@ int        ficlBuild(char *name, FICL_CODE code, char flags);
 ** ficlInitSystem - no need to waste dict space by doing it again.
 */
 void       ficlCompileCore(FICL_DICT *dp);
+void       ficlCompileSearch(FICL_DICT *dp);
 void       ficlCompileSoftCore(FICL_VM *pVM);
 
 /*

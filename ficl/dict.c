@@ -224,10 +224,10 @@ FICL_WORD *dictAppendWord2(FICL_DICT *pDict,
 
 
 /**************************************************************************
-                        d i c t A p p e n d U N S 3 2
-** Append the specified UNS32 to the dictionary
+                        d i c t A p p e n d U N S
+** Append the specified FICL_UNS to the dictionary
 **************************************************************************/
-void dictAppendUNS(FICL_DICT *pDict, UNS32 u)
+void dictAppendUNS(FICL_DICT *pDict, FICL_UNS u)
 {
     *pDict->here++ = LVALUEtoCELL(u);
     return;
@@ -685,6 +685,8 @@ UNS16 hashHashCode(STRINGINFO si)
 }
 
 
+
+
 /**************************************************************************
                         h a s h I n s e r t W o r d
 ** Put a word into the hash table using the word's hashcode as
@@ -768,6 +770,7 @@ void hashReset(FICL_HASH *pHash)
     }
 
     pHash->link = NULL;
+	pHash->name = NULL;
     return;
 }
 

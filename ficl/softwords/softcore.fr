@@ -5,8 +5,8 @@
 
 \ ** Ficl USER variables
 \ ** See words.c for primitive def'n of USER
+.( loading ficl soft extensions ) cr
 \ #if FICL_WANT_USER
-
 variable nUser  0 nUser ! 
 : user   \ name ( -- )  
     nUser dup @ user 1 swap +! ; 
@@ -40,6 +40,7 @@ decimal 32 constant bl
 
 
 \ ** CORE EXT
+.( loading CORE EXT words ) cr
 0  constant false 
 -1 constant true 
 : <>   = 0= ; 
@@ -82,20 +83,46 @@ decimal 32 constant bl
 ;
 
 \ ** SEARCH+EXT words and ficl helpers
-\ 
+.( loading SEARCH & SEARCH-EXT words ) cr 
+\ BRAND-WORDLIST is a helper for ficl-named-wordlist. Usage idiom:
+\   wordlist dup create , brand-wordlist
+\ gets the name of the word made by create and applies it to the wordlist...
+: brand-wordlist  ( wid -- )   last-word >name drop wid-set-name ;
+
+: ficl-named-wordlist  ( name -- )
+    ficl-wordlist dup create , brand-wordlist ;
+
 : wordlist   ( -- )  
     1 ficl-wordlist ;
+
+\ FICL-SET-CURRENT sets the compile wordlist and pushes the previous value
+: ficl-set-current   ( wid -- old-wid )  
+    get-current swap set-current ; 
 
 \ DO_VOCABULARY handles the DOES> part of a VOCABULARY
 \ When executed, new voc replaces top of search stack
 : do-vocabulary   ( -- ) 
     does>  @ search> drop >search ;
 
-: vocabulary   ( name -- )  
-    wordlist create ,  do-vocabulary ; 
-
 : ficl-vocabulary   ( nBuckets name -- )  
-    ficl-wordlist create ,  do-vocabulary ; 
+    ficl-named-wordlist do-vocabulary ; 
+
+: vocabulary   ( name -- )  
+    1 ficl-vocabulary ; 
+
+\ PREVIOUS drops the search order stack
+: previous  ( --  )  search> drop ; 
+
+\ HIDDEN vocabulary is a place to keep helper words from cluttering the namespace
+\ USAGE:
+\ hide
+\ <definitions to hide>
+\ set-current
+\ <words that use hidden defs>
+\ previous ( pop HIDDEN off the search order )
+
+1 ficl-named-wordlist hidden
+: hide     hidden @ dup >search ficl-set-current ;
 
 \ ALSO dups the search stack...
 : also   ( -- )  
@@ -111,20 +138,24 @@ decimal 32 constant bl
     -1 set-order ; 
 
 \ ORDER displays the compile wid and the search order list
+hide
+: list-wid ( wid -- )   
+    dup wid-get-name   ( wid c-addr u )
+    ?dup if 
+        type drop 
+    else 
+        drop ." (unnamed wid) " x.
+    endif cr 
+; 
+set-current   \ stop hiding words
+
 : order   ( -- )  
-    ." Search: " 
-    get-order  0 ?do x. loop cr 
-   ." Compile: " get-current x. cr  ; 
+    ." Search:" cr
+    get-order  0 ?do 3 spaces list-wid loop cr 
+   ." Compile: " get-current list-wid cr  
+; 
 
-\ PREVIOUS drops the search order stack
-: previous  ( --  )  search> drop ; 
-
-\ FICL-SET-CURRENT sets the compile wordlist and pushes the previous value
-: ficl-set-current   ( wid -- old-wid )  
-    get-current swap set-current ; 
-
-wordlist constant hidden
-: hide   hidden dup >search ficl-set-current ;
+previous   \ lose hidden words from search order
 
 \ ** E N D   S O F T C O R E . F R
 

@@ -15,10 +15,10 @@
 also oop definitions
 
 object subclass c-string
-    c-4byte obj: .count
-    c-4byte obj: .buflen
-      c-ptr obj: .buf
-    64 constant min-buf
+    c-cell obj: .count
+    c-cell obj: .buflen
+    c-ptr  obj: .buf
+    32 constant min-buf
 
     : get-count   ( 2this -- count )  c-string => .count  c-4byte => get ;
     : set-count   ( count 2this -- )  c-string => .count  c-4byte => set ;
@@ -104,18 +104,18 @@ object subclass c-string
     ;
 
     : compare   ( 2string 2this -- n )
-        c-string => get 
+        --> get 
         2swap 
-        c-string => get 
+        --> get 
         2swap compare
     ;
 
     : hashcode   ( 2this -- hashcode )
-        c-string => get  hash
+        --> get  hash
     ;
 
     \ destructor method (overrides object --> free) 
-    : free   ( 2this -- )  2dup c-string => free-buf  object => free ;
+    : free   ( 2this -- )  2dup --> free-buf  object => free ;
 
 end-class
 

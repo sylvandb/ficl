@@ -81,7 +81,10 @@ void ficlInitSystem(int nDictCells)
         nDictCells = defaultDict;
 
     dp     = dictCreateHashed((unsigned)nDictCells, HASHSIZE);
+	dp->pForthWords->name = "forth-wordlist";
     envp   = dictCreate(      (unsigned)FICL_DEFAULT_ENV);
+	envp->pForthWords->name = "environment";
+
 #if FICL_WANT_LOCALS
     /*
     ** The locals dictionary is only searched while compiling,

@@ -100,6 +100,10 @@ SOURCE=.\math64.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\search.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\softcore.c
 # End Source File
 # Begin Source File
@@ -152,7 +156,23 @@ SOURCE=.\softwords\ficlclass.fr
 # End Source File
 # Begin Source File
 
+SOURCE=.\softwords\ficllocal.fr
+# End Source File
+# Begin Source File
+
+SOURCE=.\softwords\forml.fr
+# End Source File
+# Begin Source File
+
 SOURCE=.\softwords\ifbrack.fr
+# End Source File
+# Begin Source File
+
+SOURCE=.\softwords\jhlocal.fr
+# End Source File
+# Begin Source File
+
+SOURCE=.\softwords\marker.fr
 # End Source File
 # Begin Source File
 
@@ -170,6 +190,14 @@ SOURCE=.\softwords\softcore.fr
 
 SOURCE=.\softwords\softcore.pl
 # End Source File
+# Begin Source File
+
+SOURCE=.\softwords\string.fr
+# End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\ReadMe.txt
+# End Source File
 # End Target
 # End Project

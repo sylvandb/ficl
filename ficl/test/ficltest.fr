@@ -1,12 +1,32 @@
 \ test file for ficl
 \ test ANSI CORE stuff first...
 -1 set-order
+
+\ set up local variable regressions before { gets redefined!
+: local1 { a b c | clr -- c b a 0 }
+    c b a clr
+;
+
+: local2 { | clr -- 0 } clr ;
+: local3 { a b | c }
+    a to c
+    b to a
+    c to b
+    a b 
+;
+
 load tester.fr
 load core.fr
 
-\ Now test ficl extras and optional word-sets
-testing :noname
 { -> }
+\ Now test ficl extras and optional word-sets
+testing locals
+{ 1 2 3 local1 -> 3 2 1 0 }
+{ local2 -> 0 }
+{ 1 local2 -> 1 0 }
+{ 1 2 local3 -> 2 1 }
+
+testing :noname
 { :noname 1 ; execute -> 1 }
 { 1 2 3 -rot -> 3 1 2 }
 
