@@ -8,6 +8,11 @@
 **
 ** Get the latest Ficl release at http://ficl.sourceforge.net
 **
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release, please
+** contact me by email at the address above.
+**
 ** L I C E N S E  and  D I S C L A I M E R
 ** 
 ** Redistribution and use in source and binary forms, with or without
@@ -30,13 +35,6 @@
 ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 ** SUCH DAMAGE.
-**
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please send
-** contact me by email at the address above.
-**
-** $Id$
 */
 
 #include <stdlib.h>
@@ -311,6 +309,12 @@ void buildTestInterface()
 
 #if !defined (_WINDOWS)
 #define nINBUF 256
+
+#if !defined (_WIN32)
+#define __try
+#define __except(i) if (0)
+#endif
+
 int main(int argc, char **argv)
 {
     int ret = 0;
@@ -328,13 +332,29 @@ int main(int argc, char **argv)
     if (argc  > 1)
     {
         sprintf(in, ".( loading %s ) cr load %s\n cr", argv[1], argv[1]);
-        ret = ficlExec(pVM, in);
+        __try
+        {
+            ret = ficlExec(pVM, in);
+        }
+        __except(1)
+        {
+            vmTextOut(pVM, "exception -- cleaning up", 1);
+            vmReset(pVM);
+        }
     }
 
     while (ret != VM_USEREXIT)
     {
         fgets(in, nINBUF, stdin);
-        ret = ficlExec(pVM, in);
+        __try
+        {
+            ret = ficlExec(pVM, in);
+        }
+        __except(1)
+        {
+            vmTextOut(pVM, "exception -- cleaning up", 1);
+            vmReset(pVM);
+        }
     }
 
     ficlTermSystem();
