@@ -4,7 +4,7 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="john sadler">
    <meta name="Description" content="the coolest embedded scripting language ever">
-   <meta name="GENERATOR" content="Mozilla/4.73 [en] (Win98; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en]C-CCK-MCD {Sony}  (WinNT; U) [Netscape]">
    <title>Ficl Documentation</title>
 </head>
 <body>
@@ -30,7 +30,30 @@
 </tr>
 
 <tr>
-<td><b>Revision 2.05: June 2000</b></td>
+<td><b>Revision 2.05: October 2000</b></td>
+</tr>
+
+<tr>
+<td COLSPAN="3"><!-- Begin ListBot Code --><form method="post" action="http://www.listbot.com/cgi-bin/subscriber">
+<table BORDER=0 >
+<tr>
+<td COLSPAN="2">Join the ficl mailing list - enter your email address here
+to be notified of new releases:&nbsp;</td>
+</tr>
+
+<tr>
+<td><input type=text name="e_mail"><input type=hidden name="list_id" value="ficl"><input type=hidden name="Act" value="subscribe_list"></td>
+
+<td><input type=image src="http://www.listbot.com/subscribe_button.gif" border=0 
+ width=88 height=31 alt="Click here to join our mailing list!"></td>
+</tr>
+
+<tr>
+<td COLSPAN="2"><font face="arial"><font size=-2><a href="http://www.listbot.com/" target="_top">Powered
+by ListBot</a></font></font></td>
+</tr>
+</table>
+</form><!-- End ListBot Code --></td>
 </tr>
 </table>
 
@@ -349,6 +372,12 @@ system. Finally, use
 <tt>testmain.c</tt> as a guide to installing the ficl
 system and one or more virtual machines into your code. You do not need
 to include <tt>testmain.c</tt> in your build.&nbsp;
+<p>Note: ficlLockDictionary can be left unimplemented in most multithreaded
+implementations - it's only necessary if you expect to have more than one
+thread modifying the dictionary at the same time. If you do decide to implement
+it, make sure calls to ficlLockDictionary can nest properly (see the comments
+in sysdep.h). You need to keep count of nested locks and unlocks and do
+the right thing.
 <p>Feel free to stub out the double precision math functions (which are
 presently implemented as inline assembly because it's so easy on many 32
 bit processors) with kludge code that only goes to 32 bit precision. In
