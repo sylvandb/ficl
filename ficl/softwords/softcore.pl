@@ -1,4 +1,4 @@
-#! \perl\bin\perl.exe
+#! /usr/bin/perl
 # Convert forth source files to a giant C string
 
 $now = localtime;
