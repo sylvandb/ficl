@@ -6,23 +6,15 @@
 ** $Id$
 *******************************************************************/
 /*
-** NOTES:
-** SEE needs information about the addresses of functions that
-** are the CFAs of colon definitions, constants, variables, DOES>
-** words, and so on. It gets this information from a table and supporting
-** functions in words.c.
-** colonParen doDoes createParen variableParen userParen constantParen
-**
-** Step and break debugger for Ficl
-** debug  ( xt -- )   Start debugging an xt
-** Set a breakpoint
-** Specify breakpoint default action
-*/
-/*
 ** Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
 ** All rights reserved.
 **
 ** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** I am interested in hearing from anyone who uses ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the ficl release, please
+** contact me by email at the address above.
 **
 ** L I C E N S E  and  D I S C L A I M E R
 ** 
@@ -46,13 +38,20 @@
 ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 ** SUCH DAMAGE.
+*/
+
+/*
+** NOTES:
+** SEE needs information about the addresses of functions that
+** are the CFAs of colon definitions, constants, variables, DOES>
+** words, and so on. It gets this information from a table and supporting
+** functions in words.c.
+** colonParen doDoes createParen variableParen userParen constantParen
 **
-** I am interested in hearing from anyone who uses ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the ficl release, please send
-** contact me by email at the address above.
-**
-** $Id$
+** Step and break debugger for Ficl
+** debug  ( xt -- )   Start debugging an xt
+** Set a breakpoint
+** Specify breakpoint default action
 */
 
 #include <stdlib.h>
@@ -68,6 +67,7 @@
 ** for the STEP command. The rest are user programmable. 
 */
 #define nBREAKPOINTS 32
+
 #endif
 
 /*
@@ -88,10 +88,11 @@ typedef struct breakpoint
 
 static BREAKPOINT bpStep = {NULL, NULL};
 
-/*
-** vmSetBreak - set a breakpoint at the current value of IP by
+/**************************************************************************
+                        v m S e t B r e a k
+** Set a breakpoint at the current value of IP by
 ** storing that address in a BREAKPOINT record
-*/
+**************************************************************************/
 static void vmSetBreak(FICL_VM *pVM, BREAKPOINT *pBP)
 {
     FICL_WORD *pStep = ficlLookup("step-break");
@@ -103,23 +104,23 @@ static void vmSetBreak(FICL_VM *pVM, BREAKPOINT *pBP)
 }
 
 
-/*
-** debugPrompt
-*/
+/**************************************************************************
+**                      d e b u g P r o m p t
+**************************************************************************/
 static void debugPrompt(FICL_VM *pVM)
 {
-        vmTextOut(pVM, "debug> ", 0);
+        vmTextOut(pVM, FICL_PROMPT, 0);
 }
 
 
-/*
-** isAFiclWord
+/**************************************************************************
+**                      i s A F i c l W o r d
 ** Vet a candidate pointer carefully to make sure
 ** it's not some chunk o' inline data...
 ** It has to have a name, and it has to look
 ** like it's in the dictionary address range.
 ** NOTE: this excludes :noname words!
-*/
+**************************************************************************/
 int isAFiclWord(FICL_WORD *pFW)
 {
     FICL_DICT *pd  = ficlGetDict();
@@ -142,14 +143,42 @@ static int isPrimitive(FICL_WORD *pFW)
 
 
 /**************************************************************************
+                        f i n d E n c l o s i n g W o r d
+** Given a pointer to something, check to make sure it's an address in the 
+** dictionary. If so, search backwards until we find something that looks
+** like a dictionary header. If successful, return the address of the 
+** FICL_WORD found. Otherwise return NULL.
+** nSEARCH_CELLS sets the maximum neighborhood this func will search before giving up
+**************************************************************************/
+#define nSEARCH_CELLS 100
+
+static FICL_WORD *findEnclosingWord(CELL *cp)
+{
+    FICL_WORD *pFW;
+    FICL_DICT *pd = ficlGetDict();
+    int i;
+
+    if (!dictIncludes(pd, (void *)cp))
+        return NULL;
+
+    for (i = nSEARCH_CELLS; i > 0; --i, --cp)
+    {
+        pFW = (FICL_WORD *)(cp + 1 - (sizeof (FICL_WORD) / sizeof (CELL)));
+        if (isAFiclWord(pFW))
+            return pFW;
+    }
+
+    return NULL;
+}
+
+
+/**************************************************************************
                         s e e 
 ** TOOLS ( "<spaces>name" -- )
 ** Display a human-readable representation of the named word's definition.
 ** The source of the representation (object-code decompilation, source
 ** block, etc.) and the particular form of the display is implementation
 ** defined. 
-** NOTE: these funcs come late in the file because they reference all
-** of the word-builder funcs without declaring them again. Call me lazy.
 **************************************************************************/
 /*
 ** seeColon (for proctologists only)
@@ -486,6 +515,21 @@ void stepBreak(FICL_VM *pVM)
     {
         return;
     }
+    else if (!strincmp(si.cp, "l", si.count))
+    {
+        FICL_WORD *xt;
+        xt = findEnclosingWord((CELL *)(pVM->ip));
+        if (xt)
+        {
+            stackPushPtr(pVM->pStack, xt);
+            seeXT(pVM);
+        }
+        else
+        {
+            vmTextOut(pVM, "sorry - can't do that", 1);
+        }
+        vmThrow(pVM, VM_RESTART);
+    }
     else if (!strincmp(si.cp, "o", si.count))
     {
         stepOver(pVM);
@@ -511,7 +555,7 @@ void stepBreak(FICL_VM *pVM)
         {
             ret = VM_RESTART;
             pVM->runningWord = oldRun;
-            debugPrompt(pVM);
+            vmTextOut(pVM, "", 1);
         }
 
         vmThrow(pVM, ret);
@@ -521,6 +565,7 @@ void stepBreak(FICL_VM *pVM)
         vmTextOut(pVM, "i -- step In", 1);
         vmTextOut(pVM, "o -- step Over", 1);
         vmTextOut(pVM, "g -- Go (execute to completion)", 1);
+        vmTextOut(pVM, "l -- List source code", 1);
         vmTextOut(pVM, "q -- Quit (stop debugging and abort)", 1);
         vmTextOut(pVM, "x -- eXecute the rest of the line as ficl words", 1);
         debugPrompt(pVM);
@@ -549,11 +594,14 @@ static void bye(FICL_VM *pVM)
 ** TOOLS 
 ** Display the parameter stack (code for ".s")
 **************************************************************************/
-static void displayStack(FICL_VM *pVM, FICL_STACK *pStk)
+static void displayPStack(FICL_VM *pVM)
 {
+    FICL_STACK *pStk = pVM->pStack;
     int d = stackDepth(pStk);
     int i;
     CELL *pCell;
+
+    vmCheckStack(pVM, 0, 0);
 
     if (d == 0)
         vmTextOut(pVM, "(Stack Empty) ", 0);
@@ -566,22 +614,50 @@ static void displayStack(FICL_VM *pVM, FICL_STACK *pStk)
             vmTextOut(pVM, " ", 0);
         }
     }
-
-    return;
-}
-
-static void displayPStack(FICL_VM *pVM)
-{
-    vmCheckStack(pVM, 0, 0);
-    displayStack(pVM, pVM->pStack);
     return;
 }
 
 
 static void displayRStack(FICL_VM *pVM)
 {
+    FICL_STACK *pStk = pVM->rStack;
+    int d = stackDepth(pStk);
+    int i;
+    CELL *pCell;
+    FICL_DICT *dp = ficlGetDict();
+
     vmCheckStack(pVM, 0, 0);
-    displayStack(pVM, pVM->rStack);
+
+    if (d == 0)
+        vmTextOut(pVM, "(Stack Empty) ", 0);
+    else
+    {
+        pCell = pStk->base;
+        for (i = 0; i < d; i++)
+        {
+            CELL c = *pCell++;
+            /*
+            ** Attempt to find the word that contains the
+            ** stacked address (as if it is part of a colon definition).
+            ** If this works, print the name of the word. Otherwise print
+            ** the value as a number.
+            */
+            if (dictIncludes(dp, c.p))
+            {
+                FICL_WORD *pFW = findEnclosingWord(c.p);
+                if (pFW)
+                {
+                    int offset = (CELL *)c.p - &pFW->param[0];
+                    sprintf(pVM->pad, "%s+%d ", pFW->name, offset);
+                    vmTextOut(pVM, pVM->pad, 0);
+                    continue;
+                }
+            }
+            vmTextOut(pVM, ltoa(c.i, pVM->pad, pVM->base), 0);
+            vmTextOut(pVM, " ", 0);
+        }
+    }
+
     return;
 }
 
