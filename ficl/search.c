@@ -4,12 +4,45 @@
 ** ANS Forth SEARCH and SEARCH-EXT word-set written in C
 ** Author: John Sadler (john_sadler@alum.mit.edu)
 ** Created: 6 June 2000
-** $Header$
+** $Id$
 *******************************************************************/
+/*
+** Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
+** All rights reserved.
+**
+** Get the latest Ficl release at http://ficl.sourceforge.net
+**
+** I am interested in hearing from anyone who uses Ficl. If you have
+** a problem, a success story, a defect, an enhancement request, or
+** if you would like to contribute to the Ficl release, please
+** contact me by email at the address above.
+**
+** L I C E N S E  and  D I S C L A I M E R
+** 
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions
+** are met:
+** 1. Redistributions of source code must retain the above copyright
+**    notice, this list of conditions and the following disclaimer.
+** 2. Redistributions in binary form must reproduce the above copyright
+**    notice, this list of conditions and the following disclaimer in the
+**    documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+** ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+** FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+** DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+** OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+** HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+** SUCH DAMAGE.
+*/
 
 #include <string.h>
 #include "ficl.h"
-#include "math64.h"
 
 /**************************************************************************
                         d e f i n i t i o n s
@@ -19,17 +52,17 @@
 ** be placed in the compilation word list. Subsequent changes in the search
 ** order will not affect the compilation word list. 
 **************************************************************************/
-static void definitions(FICL_VM *pVM)
+static void ficlPrimitiveDefinitions(ficlVm *vm)
 {
-    FICL_DICT *pDict = ficlGetDict();
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
 
-    assert(pDict);
-    if (pDict->nLists < 1)
+    FICL_VM_ASSERT(vm, dictionary);
+    if (dictionary->wordlistCount < 1)
     {
-        vmThrowErr(pVM, "DEFINITIONS error - empty search order");
+        ficlVmThrowError(vm, "DEFINITIONS error - empty search order");
     }
 
-    pDict->pCompile = pDict->pSearch[pDict->nLists-1];
+    dictionary->compilationWordlist = dictionary->wordlists[dictionary->wordlistCount-1];
     return;
 }
 
@@ -41,10 +74,10 @@ static void definitions(FICL_VM *pVM)
 ** words provided by the implementation. This word list is initially the
 ** compilation word list and is part of the initial search order. 
 **************************************************************************/
-static void forthWordlist(FICL_VM *pVM)
+static void ficlPrimitiveForthWordlist(ficlVm *vm)
 {
-    FICL_HASH *pHash = ficlGetDict()->pForthWords;
-    stackPushPtr(pVM->pStack, pHash);
+    ficlHash *hash = ficlVmGetDictionary(vm)->forthWordlist;
+    ficlStackPushPointer(vm->dataStack, hash);
     return;
 }
 
@@ -54,11 +87,12 @@ static void forthWordlist(FICL_VM *pVM)
 ** SEARCH ( -- wid )
 ** Return wid, the identifier of the compilation word list. 
 **************************************************************************/
-static void getCurrent(FICL_VM *pVM)
+static void ficlPrimitiveGetCurrent(ficlVm *vm)
 {
-    ficlLockDictionary(TRUE);
-    stackPushPtr(pVM->pStack, ficlGetDict()->pCompile);
-    ficlLockDictionary(FALSE);
+	ficlDictionary *dictionary = ficlVmGetDictionary(vm);
+    ficlDictionaryLock(dictionary, FICL_TRUE);
+    ficlStackPushPointer(vm->dataStack, dictionary->compilationWordlist);
+    ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
 
@@ -71,20 +105,20 @@ static void getCurrent(FICL_VM *pVM)
 ** the word list that is searched first, and widn the word list that is
 ** searched last. The search order is unaffected.
 **************************************************************************/
-static void getOrder(FICL_VM *pVM)
+static void ficlPrimitiveGetOrder(ficlVm *vm)
 {
-    FICL_DICT *pDict = ficlGetDict();
-    int nLists = pDict->nLists;
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
+    int wordlistCount = dictionary->wordlistCount;
     int i;
 
-    ficlLockDictionary(TRUE);
-    for (i = 0; i < nLists; i++)
+    ficlDictionaryLock(dictionary, FICL_TRUE);
+    for (i = 0; i < wordlistCount; i++)
     {
-        stackPushPtr(pVM->pStack, pDict->pSearch[i]);
+        ficlStackPushPointer(vm->dataStack, dictionary->wordlists[i]);
     }
 
-    stackPushUNS(pVM->pStack, nLists);
-    ficlLockDictionary(FALSE);
+    ficlStackPushUnsigned(vm->dataStack, wordlistCount);
+    ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
 
@@ -97,29 +131,29 @@ static void getOrder(FICL_VM *pVM)
 ** definition is found, return its execution token xt and one (1) if the
 ** definition is immediate, minus-one (-1) otherwise. 
 **************************************************************************/
-static void searchWordlist(FICL_VM *pVM)
+static void ficlPrimitiveSearchWordlist(ficlVm *vm)
 {
-    STRINGINFO si;
-    UNS16 hashCode;
-    FICL_WORD *pFW;
-    FICL_HASH *pHash = stackPopPtr(pVM->pStack);
+    ficlString name;
+    ficlUnsigned16 hashCode;
+    ficlWord *word;
+    ficlHash *hash = ficlStackPopPointer(vm->dataStack);
 
-    si.count         = (FICL_COUNT)stackPopUNS(pVM->pStack);
-    si.cp            = stackPopPtr(pVM->pStack);
-    hashCode         = hashHashCode(si);
+    name.length         = (ficlUnsigned8)ficlStackPopUnsigned(vm->dataStack);
+    name.text            = ficlStackPopPointer(vm->dataStack);
+    hashCode         = ficlHashCode(name);
 
-    ficlLockDictionary(TRUE);
-    pFW = hashLookup(pHash, si, hashCode);
-    ficlLockDictionary(FALSE);
+    ficlDictionaryLock(ficlVmGetDictionary(vm), FICL_TRUE);
+    word = ficlHashLookup(hash, name, hashCode);
+    ficlDictionaryLock(ficlVmGetDictionary(vm), FICL_FALSE);
 
-    if (pFW)
+    if (word)
     {
-        stackPushPtr(pVM->pStack, pFW);
-        stackPushINT(pVM->pStack, (wordIsImmediate(pFW) ? 1 : -1));
+        ficlStackPushPointer(vm->dataStack, word);
+        ficlStackPushInteger(vm->dataStack, (ficlWordIsImmediate(word) ? 1 : -1));
     }
     else
     {
-        stackPushUNS(pVM->pStack, 0);
+        ficlStackPushUnsigned(vm->dataStack, 0);
     }
 
     return;
@@ -131,13 +165,13 @@ static void searchWordlist(FICL_VM *pVM)
 ** SEARCH ( wid -- )
 ** Set the compilation word list to the word list identified by wid. 
 **************************************************************************/
-static void setCurrent(FICL_VM *pVM)
+static void ficlPrimitiveSetCurrent(ficlVm *vm)
 {
-    FICL_HASH *pHash = stackPopPtr(pVM->pStack);
-    FICL_DICT *pDict = ficlGetDict();
-    ficlLockDictionary(TRUE);
-    pDict->pCompile = pHash;
-    ficlLockDictionary(FALSE);
+    ficlHash *hash = ficlStackPopPointer(vm->dataStack);
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
+    ficlDictionaryLock(dictionary, FICL_TRUE);
+    dictionary->compilationWordlist = hash;
+    ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
 
@@ -153,39 +187,39 @@ static void setCurrent(FICL_VM *pVM)
 ** FORTH-WORDLIST and SET-ORDER. A system shall allow n to
 ** be at least eight.
 **************************************************************************/
-static void setOrder(FICL_VM *pVM)
+static void ficlPrimitiveSetOrder(ficlVm *vm)
 {
     int i;
-    int nLists = stackPopINT(pVM->pStack);
-    FICL_DICT *dp = ficlGetDict();
+    int wordlistCount = ficlStackPopInteger(vm->dataStack);
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
 
-    if (nLists > FICL_DEFAULT_VOCS)
+    if (wordlistCount > FICL_MAX_WORDLISTS)
     {
-        vmThrowErr(pVM, "set-order error: list would be too large");
+        ficlVmThrowError(vm, "set-order error: list would be too large");
     }
 
-    ficlLockDictionary(TRUE);
+    ficlDictionaryLock(dictionary, FICL_TRUE);
 
-    if (nLists >= 0)
+    if (wordlistCount >= 0)
     {
-        dp->nLists = nLists;
-        for (i = nLists-1; i >= 0; --i)
+        dictionary->wordlistCount = wordlistCount;
+        for (i = wordlistCount-1; i >= 0; --i)
         {
-            dp->pSearch[i] = stackPopPtr(pVM->pStack);
+            dictionary->wordlists[i] = ficlStackPopPointer(vm->dataStack);
         }
     }
     else
     {
-        dictResetSearchOrder(dp);
+        ficlDictionaryResetSearchOrder(dictionary);
     }
 
-    ficlLockDictionary(FALSE);
+    ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
 
 
 /**************************************************************************
-                        w o r d l i s t
+                        f i c l - w o r d l i s t
 ** SEARCH ( -- wid )
 ** Create a new empty word list, returning its word list identifier wid.
 ** The new word list may be returned from a pool of preallocated word
@@ -193,126 +227,122 @@ static void setOrder(FICL_VM *pVM)
 ** allow the creation of at least 8 new word lists in addition to any
 ** provided as part of the system. 
 ** Notes: 
-** 1. ficl creates a new single-list hash in the dictionary and returns
+** 1. Ficl creates a new single-list hash in the dictionary and returns
 **    its address.
 ** 2. ficl-wordlist takes an arg off the stack indicating the number of
 **    hash entries in the wordlist. Ficl 2.02 and later define WORDLIST as
 **    : wordlist 1 ficl-wordlist ;
 **************************************************************************/
-static void wordlist(FICL_VM *pVM)
+static void ficlPrimitiveFiclWordlist(ficlVm *vm)
 {
-    FICL_DICT *dp = ficlGetDict();
-    FICL_HASH *pHash;
-    FICL_UNS nBuckets;
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
+    ficlHash *hash;
+    ficlUnsigned nBuckets;
     
-#if FICL_ROBUST > 1
-    vmCheckStack(pVM, 1, 1);
-#endif
-    nBuckets = stackPopUNS(pVM->pStack);
+    FICL_STACK_CHECK(vm->dataStack, 1, 1);
 
-    dictAlign(dp);
-    pHash    = (FICL_HASH *)dp->here;
-    dictAllot(dp, sizeof (FICL_HASH) 
-        + (nBuckets-1) * sizeof (FICL_WORD *));
-
-    pHash->size = nBuckets;
-    hashReset(pHash);
-
-    stackPushPtr(pVM->pStack, pHash);
+    nBuckets = ficlStackPopUnsigned(vm->dataStack);
+    hash = ficlDictionaryCreateWordlist(dictionary, nBuckets);
+    ficlStackPushPointer(vm->dataStack, hash);
     return;
 }
 
 
 /**************************************************************************
                         S E A R C H >
-** ficl  ( -- wid )
+** Ficl  ( -- wid )
 ** Pop wid off the search order. Error if the search order is empty
 **************************************************************************/
-static void searchPop(FICL_VM *pVM)
+static void ficlPrimitiveSearchPop(ficlVm *vm)
 {
-    FICL_DICT *dp = ficlGetDict();
-    int nLists;
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
+    int wordlistCount;
 
-    ficlLockDictionary(TRUE);
-    nLists = dp->nLists;
-    if (nLists == 0)
+    ficlDictionaryLock(dictionary, FICL_TRUE);
+    wordlistCount = dictionary->wordlistCount;
+    if (wordlistCount == 0)
     {
-        vmThrowErr(pVM, "search> error: empty search order");
+        ficlVmThrowError(vm, "search> error: empty search order");
     }
-    stackPushPtr(pVM->pStack, dp->pSearch[--dp->nLists]);
-    ficlLockDictionary(FALSE);
+    ficlStackPushPointer(vm->dataStack, dictionary->wordlists[--dictionary->wordlistCount]);
+    ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
 
 
 /**************************************************************************
                         > S E A R C H
-** ficl  ( wid -- )
+** Ficl  ( wid -- )
 ** Push wid onto the search order. Error if the search order is full.
 **************************************************************************/
-static void searchPush(FICL_VM *pVM)
+static void ficlPrimitiveSearchPush(ficlVm *vm)
 {
-    FICL_DICT *dp = ficlGetDict();
+    ficlDictionary *dictionary = ficlVmGetDictionary(vm);
 
-    ficlLockDictionary(TRUE);
-    if (dp->nLists > FICL_DEFAULT_VOCS)
+    ficlDictionaryLock(dictionary, FICL_TRUE);
+    if (dictionary->wordlistCount > FICL_MAX_WORDLISTS)
     {
-        vmThrowErr(pVM, ">search error: search order overflow");
+        ficlVmThrowError(vm, ">search error: search order overflow");
     }
-    dp->pSearch[dp->nLists++] = stackPopPtr(pVM->pStack);
-    ficlLockDictionary(FALSE);
+    dictionary->wordlists[dictionary->wordlistCount++] = ficlStackPopPointer(vm->dataStack);
+    ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
 
 
 /**************************************************************************
                         W I D - G E T - N A M E
-** ficl  ( wid -- c-addr u )
+** Ficl  ( wid -- c-addr u )
 ** Get wid's (optional) name and push onto stack as a counted string
 **************************************************************************/
-static void widGetName(FICL_VM *pVM)
+static void ficlPrimitiveWidGetName(ficlVm *vm)
 {
-    FICL_HASH *pHash = vmPop(pVM).p;
-	char *cp = pHash->name;
-	int len = 0;
-	
-	if (cp)
-		len = strlen(cp);
+    ficlHash *hash;
+    char *name;
+    ficlInteger length;
 
-	vmPush(pVM, LVALUEtoCELL(cp));
-	vmPush(pVM, LVALUEtoCELL(len));
-	return;
+    hash = ficlVmPop(vm).p;
+    name = hash->name;
+    
+    if (name != NULL)
+        length = strlen(name);
+	else
+		length = 0;
+
+    ficlVmPush(vm, FICL_LVALUE_TO_CELL(name));
+    ficlVmPush(vm, FICL_LVALUE_TO_CELL(length));
+    return;
 }
 
 /**************************************************************************
                         W I D - S E T - N A M E
-** ficl  ( wid c-addr -- )
+** Ficl  ( wid c-addr -- )
 ** Set wid's name pointer to the \0 terminated string address supplied
 **************************************************************************/
-static void widSetName(FICL_VM *pVM)
+static void ficlPrimitiveWidSetName(ficlVm *vm)
 {
-	char *cp = (char *)vmPop(pVM).p;
-	FICL_HASH *pHash = vmPop(pVM).p;
-	pHash->name = cp;
-	return;
+    char *name = (char *)ficlVmPop(vm).p;
+    ficlHash *hash = ficlVmPop(vm).p;
+    hash->name = name;
+    return;
 }
 
 
 /**************************************************************************
                         setParentWid
-** FICL
+** Ficl
 ** setparentwid   ( parent-wid wid -- )
 ** Set WID's link field to the parent-wid. search-wordlist will 
 ** iterate through all the links when finding words in the child wid.
 **************************************************************************/
-static void setParentWid(FICL_VM *pVM)
+static void ficlPrimitiveSetParentWid(ficlVm *vm)
 {
-    FICL_HASH *parent, *child;
-#if FICL_ROBUST > 1
-    vmCheckStack(pVM, 2, 0);
-#endif
-    child  = (FICL_HASH *)stackPopPtr(pVM->pStack);
-    parent = (FICL_HASH *)stackPopPtr(pVM->pStack);
+    ficlHash *parent, *child;
+
+    FICL_STACK_CHECK(vm->dataStack, 2, 0);
+
+    child  = (ficlHash *)ficlStackPopPointer(vm->dataStack);
+    parent = (ficlHash *)ficlStackPopPointer(vm->dataStack);
 
     child->link = parent;
     return;
@@ -324,40 +354,46 @@ static void setParentWid(FICL_VM *pVM)
 ** Builds the primitive wordset and the environment-query namespace.
 **************************************************************************/
 
-void ficlCompileSearch(FICL_DICT *dp)
+void ficlSystemCompileSearch(ficlSystem *system)
 {
-    assert (dp);
+    ficlDictionary *dictionary = ficlSystemGetDictionary(system);
+    ficlDictionary *environment = ficlSystemGetEnvironment(system);
+
+    FICL_SYSTEM_ASSERT(system, dictionary);
+    FICL_SYSTEM_ASSERT(system, environment);
+
 
     /*
     ** optional SEARCH-ORDER word set 
     */
-    dictAppendWord(dp, ">search",   searchPush,     FW_DEFAULT);
-    dictAppendWord(dp, "search>",   searchPop,      FW_DEFAULT);
-    dictAppendWord(dp, "definitions",
-                                    definitions,    FW_DEFAULT);
-    dictAppendWord(dp, "forth-wordlist",  
-                                    forthWordlist,  FW_DEFAULT);
-    dictAppendWord(dp, "get-current",  
-                                    getCurrent,     FW_DEFAULT);
-    dictAppendWord(dp, "get-order", getOrder,       FW_DEFAULT);
-    dictAppendWord(dp, "search-wordlist",  
-                                    searchWordlist, FW_DEFAULT);
-    dictAppendWord(dp, "set-current",  
-                                    setCurrent,     FW_DEFAULT);
-    dictAppendWord(dp, "set-order", setOrder,       FW_DEFAULT);
-    dictAppendWord(dp, "ficl-wordlist", wordlist,   FW_DEFAULT);
-    dictAppendWord(dp, "wid-get-name", widGetName,  FW_DEFAULT);
-    dictAppendWord(dp, "wid-set-name", widSetName,  FW_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, ">search",   ficlPrimitiveSearchPush,     FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "search>",   ficlPrimitiveSearchPop,      FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "definitions",
+                                    ficlPrimitiveDefinitions,    FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "forth-wordlist",  
+                                    ficlPrimitiveForthWordlist,  FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "get-current",  
+                                    ficlPrimitiveGetCurrent,     FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "get-order", ficlPrimitiveGetOrder,       FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "search-wordlist",  
+                                    ficlPrimitiveSearchWordlist, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "set-current",  
+                                    ficlPrimitiveSetCurrent,     FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "set-order", ficlPrimitiveSetOrder,       FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "ficl-wordlist", 
+                                    ficlPrimitiveFiclWordlist,   FICL_WORD_DEFAULT);
 
     /*
     ** Set SEARCH environment query values
     */
-    ficlSetEnv("search-order",      FICL_TRUE);
-    ficlSetEnv("search-order-ext",  FICL_TRUE);
-    ficlSetEnv("wordlists",         FICL_DEFAULT_VOCS);
+    ficlDictionarySetConstant(environment, "search-order",      FICL_TRUE);
+    ficlDictionarySetConstant(environment, "search-order-ext",  FICL_TRUE);
+    ficlDictionarySetConstant(environment, "wordlists",         FICL_MAX_WORDLISTS);
 
-    dictAppendWord(dp, "wid-set-super", 
-                                    setParentWid,   FW_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "wid-get-name", ficlPrimitiveWidGetName,  FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "wid-set-name", ficlPrimitiveWidSetName,  FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "wid-set-super", 
+                                    ficlPrimitiveSetParentWid,   FICL_WORD_DEFAULT);
     return;
 }
 
