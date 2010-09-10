@@ -4,7 +4,7 @@
 **/
 
 #include <sys/stat.h>
-#include "../ficl.h"
+#include "ficl.h"
 
 
 /*

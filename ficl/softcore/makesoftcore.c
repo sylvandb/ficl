@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../ficl.h"
+#include "ficl.h"
 
 
 void fprintDataAsHex(FILE *f, char *data, int length)
