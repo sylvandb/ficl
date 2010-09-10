@@ -167,6 +167,8 @@ extern "C" {
 	#include "ficlplatform/alpha.h"
 #elif defined(unix) || defined(__unix__) || defined(__unix)
 	#include "ficlplatform/unix.h"
+#else /* catch-all */
+	#include "ficlplatform/ansi.h"
 #endif /* platform */
 
 
