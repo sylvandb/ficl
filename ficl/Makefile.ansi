@@ -4,8 +4,9 @@ HEADERS= ficl.h ficlplatform/ansi.h
 # Flags for shared library
 TARGET=  -ansi -DFICL_ANSI  # riscos MOTO_CPU32 
 SHFLAGS = -fPIC
-CFLAGS= -O $(SHFLAGS) $(TARGET) -I.
-CC=gcc
+CFLAGS= -O $(SHFLAGS)
+CPPFLAGS= $(TARGET) -I.
+CC = cc
 LIB = ar cr
 RANLIB = ranlib
 
@@ -33,7 +34,7 @@ main: main.o ficl.h sysdep.h libficl.so.$(MAJOR).$(MINOR)
 	ln -sf libficl.so.$(MAJOR).$(MINOR) libficl.so.$(MAJOR)
 
 ansi.o: ficlplatform/ansi.c $(HEADERS)
-	$(CC) $(CFLAGS) -c ficlplatform/ansi.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ ficlplatform/ansi.c
 
 #
 #       generic object code
@@ -41,13 +42,13 @@ ansi.o: ficlplatform/ansi.c $(HEADERS)
 .SUFFIXES: .cxx .cc .c .o
 
 .c.o:
-	$(CC) $(CFLAGS) -c $*.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 .cxx.o:
-	$(CPP) $(CPFLAGS) -c $*.cxx
+	$(CPP) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 .cc.o:
-	$(CPP) $(CPFLAGS) -c $*.cc
+	$(CPP) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 #
 #       generic cleanup code
 #
