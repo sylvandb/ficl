@@ -1027,7 +1027,7 @@ FICL_PLATFORM_EXTERN void ficlCompatibilityTextOutCallback(ficlCallback *callbac
 ** and words are (more or less) arrays of these constants.  In Ficl
 ** these constants are an enumerated type called ficlInstruction.
 */
-typedef enum
+enum ficlInstruction
 {
     #define FICL_TOKEN(token, description) token,
     #define FICL_INSTRUCTION_TOKEN(token, description, flags) token,
@@ -1038,7 +1038,8 @@ typedef enum
     ficlInstructionLast,
 
     ficlInstructionFourByteTrick = 0x10000000
-} ficlInstruction;
+};
+typedef intptr_t ficlInstruction;
 
 
 /* 
