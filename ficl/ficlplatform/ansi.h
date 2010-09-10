@@ -1,12 +1,12 @@
-typedef char ficlInteger8;
-typedef unsigned char ficlUnsigned8;
-typedef short ficlInteger16;
-typedef unsigned short ficlUnsigned16;
-typedef long ficlInteger32;
-typedef unsigned long ficlUnsigned32;
+typedef int8_t ficlInteger8;
+typedef uint8_t ficlUnsigned8;
+typedef int16_t ficlInteger16;
+typedef uint16_t ficlUnsigned16;
+typedef int32_t ficlInteger32;
+typedef uint32_t ficlUnsigned32;
 
-typedef ficlInteger32 ficlInteger;
-typedef ficlUnsigned32 ficlUnsigned;
+typedef intptr_t ficlInteger;
+typedef uintptr_t ficlUnsigned;
 typedef float ficlFloat;
 
 #define FICL_PLATFORM_BASIC_TYPES   (1)
