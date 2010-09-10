@@ -69,7 +69,7 @@ void fprintDataAsQuotedString(FILE *f, char *data)
 int main(int argc, char *argv[])
 	{
 	char *uncompressed = (char *)malloc(128 * 1024);
-	char *compressed;
+	unsigned char *compressed;
 	char *trace = uncompressed;
 	int i;
 	int compressedSize;
