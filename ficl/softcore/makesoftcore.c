@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
 	unsigned char *compressed;
 	char *trace = uncompressed;
 	int i;
-	int compressedSize;
-	int uncompressedSize;
+	size_t compressedSize;
+	size_t uncompressedSize;
 	char *src, *dst;
 	FILE *f;
 	time_t currentTimeT;
