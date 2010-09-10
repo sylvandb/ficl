@@ -13,6 +13,10 @@
 #include "ficl.h"
 
 
+#ifndef SOFTCORE_OUT
+#define SOFTCORE_OUT "../softcore.c"
+#endif
+ 
 void fprintDataAsHex(FILE *f, char *data, int length)
 	{
 	int i;
@@ -166,10 +170,10 @@ int main(int argc, char *argv[])
 	}
 	*dst = 0;
 
-	f = fopen("../softcore.c", "wt");
+	f = fopen(SOFTCORE_OUT, "wt");
 	if (f == NULL)
 		{
-		printf("couldn't open ../softcore.c for writing!  giving up.\n");
+		printf("couldn't open " SOFTCORE_OUT " for writing!  giving up.\n");
 		exit(-1);
 		}
 
