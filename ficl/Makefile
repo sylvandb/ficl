@@ -4,7 +4,7 @@ HEADERS= ficl.h ficlplatform/unix.h
 # Flags for shared library
 #TARGET= -Dlinux  # riscos MOTO_CPU32 
 SHFLAGS = -fPIC
-CFLAGS= -O $(SHFLAGS)
+CFLAGS= -O $(SHFLAGS) -Wall
 CPPFLAGS= $(TARGET) -I.
 CC = cc
 LIB = ar cr
