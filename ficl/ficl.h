@@ -165,7 +165,7 @@ extern "C" {
 	#include "ficlplatform/win32.h"
 #elif defined (FREEBSD_ALPHA)
 	#include "ficlplatform/alpha.h"
-#elif defined(linux)
+#elif defined(unix) || defined(__unix__) || defined(__unix)
 	#include "ficlplatform/unix.h"
 #endif /* platform */
 
