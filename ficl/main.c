@@ -67,8 +67,8 @@ int main(int argc, char **argv)
 
     while (returnValue != FICL_VM_STATUS_USER_EXIT)
     {
-	    fputs(FICL_PROMPT, stdout);
-        fgets(buffer, sizeof(buffer), stdin);
+        fputs(FICL_PROMPT, stdout);
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) break;
         returnValue = ficlVmEvaluate(vm, buffer);
     }
 
