@@ -6,6 +6,7 @@
 **
 ** Contributed by Larry Hastings, larry@hastings.org
 **/
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
