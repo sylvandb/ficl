@@ -39,7 +39,7 @@ void fprintDataAsHex(FILE *f, char *data, int length)
 void fprintDataAsQuotedString(FILE *f, char *data)
 	{
 	int i;
-	int lineIsBlank = FICL_TRUE;
+	int lineIsBlank = 1; /* true */
 
 	while (*data)
 		{
@@ -47,7 +47,7 @@ void fprintDataAsQuotedString(FILE *f, char *data)
 			{
 			if (!lineIsBlank)
 				fprintf(f, "\\n\"\n");
-			lineIsBlank = FICL_TRUE;
+			lineIsBlank = 1; /* true */
 			}
 		else
 			{
@@ -55,7 +55,7 @@ void fprintDataAsQuotedString(FILE *f, char *data)
 				{
 				fputc('\t', f);
 				fputc('"', f);
-				lineIsBlank = FICL_FALSE;
+				lineIsBlank = 0; /* false */
 				}
 
 			if (*data == '"')
