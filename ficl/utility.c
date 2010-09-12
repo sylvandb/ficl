@@ -174,8 +174,8 @@ char *ficlStringCaseFold(char *cp)
 
     while (*cp)
     {
-        if (isupper(*cp))
-            *cp = (char)tolower(*cp);
+        if (isupper((unsigned char)*cp))
+            *cp = (char)tolower((unsigned char)*cp);
         cp++;
     }
 
@@ -193,7 +193,7 @@ int ficlStrincmp(char *cp1, char *cp2, ficlUnsigned count)
 
     for (; 0 < count; ++cp1, ++cp2, --count)
     {
-        i = tolower(*cp1) - tolower(*cp2);
+        i = tolower((unsigned char)*cp1) - tolower((unsigned char)*cp2);
         if (i != 0)
             return i;
         else if (*cp1 == '\0')
@@ -213,7 +213,7 @@ char *ficlStringSkipSpace(char *cp, char *end)
 {
     FICL_ASSERT(NULL, cp);
 
-    while ((cp != end) && isspace(*cp))
+    while ((cp != end) && isspace((unsigned char)*cp))
         cp++;
 
     return cp;

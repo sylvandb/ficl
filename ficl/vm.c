@@ -1199,14 +1199,14 @@ COMPARE:
 				uMin = (u1 < u2)? u1 : u2;
 				for ( ; (uMin > 0) && (n == 0); uMin--)
 				{
-					char c1 = *cp1++;
-					char c2 = *cp2++;
+					int c1 = (unsigned char)*cp1++;
+					int c2 = (unsigned char)*cp2++;
 					if (i)
 					{
-						c1 = (char)tolower(c1);
-						c2 = (char)tolower(c2);
+						c1 = tolower(c1);
+						c2 = tolower(c2);
 					}
-					n = (int)(c1 - c2);
+					n = (c1 - c2);
 				}
 
 				if (n == 0)
@@ -2401,7 +2401,7 @@ ficlString ficlVmGetWord0(ficlVm *vm)
 		if (trace == stop)
 			break;
 		c = *trace;
-		if (isspace(c))
+		if (isspace((unsigned char)c))
 			break;
         length++;
 		trace++;
@@ -2409,7 +2409,7 @@ ficlString ficlVmGetWord0(ficlVm *vm)
 
     FICL_STRING_SET_LENGTH(s, length);
 
-    if ((trace != stop) && isspace(c))    /* skip one trailing delimiter */
+    if ((trace != stop) && isspace((unsigned char)c))    /* skip one trailing delimiter */
         trace++;
 
     ficlVmUpdateTib(vm, trace);

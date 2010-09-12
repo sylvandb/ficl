@@ -409,7 +409,7 @@ static void ficlPrimitiveSprintf(ficlVm *vm) /*  */
 					break;
 				}
 
-			desiredLength = isdigit(*format);
+			desiredLength = isdigit((unsigned char)*format);
 			if (desiredLength)
 				{
 				desiredLength = strtoul(format, &format, 10);
