@@ -230,13 +230,13 @@ void ficlCompatibilityTextOutCallback(ficlCallback *callback, char *text, ficlCo
 
 	if (text == NULL)
 	{
-		outputFunction(callback->vm, NULL, FICL_FALSE);
+		outputFunction(callback->vm, NULL, 0 /* false */);
 		return;
 	}
 
 	while (*text)
 	{
-		int newline = FICL_FALSE;
+		int newline = 0 /* false */;
 		char *trace = buffer;
 		while ((*text) && (trace < bufferStop))
 		{
@@ -248,7 +248,7 @@ void ficlCompatibilityTextOutCallback(ficlCallback *callback, char *text, ficlCo
 					continue;
 				case '\n':
 					text++;
-					newline = FICL_TRUE;
+					newline = !0 /* true */;
 					break;
 				default:
 					*trace++ = *text++;
