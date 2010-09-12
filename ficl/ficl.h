@@ -649,7 +649,7 @@ FICL_PLATFORM_EXTERN void *ficlRealloc(void *p, size_t size);
 
 
 #if !defined FICL_IGNORE     /* Macro to silence unused param warnings */
-#define FICL_IGNORE(x) &x
+#define FICL_IGNORE(x) (void)x
 #endif /*  !defined FICL_IGNORE */
 
 
@@ -1517,7 +1517,7 @@ FICL_PLATFORM_EXTERN ficlWord        *ficlDictionaryFindEnclosingWord(ficlDictio
 #if FICL_MULTITHREAD
 FICL_PLATFORM_EXTERN int ficlDictionaryLock(ficlDictionary *dictionary, short lockIncrement);
 #else
-#define ficlDictionaryLock(dictionary, lock) 0 /* ignore */
+#define ficlDictionaryLock(dictionary, lock) (void)0 /* ignore */
 #endif
 
 
