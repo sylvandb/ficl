@@ -470,7 +470,7 @@ AGAIN:
 		#define POP_CELL_POINTER_DOUBLE(cp)  cell = (cp); *cell = *dataTop--; cell[1] = *dataTop--; continue
 		#define POP_CELL_POINTER(cp)         cell = (cp); *cell = *dataTop--; continue
 
-		#define BRANCH()         ip += *(int *)ip; continue
+		#define BRANCH()         ip += *(ficlInteger *)ip; continue
 		#define EXIT_FUNCTION()  ip = (ficlInstruction *)((returnTop--)->p); continue
 
 #endif /* FICL_WANT_SIZE */
