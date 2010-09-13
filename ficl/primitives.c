@@ -376,9 +376,9 @@ static void ficlPrimitiveSprintf(ficlVm *vm) /*  */
 	char *formatStop = format + formatLength;
 
 	int base = 10;
-	int unsignedInteger = FICL_FALSE;
+	int unsignedInteger = 0; /* false */
 
-	int append = FICL_TRUE;
+	int append = 1; /* true */
 
 	while (format < formatStop)
 	{
@@ -439,7 +439,7 @@ static void ficlPrimitiveSprintf(ficlVm *vm) /*  */
 					base = 16;
 				case 'u':
 				case 'U':
-					unsignedInteger = FICL_TRUE;
+					unsignedInteger = 1; /* true */
 				case 'd':
 				case 'D':
 				{
@@ -449,7 +449,7 @@ static void ficlPrimitiveSprintf(ficlVm *vm) /*  */
 					else
 						ficlLtoa(integer, scratch, base);
 					base = 10;
-					unsignedInteger = FICL_FALSE;
+					unsignedInteger = 0; /* false */
 					source = scratch;
 					actualLength = strlen(scratch);
 					break;
@@ -462,13 +462,13 @@ static void ficlPrimitiveSprintf(ficlVm *vm) /*  */
 			}
 		}
 
-		if (append == FICL_TRUE)
+		if (append)
 		{
 			if (!desiredLength)
 				desiredLength = actualLength;
 			if (desiredLength > bufferLength)
 			{
-				append = FICL_FALSE;
+				append = 0; /* false */
 				desiredLength = bufferLength;
 			}
 			while (desiredLength > actualLength)
@@ -487,7 +487,7 @@ static void ficlPrimitiveSprintf(ficlVm *vm) /*  */
 
 	ficlStackPushPointer(vm->dataStack, bufferStart);
 	ficlStackPushInteger(vm->dataStack, buffer - bufferStart);
-	ficlStackPushInteger(vm->dataStack, append);
+	ficlStackPushInteger(vm->dataStack, append && FICL_TRUE);
 }
 
 
@@ -2550,23 +2550,23 @@ void ficlLocalParenIm(ficlVm *vm, int isDouble, int isFloat)
 
 static void ficlPrimitiveDoLocalIm(ficlVm *vm)
 {
-    ficlLocalParenIm(vm, FICL_FALSE, FICL_FALSE);
+    ficlLocalParenIm(vm, 0, 0);
 }
 
 static void ficlPrimitiveDo2LocalIm(ficlVm *vm)
 {
-    ficlLocalParenIm(vm, FICL_TRUE, FICL_FALSE);
+    ficlLocalParenIm(vm, 1, 0);
 }
 
 #if FICL_WANT_FLOAT
 static void ficlPrimitiveDoFLocalIm(ficlVm *vm)
 {
-    ficlLocalParenIm(vm, FICL_FALSE, FICL_TRUE);
+    ficlLocalParenIm(vm, 0, 1);
 }
 
 static void ficlPrimitiveDoF2LocalIm(ficlVm *vm)
 {
-    ficlLocalParenIm(vm, FICL_TRUE, FICL_TRUE);
+    ficlLocalParenIm(vm, 1, 1);
 }
 #endif /* FICL_WANT_FLOAT */
 
@@ -2676,12 +2676,12 @@ void ficlLocalParen(ficlVm *vm, int isDouble, int isFloat)
 
 static void ficlPrimitiveLocalParen(ficlVm *vm)
 {
-   ficlLocalParen(vm, FICL_FALSE, FICL_FALSE);
+   ficlLocalParen(vm, 0, 0);
 }
 
 static void ficlPrimitive2LocalParen(ficlVm *vm)
 {
-   ficlLocalParen(vm, FICL_TRUE, FICL_FALSE);
+   ficlLocalParen(vm, 1, 0);
 }
 
 

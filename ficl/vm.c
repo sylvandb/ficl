@@ -2302,7 +2302,7 @@ FMINUSROLL:
 				*/
 				if ((ficlInstruction)fw->code < ficlInstructionLast)
 				{
-					instruction = (int)fw->code;
+					instruction = (ficlInstruction)fw->code;
 					goto AGAIN;
 				}
 
@@ -2901,12 +2901,12 @@ int ficlVmParseNumber(ficlVm *vm, ficlString s)
     }
 
     if (length == 0)        /* detect "+", "-", ".", "+." etc */
-        return FICL_FALSE;
+        return 0; /* false */
 
     while ((length--) && ((c = *trace++) != '\0'))
     {
         if (!isalnum(c))
-            return FICL_FALSE;
+            return 0; /* false */
 
         digit = c - '0';
 
@@ -2914,7 +2914,7 @@ int ficlVmParseNumber(ficlVm *vm, ficlString s)
             digit = tolower(c) - 'a' + 10;
 
         if (digit >= base)
-            return FICL_FALSE;
+            return 0; /* false */
 
         accumulator = accumulator * base + digit;
     }
@@ -2929,7 +2929,7 @@ int ficlVmParseNumber(ficlVm *vm, ficlString s)
     if (vm->state == FICL_VM_STATE_COMPILE)
         ficlPrimitiveLiteralIm(vm);
 
-    return FICL_TRUE;
+    return 1; /* true */
 }
 
 
@@ -3059,7 +3059,7 @@ int ficlVmParseWord(ficlVm *vm, ficlString name)
             }
 
             ficlVmExecuteWord(vm, tempFW);
-            return FICL_TRUE;
+            return 1; /* true */
         }
     }
 
@@ -3078,11 +3078,11 @@ int ficlVmParseWord(ficlVm *vm, ficlString name)
 				else
 	                ficlDictionaryAppendCell(dictionary, FICL_LVALUE_TO_CELL(tempFW));
             }
-            return FICL_TRUE;
+            return 1; /* true */
         }
     }
 
-    return FICL_FALSE;
+    return 0; /* false */
 }
 
 

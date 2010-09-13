@@ -404,12 +404,12 @@ int ficlVmParseFloatNumber( ficlVm *vm, ficlString s)
 
 static void ficlPrimitiveFLocalParen(ficlVm *vm)
 {
-   ficlLocalParen(vm, FICL_FALSE, FICL_TRUE);
+   ficlLocalParen(vm, 0, 1);
 }
 
 static void ficlPrimitiveF2LocalParen(ficlVm *vm)
 {
-   ficlLocalParen(vm, FICL_TRUE, FICL_TRUE);
+   ficlLocalParen(vm, 1, 1);
 }
 
 #endif /* FICL_WANT_LOCALS */
