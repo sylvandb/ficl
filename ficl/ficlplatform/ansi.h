@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 typedef int8_t ficlInteger8;
 typedef uint8_t ficlUnsigned8;
 typedef int16_t ficlInteger16;
