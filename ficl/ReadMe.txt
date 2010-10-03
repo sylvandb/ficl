@@ -1,5 +1,5 @@
-FICL 4.0.31
-June 2003
+FICL 4.1.0
+October 2010
 
 ________
 OVERVIEW
@@ -16,10 +16,12 @@ ____________
 INSTALLATION
 
 Ficl builds out-of-the-box on the following platforms:
-	* Linux: use "Makefile.linux".
+	* NetBSD, FreeBSD: use "Makefile".
+	* Linux: use "Makefile.linux", but it should work with
+	  "Makefile" as well.
 	* Win32: use "ficl.dsw" / "ficl.dsp".
-To port to other platforms, we suggest you start with the Linux
-makefile and the "unix.c" / "unix.h" platform-specific implementation
+To port to other platforms, we suggest you start with the generic
+"Makefile" and the "unix.c" / "unix.h" platform-specific implementation
 files.  (And please--feel free to submit your portability changes!)
 
 (Note: Ficl used to build under RiscOS, but we broke everything
