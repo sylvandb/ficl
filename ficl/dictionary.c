@@ -662,7 +662,7 @@ void ficlDictionarySee(ficlDictionary *dictionary, ficlWord *word, ficlCallback 
             *trace++ = '>';
         else
             *trace++ = ' ';
-        trace += sprintf(trace, "%3d   ", cell - param0);
+        trace += sprintf(trace, "%3td   ", cell - param0);
         
         if (ficlDictionaryIsAWord(dictionary, word))
         {
@@ -686,21 +686,21 @@ void ficlDictionarySee(ficlDictionary *dictionary, ficlWord *word, ficlCallback 
                 if (ficlDictionaryIsAWord(dictionary, c.p) && (c.i >= ficlInstructionLast))
                 {
                     ficlWord *word = (ficlWord *)c.p;
-                    sprintf(trace, "%.*s ( %#lx literal )", 
-                        word->length, word->name, c.u);
+                    sprintf(trace, "%.*s ( %#jx literal )", 
+                        word->length, word->name, (uintmax_t)c.u);
                 }
                 else
-                    sprintf(trace, "literal %ld (%#lx)", c.i, c.u);
+                    sprintf(trace, "literal %jd (%#jx)", (intmax_t)c.i, (uintmax_t)c.u);
                 break;
             case FICL_WORDKIND_2LITERAL:
                 c = *++cell;
                 c2 = *++cell;
-                sprintf(trace, "2literal %d %d (%#lx %#lx)", c2.i, c.i, c2.u, c.u);
+                sprintf(trace, "2literal %jd %jd (%#jx %#jx)", (intmax_t)c2.i, (intmax_t)c.i, (uintmax_t)c2.u, (uintmax_t)c.u);
                 break;
 #if FICL_WANT_FLOAT
             case FICL_WORDKIND_FLITERAL:
                 c = *++cell;
-                sprintf(trace, "fliteral %f (%#lx)", c.f, c.u);
+                sprintf(trace, "fliteral %f (%#jx)", c.f, (uintmax_t)c.u);
                 break;
 #endif /* FICL_WANT_FLOAT */
             case FICL_WORDKIND_STRING_LITERAL:
@@ -719,32 +719,32 @@ void ficlDictionarySee(ficlDictionary *dictionary, ficlWord *word, ficlCallback 
                 break;
             case FICL_WORDKIND_BRANCH0:
                 c = *++cell;
-                sprintf(trace, "branch0 %d", cell + c.i - param0);
+                sprintf(trace, "branch0 %td", cell + c.i - param0);
                 break;                                                           
             case FICL_WORDKIND_BRANCH:
                 c = *++cell;
-                sprintf(trace, "branch %d",     cell + c.i - param0);
+                sprintf(trace, "branch %td",     cell + c.i - param0);
                 break;
 
             case FICL_WORDKIND_QDO:
                 c = *++cell;
-                sprintf(trace, "?do (leave %d)",  (ficlCell *)c.p - param0);
+                sprintf(trace, "?do (leave %td)",  (ficlCell *)c.p - param0);
                 break;
             case FICL_WORDKIND_DO:
                 c = *++cell;
-                sprintf(trace, "do (leave %d)", (ficlCell *)c.p - param0);
+                sprintf(trace, "do (leave %td)", (ficlCell *)c.p - param0);
                 break;
             case FICL_WORDKIND_LOOP:
                 c = *++cell;
-                sprintf(trace, "loop (branch %d)", cell + c.i - param0);
+                sprintf(trace, "loop (branch %td)", cell + c.i - param0);
                 break;
             case FICL_WORDKIND_OF:
                 c = *++cell;
-                sprintf(trace, "of (branch %d)",      cell + c.i - param0);
+                sprintf(trace, "of (branch %td)",      cell + c.i - param0);
                 break;
             case FICL_WORDKIND_PLOOP:
                 c = *++cell;
-                sprintf(trace, "+loop (branch %d)", cell + c.i - param0);
+                sprintf(trace, "+loop (branch %td)", cell + c.i - param0);
                 break;
             default:
                 sprintf(trace, "%.*s", word->length, word->name);
