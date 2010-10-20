@@ -16,9 +16,7 @@ ____________
 INSTALLATION
 
 Ficl builds out-of-the-box on the following platforms:
-	* NetBSD, FreeBSD: use "Makefile".
-	* Linux: use "Makefile.linux", but it should work with
-	  "Makefile" as well.
+	* NetBSD, FreeBSD, Linux: use "Makefile".
 	* Win32: use "ficl.dsw" / "ficl.dsp".
 To port to other platforms, we suggest you start with the generic
 "Makefile" and the "unix.c" / "unix.h" platform-specific implementation
