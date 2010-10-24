@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 	fprintf(f, "\n");
 	fprintf(f, "#if !FICL_WANT_LZ_SOFTCORE\n");
 	fprintf(f, "\n");
-	fprintf(f, "static char ficlSoftcoreUncompressed[] =\n");
+	fprintf(f, "static char ficlSoftcoreUncompressed[] = \"\"\n");
 	fprintDataAsQuotedString(f, uncompressed);
 	fprintf(f, ";\n");
 	fprintf(f, "\n");
