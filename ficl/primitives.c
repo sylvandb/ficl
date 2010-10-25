@@ -853,6 +853,13 @@ static void ficlPrimitiveHash(ficlVm *vm)
     return;
 }
 
+/**************************************************************************
+** Report error
+**************************************************************************/
+static void ficlVmThrowNotFound(ficlVm *vm, ficlString s)
+{
+    ficlVmThrowError(vm, "%.*s not found", FICL_STRING_GET_LENGTH(s), FICL_STRING_GET_POINTER(s));
+}
 
 /**************************************************************************
                         i n t e r p r e t 
@@ -920,7 +927,7 @@ static void ficlPrimitiveInterpret(ficlVm *vm)
         }
     }
 
-    ficlVmThrowError(vm, "%.*s not found", FICL_STRING_GET_LENGTH(s), FICL_STRING_GET_POINTER(s));
+    ficlVmThrowNotFound(vm, s);
 
     return;                 /* back to inner interpreter */
 }
@@ -1253,7 +1260,7 @@ void ficlPrimitiveTick(ficlVm *vm)
 
     word = ficlDictionaryLookup(ficlVmGetDictionary(vm), name);
     if (!word)
-        ficlVmThrowError(vm, "%.*s not found", FICL_STRING_GET_LENGTH(name), FICL_STRING_GET_POINTER(name));
+        ficlVmThrowNotFound(vm, name);
     ficlStackPushPointer(vm->dataStack, word);
     return;
 }
@@ -2783,7 +2790,7 @@ TO_GLOBAL:
 #endif /* FICL_WANT_LOCALS */
     word = ficlDictionaryLookup(dictionary, name);
     if (!word)
-        ficlVmThrowError(vm, "%.*s not found", FICL_STRING_GET_LENGTH(name), FICL_STRING_GET_POINTER(name));
+        ficlVmThrowNotFound(vm, name);
 
 	switch ((ficlInstruction)word->code)
 	{
