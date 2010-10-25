@@ -1,15 +1,28 @@
 SRCDIR=	.
 VPATH=	$(SRCDIR):$(SRCDIR)/softcore
 # core:
-OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o unix.o utility.o hash.o callback.o word.o extras.o
-HEADERS= ficl.h ficlplatform/unix.h
+OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o utility.o hash.o callback.o word.o extras.o $(OBJECTS.$(platform))
+HEADERS= ficl.h $(HEADERS.$(platform))
+# platform dependent source:
+OBJECTS.unix=	unix.o
+HEADERS.unix=	ficlplatform/unix.h
+OBJECTS.ansi=	ansi.o
+HEADERS.ansi=	ficlplatform/ansi.h
 # soft core:
 SOURCES = softcore.fr ifbrack.fr prefix.fr ficl.fr jhlocal.fr marker.fr oo.fr classes.fr string.fr ficllocal.fr fileaccess.fr
 #
 # Flags for shared library
 SHFLAGS = -fPIC
-CFLAGS= -O $(SHFLAGS) -Wall
-CPPFLAGS= -I.
+CFLAGS= $(CFLAGS.$(platform)) -O $(SHFLAGS) -Wall
+CPPFLAGS= $(CPPFLAGS.$(platform)) -I.
+# Platform dependent flags:
+CFLAGS.unix=	# empty
+CPPFLAGS.unix=	# empty
+CFLAGS.ansi=	-ansi
+CPPFLAGS.ansi=	-ansi -DFICL_ANSI
+# Default platform is "unix"
+platform=	unix
+#
 CC = cc
 LIB = ar cr
 RANLIB = ranlib
