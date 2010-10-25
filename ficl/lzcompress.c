@@ -4,8 +4,6 @@
 
 #include "ficl.h"
 
-#define NETWORK_ORDER(X) ((((unsigned char*)X[0]) << 8) | (((unsigned char *)X[1])))
-
 
 static int ficlLzCompareWindow(const unsigned char *window, const unsigned char *buffer,
 	int *offset, unsigned char *next, int windowSize, int bufferSize)
