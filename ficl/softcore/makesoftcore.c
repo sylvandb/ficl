@@ -26,10 +26,8 @@ void fprintDataAsHex(FILE *f, char *data, int length)
 		fprintf(f, "\t");
 		for (i = 0; (i < 8) && length; i++)
 			{
-			char buf[16];
 			/* if you don't do this little stuff, you get ugly sign-extended 0xFFFFFF6b crap. */
-			sprintf(buf, "%08x", (unsigned int)*data++);
-			fprintf(f, "0x%s, ", buf + 6);
+			fprintf(f, "0x%02x, ", (unsigned)*(unsigned char*)data++);
 			length--;
 			}
 		fprintf(f, "\n");
