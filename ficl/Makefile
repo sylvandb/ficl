@@ -1,5 +1,10 @@
+SRCDIR=	.
+VPATH=	$(SRCDIR):$(SRCDIR)/softcore
+# core:
 OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o unix.o utility.o hash.o callback.o word.o extras.o
 HEADERS= ficl.h ficlplatform/unix.h
+# soft core:
+SOURCES = softcore.fr ifbrack.fr prefix.fr ficl.fr jhlocal.fr marker.fr oo.fr classes.fr string.fr ficllocal.fr fileaccess.fr
 #
 # Flags for shared library
 SHFLAGS = -fPIC
@@ -39,6 +44,10 @@ ansi.o: ficlplatform/ansi.c $(HEADERS)
 unix.o: ficlplatform/unix.c $(HEADERS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
+# generate softcore source
+softcore.c: $(SOURCES)
+	(cd softcore && exec $(MAKE) softcore.c) && cp softcore/softcore.c .
+
 #
 #       generic object code
 #
@@ -57,3 +66,4 @@ unix.o: ficlplatform/unix.c $(HEADERS)
 #
 clean:
 	rm -f *.o *.a libficl.* ficl
+	rm -f softcore.c softcore/softcore.c
