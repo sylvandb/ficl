@@ -15,7 +15,7 @@
 
 
 #ifndef SOFTCORE_OUT
-#define SOFTCORE_OUT "../softcore.c"
+#define SOFTCORE_OUT "softcore.c"
 #endif
  
 void fprintDataAsHex(FILE *f, char *data, int length)
