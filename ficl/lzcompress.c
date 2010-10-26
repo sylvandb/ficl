@@ -99,7 +99,7 @@ void ficlLzEncodeHeaderField(unsigned char *data, unsigned int input, int *byteO
 
 
 
-int ficlLzCompress(const unsigned char *uncompressed, size_t uncompressedSize, unsigned char **compressed_p, size_t *compressedSize_p)
+int ficlLzCompress(const char *uncompressed, size_t uncompressedSize, uint8_t **compressed_p, size_t *compressedSize_p)
 	{
 	unsigned char *compressed;
 	const unsigned char *window;
@@ -156,7 +156,7 @@ int ficlLzCompress(const unsigned char *uncompressed, size_t uncompressedSize, u
 		token = ficlNetworkUnsigned32(token);
 		for (i = 0; i < tokenLength; i++)
 			{
-			int inputPosition = (sizeof(unsigned long) * 8) - tokenLength + i;
+			int inputPosition = (sizeof(uint32_t) * 8) - tokenLength + i;
 			ficlBitSet(compressed, outputPosition, ficlBitGet((unsigned char *)&token, inputPosition));
 			outputPosition++;
 			}
