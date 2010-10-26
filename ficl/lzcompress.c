@@ -85,7 +85,7 @@ void ficlLzEncodeHeaderField(unsigned char *data, unsigned int input, int *byteO
 			}
 
 		input = ficlNetworkUnsigned32(input);
-		inputPosition = (sizeof(unsigned long) * 8) - (length * 8);
+		inputPosition = (sizeof(uint32_t) * 8) - (length * 8);
 		bitsOffset;
 
 		data[(*byteOffset)++] = (unsigned char)id;
