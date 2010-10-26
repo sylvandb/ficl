@@ -99,7 +99,7 @@ void ficlLzEncodeHeaderField(unsigned char *data, unsigned int input, int *byteO
 
 
 
-int ficlLzCompress(const char *uncompressed, size_t uncompressedSize, uint8_t **compressed_p, size_t *compressedSize_p)
+int ficlLzCompress(const char *uncompressed, size_t uncompressedSize, unsigned char **compressed_p, size_t *compressedSize_p)
 	{
 	unsigned char *compressed;
 	const unsigned char *window;
