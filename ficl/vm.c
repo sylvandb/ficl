@@ -258,7 +258,6 @@ void ficlVmInnerLoop(ficlVm *vm, ficlWord *fw)
 	register ficlCell *returnTop;
 #if FICL_WANT_FLOAT
 	register ficlCell *floatTop;
-	ficlFloat f;
 #endif  /* FICL_WANT_FLOAT */
 #if FICL_WANT_LOCALS
 	register ficlCell *frame;
@@ -1727,6 +1726,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFPlus:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 1);
 
 				f = (floatTop--)->f;
@@ -1740,6 +1740,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFMinus:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 1);
 
 				f = (floatTop--)->f;
@@ -1753,6 +1754,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFStar:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 1);
 
 				f = (floatTop--)->f;
@@ -1778,6 +1780,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFSlash:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 1);
 
 				f = (floatTop--)->f;
@@ -1791,6 +1794,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFPlusI:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(1, 1);
 				CHECK_STACK(1, 0);
 
@@ -1805,6 +1809,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFMinusI:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(1, 1);
 				CHECK_STACK(1, 0);
 
@@ -1819,6 +1824,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFStarI:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(1, 1);
 				CHECK_STACK(1, 0);
 
@@ -1833,6 +1839,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionFSlashI:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(1, 1);
 				CHECK_STACK(1, 0);
 
@@ -1847,6 +1854,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionIMinusF:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(1, 1);
 				CHECK_STACK(1, 0);
 
@@ -1861,6 +1869,7 @@ BRANCH_PAREN:
 			*******************************************************************/
 			case ficlInstructionISlashF:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(1,1);
 				CHECK_STACK(1, 0);
 
@@ -2160,6 +2169,7 @@ FMINUSROLL:
 			*******************************************************************/
 			case ficlInstructionFEquals:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 0);
 				CHECK_STACK(0, 1);
 
@@ -2174,6 +2184,7 @@ FMINUSROLL:
 			*******************************************************************/
 			case ficlInstructionFLess:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 0);
 				CHECK_STACK(0, 1);
 
@@ -2188,6 +2199,7 @@ FMINUSROLL:
 			*******************************************************************/
 			case ficlInstructionFGreater:
 			{
+				ficlFloat f;
 				CHECK_FLOAT_STACK(2, 0);
 				CHECK_STACK(0, 1);
 
