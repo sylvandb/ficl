@@ -30,6 +30,14 @@ RANLIB = ranlib
 MAJOR = 4
 MINOR = 1.0
 
+.PHONY: all test clean
+.PHONY: lib
+
+all: ficl
+
+test:
+	wd="$$(pwd)"; cd test && $${wd}/ficl ficltest.fr < /dev/null
+
 ficl: main.o $(HEADERS) libficl.a
 	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm
 
