@@ -444,7 +444,7 @@ AGAIN:
 		#define POP_CELL_POINTER(cp)         cell = (cp); goto POP_CELL_POINTER_MINIPROC
 
 		BRANCH_MINIPROC:
-			ip += *(int *)ip;
+			ip += *(ficlInstruction *)ip;
 			continue;
 
 		#define BRANCH()         goto BRANCH_MINIPROC
@@ -469,7 +469,7 @@ AGAIN:
 		#define POP_CELL_POINTER_DOUBLE(cp)  cell = (cp); *cell = *dataTop--; cell[1] = *dataTop--; continue
 		#define POP_CELL_POINTER(cp)         cell = (cp); *cell = *dataTop--; continue
 
-		#define BRANCH()         ip += *(ficlInteger *)ip; continue
+		#define BRANCH()         ip += *(ficlInstruction *)ip; continue
 		#define EXIT_FUNCTION()  ip = (ficlInstruction *)((returnTop--)->p); continue
 
 #endif /* FICL_WANT_SIZE */

@@ -1039,7 +1039,7 @@ enum ficlInstruction
 
     ficlInstructionFourByteTrick = 0x10000000
 };
-typedef intptr_t ficlInstruction;
+typedef ficlInteger ficlInstruction;
 
 
 /* 
@@ -1595,7 +1595,7 @@ struct ficlSystem
     ficlDictionary *dictionary;
     ficlDictionary *environment;
 
-    ficlWord *interpreterLoop[3];
+    ficlInstruction interpreterLoop[3];
     ficlWord *parseList[FICL_MAX_PARSE_STEPS];
 
     ficlWord *exitInnerWord;
