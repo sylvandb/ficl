@@ -55,6 +55,7 @@
 */
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>          /* sprintf */
 #include <string.h>
 #include <ctype.h>
