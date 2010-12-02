@@ -44,8 +44,6 @@
 
 #include "ficl.h"
 
-#define STKDEPTH(s) (((s)->top - (s)->base) + 1)
-
 /*
 ** N O T E: Stack convention:
 **
@@ -70,9 +68,10 @@
 void ficlStackCheck(ficlStack *stack, int popCells, int pushCells)
 #if FICL_ROBUST >= 1
 {
-    int nFree = stack->size - STKDEPTH(stack);
+    int depth = ficlStackDepth(stack);
+    int nFree = stack->size - depth;
 
-    if (popCells > STKDEPTH(stack))
+    if (popCells > depth)
     {
         ficlVmThrowError(stack->vm, "Error: %s stack underflow", stack->name);
     }
@@ -136,7 +135,7 @@ void ficlStackDestroy(ficlStack *stack)
 
 int ficlStackDepth(ficlStack *stack)
 {
-    return STKDEPTH(stack);
+    return (stack->top - stack->base) + 1;
 }
 
 /*******************************************************************
