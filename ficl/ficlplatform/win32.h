@@ -26,7 +26,9 @@
 #define stat        _stat
 #define getcwd      _getcwd
 #define chdir       _chdir
+#if !defined(__WATCOMC__)
 #define fileno      _fileno
+#endif
 
 
 extern int ftruncate(int fileno, size_t size);
