@@ -78,10 +78,10 @@ softcore.c: $(SOURCES)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 .cxx.o:
-	$(CPP) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 .cc.o:
-	$(CPP) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 #
 #       generic cleanup code
 #
