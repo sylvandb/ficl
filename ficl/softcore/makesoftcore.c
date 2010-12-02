@@ -239,4 +239,5 @@ int main(int argc, char *argv[])
 		);
 	free(uncompressed);
 	free(compressed);
+	return 0;
 	}
