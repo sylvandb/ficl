@@ -136,10 +136,10 @@ static void ficlPrimitiveSearchWordlist(ficlVm *vm)
     ficlString name;
     ficlUnsigned16 hashCode;
     ficlWord *word;
-    ficlHash *hash = ficlStackPopPointer(vm->dataStack);
+    ficlHash *hash = (ficlHash*)ficlStackPopPointer(vm->dataStack);
 
     name.length         = (ficlUnsigned8)ficlStackPopUnsigned(vm->dataStack);
-    name.text            = ficlStackPopPointer(vm->dataStack);
+    name.text            = (char*)ficlStackPopPointer(vm->dataStack);
     hashCode         = ficlHashCode(name);
 
     ficlDictionaryLock(ficlVmGetDictionary(vm), FICL_TRUE);
@@ -167,7 +167,7 @@ static void ficlPrimitiveSearchWordlist(ficlVm *vm)
 **************************************************************************/
 static void ficlPrimitiveSetCurrent(ficlVm *vm)
 {
-    ficlHash *hash = ficlStackPopPointer(vm->dataStack);
+    ficlHash *hash = (ficlHash*)ficlStackPopPointer(vm->dataStack);
     ficlDictionary *dictionary = ficlVmGetDictionary(vm);
     ficlDictionaryLock(dictionary, FICL_TRUE);
     dictionary->compilationWordlist = hash;
@@ -205,7 +205,7 @@ static void ficlPrimitiveSetOrder(ficlVm *vm)
         dictionary->wordlistCount = wordlistCount;
         for (i = wordlistCount-1; i >= 0; --i)
         {
-            dictionary->wordlists[i] = ficlStackPopPointer(vm->dataStack);
+            dictionary->wordlists[i] = (ficlHash*)ficlStackPopPointer(vm->dataStack);
         }
     }
     else
@@ -284,7 +284,7 @@ static void ficlPrimitiveSearchPush(ficlVm *vm)
     {
         ficlVmThrowError(vm, ">search error: search order overflow");
     }
-    dictionary->wordlists[dictionary->wordlistCount++] = ficlStackPopPointer(vm->dataStack);
+    dictionary->wordlists[dictionary->wordlistCount++] = (ficlHash*)ficlStackPopPointer(vm->dataStack);
     ficlDictionaryLock(dictionary, FICL_FALSE);
     return;
 }
@@ -301,7 +301,7 @@ static void ficlPrimitiveWidGetName(ficlVm *vm)
     char *name;
     ficlInteger length;
 
-    hash = ficlVmPop(vm).p;
+    hash = (ficlHash*)ficlVmPop(vm).p;
     name = hash->name;
     
     if (name != NULL)
@@ -322,7 +322,7 @@ static void ficlPrimitiveWidGetName(ficlVm *vm)
 static void ficlPrimitiveWidSetName(ficlVm *vm)
 {
     char *name = (char *)ficlVmPop(vm).p;
-    ficlHash *hash = ficlVmPop(vm).p;
+    ficlHash *hash = (ficlHash*)ficlVmPop(vm).p;
     hash->name = name;
     return;
 }

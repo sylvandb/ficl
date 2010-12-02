@@ -92,7 +92,7 @@ void ficlDictionaryAbortDefinition(ficlDictionary *dictionary)
 **************************************************************************/
 void ficlDictionaryAlign(ficlDictionary *dictionary)
 {
-    dictionary->here = ficlAlignPointer(dictionary->here);
+    dictionary->here = (ficlCell*)ficlAlignPointer(dictionary->here);
 }
 
 
@@ -199,7 +199,7 @@ char *ficlDictionaryAppendString(ficlDictionary *dictionary, ficlString s)
     if (length > FICL_NAME_LENGTH)
         length = FICL_NAME_LENGTH;
     
-	return ficlDictionaryAppendData(dictionary, data, length);
+	return (char*)ficlDictionaryAppendData(dictionary, data, length);
 }
 
 
@@ -273,10 +273,10 @@ ficlWord *ficlDictionarySet2ConstantInstruction(ficlDictionary *dictionary, ficl
 
 	/* only reuse the existing word if we're sure it has space for a 2constant */
     if ((word != NULL) &&
-		((((ficlInstruction)word->code) == ficlInstruction2ConstantParen)
+		((((ficlInstruction)(uintptr_t)word->code) == ficlInstruction2ConstantParen)
 #if FICL_WANT_FLOAT
 		  ||
-		(((ficlInstruction)word->code) == ficlInstructionF2ConstantParen)
+		(((ficlInstruction)(uintptr_t)word->code) == ficlInstructionF2ConstantParen)
 #endif /* FICL_WANT_FLOAT */
 		)
 		)
@@ -454,7 +454,7 @@ ficlDictionary  *ficlDictionaryCreateHashed(ficlSystem *system, unsigned size, u
     nAlloc =  sizeof(ficlDictionary) + (size * sizeof (ficlCell))
             + sizeof(ficlHash) + (bucketCount - 1) * sizeof (ficlWord *);
 
-    dictionary = ficlMalloc(nAlloc);
+    dictionary = (ficlDictionary*)ficlMalloc(nAlloc);
     FICL_SYSTEM_ASSERT(system, dictionary != NULL);
 
     dictionary->size = size;
@@ -532,8 +532,8 @@ void ficlDictionaryEmpty(ficlDictionary *dictionary, unsigned bucketCount)
 **************************************************************************/
 int ficlDictionaryIsAWord(ficlDictionary *dictionary, ficlWord *word)
 {
-	if ( (((ficlInstruction)word) > ficlInstructionInvalid)
-		&& (((ficlInstruction)word) < ficlInstructionLast) )
+	if ( (((ficlInstruction)(uintptr_t)word) > ficlInstructionInvalid)
+		&& (((ficlInstruction)(uintptr_t)word) < ficlInstructionLast) )
 		return 1;
 
     if (!ficlDictionaryIncludes(dictionary, word))
@@ -683,7 +683,7 @@ void ficlDictionarySee(ficlDictionary *dictionary, ficlWord *word, ficlCallback 
                 break;
             case FICL_WORDKIND_LITERAL:
                 c = *++cell;
-                if (ficlDictionaryIsAWord(dictionary, c.p) && (c.i >= ficlInstructionLast))
+                if (ficlDictionaryIsAWord(dictionary, (ficlWord*)c.p) && (c.i >= ficlInstructionLast))
                 {
                     ficlWord *word = (ficlWord *)c.p;
                     sprintf(trace, "%.*s ( %#jx literal )", 

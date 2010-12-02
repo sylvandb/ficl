@@ -137,7 +137,7 @@ ficlSystem *ficlSystemCreate(ficlSystemInformation *fsi)
     FICL_ASSERT(&callback, sizeof(ficlFloat) <= sizeof(ficlInteger));
 #endif
 
-    system = ficlMalloc(sizeof(ficlSystem));
+    system = (ficlSystem*)ficlMalloc(sizeof(ficlSystem));
 
     FICL_ASSERT(&callback, system);
 

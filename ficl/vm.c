@@ -378,8 +378,8 @@ AGAIN:
 				(++dataTop)->i = length;
 
 				cp += length + 1;
-				cp = ficlAlignPointer(cp);
-				ip = (void *)cp;
+				cp = (char *)ficlAlignPointer(cp);
+				ip = (ficlInstruction *)cp;
 				continue;
 			}
 
@@ -389,8 +389,8 @@ AGAIN:
 
 				s = (ficlCountedString *)(ip);
 				cp = s->text + s->length + 1;
-				cp = ficlAlignPointer(cp);
-				ip = (void *)cp;
+				cp = (char *)ficlAlignPointer(cp);
+				ip = (ficlInstruction *)cp;
 				(++dataTop)->p = s;
 				continue;
 			}
@@ -525,7 +525,7 @@ AGAIN:
 			case ficlInstructionUnlinkParen:
 			{
 			    returnTop = frame - 1;
-				frame = (returnTop--)->p;
+				frame = (ficlCell *)(returnTop--)->p;
 				continue;
 			}
 
@@ -1122,8 +1122,8 @@ MINUSROLL:
 				CHECK_STACK(3, 0);
 
 				u = (dataTop--)->u;
-				addr2 = (dataTop--)->p;
-				addr1 = (dataTop--)->p;
+				addr2 = (char *)(dataTop--)->p;
+				addr1 = (char *)(dataTop--)->p;
 
 				if (u == 0) 
 					continue;
@@ -1372,7 +1372,7 @@ BRANCH_PAREN:
 
 				if (limit.u == index.u)
 				{
-				    ip = leave.p;
+				    ip = (ficlInstruction *)leave.p;
 				}
 				else
 				{
@@ -1490,22 +1490,22 @@ BRANCH_PAREN:
 			case ficlInstructionF2Fetch:
 				CHECK_FLOAT_STACK(0, 2);
 				CHECK_STACK(1, 0);
-				FLOAT_PUSH_CELL_POINTER_DOUBLE((dataTop--)->p);
+				FLOAT_PUSH_CELL_POINTER_DOUBLE((ficlCell *)(dataTop--)->p);
 
 			case ficlInstructionFFetch:
 				CHECK_FLOAT_STACK(0, 1);
 				CHECK_STACK(1, 0);
-				FLOAT_PUSH_CELL_POINTER((dataTop--)->p);
+				FLOAT_PUSH_CELL_POINTER((ficlCell *)(dataTop--)->p);
 
 			case ficlInstructionF2Store:
 				CHECK_FLOAT_STACK(2, 0);
 				CHECK_STACK(1, 0);
-				FLOAT_POP_CELL_POINTER_DOUBLE((dataTop--)->p);
+				FLOAT_POP_CELL_POINTER_DOUBLE((ficlCell *)(dataTop--)->p);
 
 			case ficlInstructionFStore:
 				CHECK_FLOAT_STACK(1, 0);
 				CHECK_STACK(1, 0);
-				FLOAT_POP_CELL_POINTER((dataTop--)->p);
+				FLOAT_POP_CELL_POINTER((ficlCell *)(dataTop--)->p);
 #endif /* FICL_WANT_FLOAT */
 
 			/*
@@ -1517,7 +1517,7 @@ BRANCH_PAREN:
 			*/
 			case ficlInstruction2Fetch:
 				CHECK_STACK(1, 2);
-				PUSH_CELL_POINTER_DOUBLE((dataTop--)->p);
+				PUSH_CELL_POINTER_DOUBLE((ficlCell *)(dataTop--)->p);
 
 			/*
 			** fetch CORE ( a-addr -- x )
@@ -1526,7 +1526,7 @@ BRANCH_PAREN:
 			*/
 			case ficlInstructionFetch:
 				CHECK_STACK(1, 1);
-				PUSH_CELL_POINTER((dataTop--)->p);
+				PUSH_CELL_POINTER((ficlCell *)(dataTop--)->p);
 
 			/*
 			** two-store    CORE ( x1 x2 a-addr -- )
@@ -1536,7 +1536,7 @@ BRANCH_PAREN:
 			*/
 			case ficlInstruction2Store:
 				CHECK_STACK(3, 0);
-				POP_CELL_POINTER_DOUBLE((dataTop--)->p);
+				POP_CELL_POINTER_DOUBLE((ficlCell *)(dataTop--)->p);
 
 			/*
 			** store        CORE ( x a-addr -- )
@@ -1544,7 +1544,7 @@ BRANCH_PAREN:
 			*/
 			case ficlInstructionStore:
 				CHECK_STACK(2, 0);
-				POP_CELL_POINTER((dataTop--)->p);
+				POP_CELL_POINTER((ficlCell *)(dataTop--)->p);
 
 			case ficlInstructionComma:
 			{

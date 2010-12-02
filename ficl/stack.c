@@ -100,7 +100,7 @@ void ficlStackCheck(ficlStack *stack, int popCells, int pushCells)
 ficlStack *ficlStackCreate(ficlVm *vm, char *name, unsigned size)
 {
     size_t totalSize = sizeof (ficlStack) + (size * sizeof (ficlCell));
-    ficlStack *stack = ficlMalloc(totalSize);
+    ficlStack *stack = (ficlStack*)ficlMalloc(totalSize);
 
     FICL_VM_ASSERT(vm, size != 0);
     FICL_VM_ASSERT(vm, stack != NULL);
@@ -209,7 +209,7 @@ void ficlStackLink(ficlStack *stack, int size)
 void ficlStackUnlink(ficlStack *stack)
 {
     stack->top = stack->frame - 1;
-    stack->frame = ficlStackPopPointer(stack);
+    stack->frame = (ficlCell*)ficlStackPopPointer(stack);
     return;
 }
 #endif /* FICL_WANT_LOCALS */

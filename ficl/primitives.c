@@ -156,7 +156,7 @@ static void resolveAbsBranch(ficlDictionary *dictionary, ficlVm *vm, char *wantT
 
     FICL_STACK_CHECK(vm->dataStack, 2, 0);
 
-    tag = ficlStackPopPointer(vm->dataStack);
+    tag = (char *)ficlStackPopPointer(vm->dataStack);
     /*
     ** Changed the comparison below to compare the pointers first (by popular demand)
     */
@@ -696,7 +696,7 @@ static void ficlPrimitiveEndcaseCoIm(ficlVm *vm)
 	if (ficlStackGetTop(vm->dataStack).p == fallthroughTag)
 	{
 		matchControlTag(vm, fallthroughTag);
-		patchAddr = ficlStackPopPointer(vm->dataStack);
+		patchAddr = (ficlCell *)ficlStackPopPointer(vm->dataStack);
 	    matchControlTag(vm, caseTag);
 		fixupCount = ficlStackPopUnsigned(vm->dataStack);
 		ficlStackPushPointer(vm->dataStack, patchAddr);
@@ -740,7 +740,7 @@ static void ficlPrimitiveOfCoIm(ficlVm *vm)
 	if (ficlStackGetTop(vm->dataStack).p == fallthroughTag)
 	{
 		matchControlTag(vm, fallthroughTag);
-		fallthroughFixup = ficlStackPopPointer(vm->dataStack);
+		fallthroughFixup = (ficlCell *)ficlStackPopPointer(vm->dataStack);
 	}
 
 	matchControlTag(vm, caseTag);
@@ -1290,7 +1290,7 @@ static void ficlPrimitivePostponeCoIm(ficlVm *vm)
     FICL_VM_ASSERT(vm, pComma);
 
     ficlPrimitiveTick(vm);
-    word = ficlStackGetTop(vm->dataStack).p;
+    word = (ficlWord *)ficlStackGetTop(vm->dataStack).p;
     if (ficlWordIsImmediate(word))
     {
         ficlDictionaryAppendCell(dictionary, ficlStackPop(vm->dataStack));
@@ -1318,7 +1318,7 @@ static void ficlPrimitiveExecute(ficlVm *vm)
 
     FICL_STACK_CHECK(vm->dataStack, 1, 0);
 
-    word = ficlStackPopPointer(vm->dataStack);
+    word = (ficlWord *)ficlStackPopPointer(vm->dataStack);
     ficlVmExecuteWord(vm, word);
 
     return;
@@ -1455,7 +1455,7 @@ static void ficlPrimitiveSLiteralCoIm(ficlVm *vm)
 
     dictionary = ficlVmGetDictionary(vm);
     length  = ficlStackPopUnsigned(vm->dataStack);
-    from = ficlStackPopPointer(vm->dataStack);
+    from = (char *)ficlStackPopPointer(vm->dataStack);
 
     ficlDictionaryAppendUnsigned(dictionary, ficlInstructionStringLiteralParen);
     to    = (char *) dictionary->here;
@@ -1535,7 +1535,7 @@ static void ficlPrimitiveToBody(ficlVm *vm)
     ficlWord *word;
     FICL_STACK_CHECK(vm->dataStack, 1, 1);
 
-    word = ficlStackPopPointer(vm->dataStack);
+    word = (ficlWord *)ficlStackPopPointer(vm->dataStack);
     ficlStackPushPointer(vm->dataStack, word->param + 1);
     return;
 }
@@ -1567,7 +1567,7 @@ static void ficlPrimitiveToName(ficlVm *vm)
 
     FICL_STACK_CHECK(vm->dataStack, 1, 2);
 
-    word = ficlStackPopPointer(vm->dataStack);
+    word = (ficlWord *)ficlStackPopPointer(vm->dataStack);
     ficlStackPushPointer(vm->dataStack, word->name);
     ficlStackPushUnsigned(vm->dataStack, word->length);
     return;
@@ -1857,7 +1857,7 @@ static void ficlPrimitiveAccept(ficlVm *vm)
     ** Now we have something in the text buffer - use it 
     */
     size = ficlStackPopInteger(vm->dataStack);
-    address = ficlStackPopPointer(vm->dataStack);
+    address = (char *)ficlStackPopPointer(vm->dataStack);
 
     length = (size < length) ? size : length;
     strncpy(address, trace, length);
@@ -2010,7 +2010,7 @@ static void ficlPrimitiveCharPlus(ficlVm *vm)
     FICL_STACK_CHECK(vm->dataStack,1,1);
 
 
-    p = ficlStackPopPointer(vm->dataStack);
+    p = (char *)ficlStackPopPointer(vm->dataStack);
     ficlStackPushPointer(vm->dataStack, p + 1);
     return;
 }
@@ -2059,7 +2059,7 @@ static void ficlPrimitiveCount(ficlVm *vm)
     FICL_STACK_CHECK(vm->dataStack,1,2);
 
 
-    counted = ficlStackPopPointer(vm->dataStack);
+    counted = (ficlCountedString *)ficlStackPopPointer(vm->dataStack);
     ficlStackPushPointer(vm->dataStack, counted->text);
     ficlStackPushUnsigned(vm->dataStack, counted->length);
     return;
@@ -2089,7 +2089,7 @@ static void ficlPrimitiveEnvironmentQ(ficlVm *vm)
 
     environment = vm->callback.system->environment;
     name.length = ficlStackPopUnsigned(vm->dataStack);
-    name.text    = ficlStackPopPointer(vm->dataStack);
+    name.text    = (char *)ficlStackPopPointer(vm->dataStack);
 
     word = ficlDictionaryLookup(environment, name);
 
@@ -2181,7 +2181,7 @@ static void ficlPrimitiveType(ficlVm *vm)
 
 
     length = ficlStackPopUnsigned(vm->dataStack);
-    s = ficlStackPopPointer(vm->dataStack);
+    s = (char *)ficlStackPopPointer(vm->dataStack);
 	
 	if ((s == NULL) || (length == 0))
 		return;
@@ -2343,7 +2343,7 @@ static void ficlPrimitiveCFind(ficlVm *vm)
 
     FICL_STACK_CHECK(vm->dataStack, 1, 2);
 
-    counted = ficlStackPopPointer(vm->dataStack);
+    counted = (ficlCountedString *)ficlStackPopPointer(vm->dataStack);
     FICL_STRING_SET_FROM_COUNTED_STRING(name, *counted);
     do_find(vm, name, counted);
 }
@@ -2364,7 +2364,7 @@ static void ficlPrimitiveSFind(ficlVm *vm)
 
 
     name.length = ficlStackPopInteger(vm->dataStack);
-    name.text = ficlStackPopPointer(vm->dataStack);
+    name.text = (char *)ficlStackPopPointer(vm->dataStack);
 
     do_find(vm, name, NULL);
 }
@@ -3081,7 +3081,7 @@ static void ficlPrimitiveCatch(ficlVm *vm)
 
     FICL_STACK_CHECK(vm->dataStack, 1, 0);
 
-    word = ficlStackPopPointer(vm->dataStack);
+    word = (ficlWord *)ficlStackPopPointer(vm->dataStack);
 
     /* 
     ** Save vm's state -- a catch will not back out environmental

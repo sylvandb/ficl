@@ -295,7 +295,7 @@ static void ficlPrimitiveSee(ficlVm *vm)
 **************************************************************************/
 static void ficlPrimitiveDebugXT(ficlVm *vm)
 {
-    ficlWord *xt    = ficlStackPopPointer(vm->dataStack);
+    ficlWord *xt    = (ficlWord*)ficlStackPopPointer(vm->dataStack);
     ficlWordKind   wk    = ficlWordClassify(xt);
 
     ficlStackPushPointer(vm->dataStack, xt);
@@ -653,7 +653,7 @@ static ficlInteger ficlReturnStackDisplayCallback(void *c, ficlCell *cell)
     */
     if (ficlDictionaryIncludes(context->dictionary, cell->p))
     {
-        ficlWord *word = ficlDictionaryFindEnclosingWord(context->dictionary, cell->p);
+        ficlWord *word = ficlDictionaryFindEnclosingWord(context->dictionary, (ficlCell*)cell->p);
         if (word)
         {
             int offset = (ficlCell *)cell->p - &word->param[0];
