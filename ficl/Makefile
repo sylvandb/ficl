@@ -86,5 +86,5 @@ softcore.c: $(SOURCES)
 #       generic cleanup code
 #
 clean:
-	rm -f *.o *.a libficl.* ficl
-	rm -f softcore.c softcore/softcore.c
+	rm -f *.o *.a *.core libficl.* ficl
+	rm -f softcore.c softcore/softcore.c softcore/makesoftcore
