@@ -98,13 +98,15 @@ void ficlStackCheck(ficlStack *stack, int popCells, int pushCells)
 
 ficlStack *ficlStackCreate(ficlVm *vm, char *name, unsigned size)
 {
-    size_t totalSize = sizeof (ficlStack) + (size * sizeof (ficlCell));
-    ficlStack *stack = (ficlStack*)ficlMalloc(totalSize);
+    ficlCell *base = (ficlCell*)ficlMalloc(size * sizeof (ficlCell));
+    ficlStack *stack = (ficlStack*)ficlMalloc(sizeof (ficlStack));
 
     FICL_VM_ASSERT(vm, size != 0);
+    FICL_VM_ASSERT(vm, base != NULL);
     FICL_VM_ASSERT(vm, stack != NULL);
 
     stack->size = size;
+    stack->base = base;
     stack->frame = NULL;
 
 	stack->vm = vm;
@@ -122,8 +124,11 @@ ficlStack *ficlStackCreate(ficlVm *vm, char *name, unsigned size)
 
 void ficlStackDestroy(ficlStack *stack)
 {
-    if (stack)
+    if (stack != NULL) {
+	if (stack->base != NULL)
+	    ficlFree(stack->base);
         ficlFree(stack);
+    }
     return;
 }
 

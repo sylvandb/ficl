@@ -931,7 +931,7 @@ typedef struct ficlStack
     ficlCell *top;     /* stack pointer */
     ficlVm *vm;        /* used for debugging */
     char *name;        /* used for debugging */
-    ficlCell base[1];  /* Top of stack */
+    ficlCell *base;    /* Top of stack */
 } ficlStack;
 
 /*
