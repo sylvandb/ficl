@@ -39,7 +39,7 @@ test:
 	wd="$$(pwd)"; cd test && $${wd}/ficl ficltest.fr < /dev/null
 
 ficl: main.o $(HEADERS) libficl.a
-	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ main.o -L. -lficl -lm
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
@@ -50,12 +50,11 @@ libficl.a: $(OBJECTS)
 
 # shared library build
 libficl.so.$(MAJOR).$(MINOR): $(OBJECTS)
-	$(CC) $(LDFLAGS) -shared -Wl,-soname,libficl.so.$(MAJOR).$(MINOR) \
-	-o libficl.so.$(MAJOR).$(MINOR) $(OBJECTS)
+	$(CC) $(LDFLAGS) -shared -Wl,-soname,$@ -o $@ $(OBJECTS)
 	ln -sf libficl.so.$(MAJOR).$(MINOR) libficl.so
 
 main: main.o ficl.h sysdep.h libficl.so.$(MAJOR).$(MINOR)
-	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o main -L. -lficl -lm
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ main.o -L. -lficl -lm
 	ln -sf libficl.so.$(MAJOR).$(MINOR) libficl.so.$(MAJOR)
 
 # depend explicitly to help finding source files in another subdirectory,
