@@ -2651,7 +2651,6 @@ void ficlVmThrowError(ficlVm *vm, char *fmt, ...)
     va_end(list);
 	strcat(vm->pad, "\n");
 
-    ficlVmErrorOut(vm, vm->pad);
     longjmp(*(vm->exceptionHandler), FICL_VM_STATUS_ERROR_EXIT);
 }
 
@@ -2663,7 +2662,6 @@ void ficlVmThrowErrorVararg(ficlVm *vm, char *fmt, va_list list)
     va_end(list);
 	strcat(vm->pad, "\n");
 	
-    ficlVmErrorOut(vm, vm->pad);
     longjmp(*(vm->exceptionHandler), FICL_VM_STATUS_ERROR_EXIT);
 }
 
@@ -2768,10 +2766,11 @@ int ficlVmExecuteString(ficlVm *vm, ficlString s)
         ficlVmQuit(vm);
         break;
 
+    default: /* unhandled exception */
     case FICL_VM_STATUS_ERROR_EXIT:
+	ficlVmErrorOut(vm, vm->pad); /* print saved message */
     case FICL_VM_STATUS_ABORT:
     case FICL_VM_STATUS_ABORTQ:
-    default:    /* user defined exit code?? */
         if (vm->state == FICL_VM_STATE_COMPILE)
         {
             ficlDictionaryAbortDefinition(dictionary);
