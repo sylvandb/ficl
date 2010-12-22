@@ -8,7 +8,7 @@
 #define FICL_PLATFORM_ARCHITECTURE    "unknown"
 
 #define FICL_PLATFORM_BASIC_TYPES     (1)
-#if defined(__amd64__)
+#if defined(__amd64__) || defined(__alpha__)
 #define FICL_PLATFORM_ALIGNMENT       (8)
 #else
 #define FICL_PLATFORM_ALIGNMENT       (4)
@@ -16,7 +16,7 @@
 #define FICL_PLATFORM_INLINE          inline
 
 #define FICL_PLATFORM_HAS_FTRUNCATE   (1)
-#if defined(__amd64__)
+#if defined(__amd64__) || defined(__alpha__)
 #define FICL_PLATFORM_HAS_2INTEGER    (0)
 #else
 #define FICL_PLATFORM_HAS_2INTEGER    (1)
@@ -31,7 +31,7 @@ typedef uint32_t ficlUnsigned32;
 typedef int64_t ficlInteger64;
 typedef uint64_t ficlUnsigned64;
 
-#if defined(__amd64__)
+#if defined(__amd64__) || defined(__alpha__)
 typedef ficlInteger64 ficlInteger;
 typedef ficlUnsigned64 ficlUnsigned;
 #else /* default */

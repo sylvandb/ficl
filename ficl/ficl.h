@@ -163,8 +163,6 @@ extern "C" {
 	#include "ficlplatform/ansi.h"
 #elif defined(_WIN32)
 	#include "ficlplatform/win32.h"
-#elif defined (FREEBSD_ALPHA)
-	#include "ficlplatform/alpha.h"
 #elif defined(unix) || defined(__unix__) || defined(__unix)
 	#include "ficlplatform/unix.h"
 #else /* catch-all */
