@@ -1846,7 +1846,7 @@ FICL_PLATFORM_EXTERN ficlUnsigned32 ficlNetworkUnsigned32(ficlUnsigned32 number)
 
 #define FICL_MIN(a, b)  (((a) < (b)) ? (a) : (b))
 FICL_PLATFORM_EXTERN int ficlLzCompress(const char *uncompressed, size_t uncompressedSize, unsigned char **compressed, size_t *compressedSize);
-FICL_PLATFORM_EXTERN int ficlLzUncompress(const unsigned char *compressed, unsigned char **uncompressed, size_t *uncompressedSize);
+FICL_PLATFORM_EXTERN int ficlLzUncompress(const unsigned char *compressed, char **uncompressed, size_t *uncompressedSize);
 
 
 

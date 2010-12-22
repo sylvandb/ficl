@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 "#if FICL_WANT_LZ_SOFTCORE\n"
 "    char *ficlSoftcoreUncompressed = NULL;\n"
 "    size_t gotUncompressedSize = 0;\n"
-"    returnValue = ficlLzUncompress(ficlSoftcoreCompressed, (unsigned char**)&ficlSoftcoreUncompressed, &gotUncompressedSize);\n"
+"    returnValue = ficlLzUncompress(ficlSoftcoreCompressed, &ficlSoftcoreUncompressed, &gotUncompressedSize);\n"
 "    FICL_VM_ASSERT(vm, returnValue == 0);\n"
 "    FICL_VM_ASSERT(vm, gotUncompressedSize == ficlSoftcoreUncompressedSize);\n"
 "#endif /* FICL_WANT_LZ_SOFTCORE */\n"

@@ -28,7 +28,7 @@ int ficlLzDecodeHeaderField(const unsigned char *data, int *byteOffset)
 
 
 
-int ficlLzUncompress(const unsigned char *compressed, unsigned char **uncompressed_p, size_t *uncompressedSize_p)
+int ficlLzUncompress(const unsigned char *compressed, char **uncompressed_p, size_t *uncompressedSize_p)
 	{
 	unsigned char *window;
 	unsigned char *buffer;
@@ -87,7 +87,7 @@ int ficlLzUncompress(const unsigned char *compressed, unsigned char **uncompress
 			window = buffer - FICL_LZ_WINDOW_SIZE;
 		}
 
-	*uncompressed_p = uncompressed;
+	*uncompressed_p = (char *)uncompressed;
 	*uncompressedSize_p = uncompressedSize;
 
 	return 0;
