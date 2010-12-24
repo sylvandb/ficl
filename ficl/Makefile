@@ -36,7 +36,7 @@ MINOR = 1.0
 all: ficl
 
 test:
-	wd="$$(pwd)"; cd test && $${wd}/ficl ficltest.fr < /dev/null
+	wd="$$(pwd)"; cd test && "$${wd}"/ficl ficltest.fr < /dev/null
 
 ficl: main.o $(HEADERS) libficl.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ main.o -L. -lficl -lm
